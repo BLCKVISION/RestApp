@@ -91,7 +91,6 @@ export class MovimientosComponent implements OnInit {
     switch(this.filters.tipo) {
       case TipoMovimiento.ENTRADA: return 'Entrada';
       case TipoMovimiento.SALIDA: return 'Salida';
-      case TipoMovimiento.TRASLADO: return 'Traslado';
       default: return 'Todos';
     }
   }

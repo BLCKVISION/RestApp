@@ -23,13 +23,16 @@
 .filters-card {
   margin-bottom: 24px;
   padding: 20px 24px;
+  position: relative;
+  z-index: 10;
 }
 
 .filters-grid {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
-  gap: 16px;
+  gap: 20px;
+  justify-content: flex-start;
+  align-items: center;
   align-items: end;
   
   .form-group {

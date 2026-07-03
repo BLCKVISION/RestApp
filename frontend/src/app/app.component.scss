@@ -115,9 +115,13 @@
     }
 
     &--active {
-      color: var(--sidebar-icon-active) !important;
+      color: var(--primary) !important;
       background: #ffffff !important;
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04);
+      
+      svg {
+        stroke: var(--primary) !important;
+      }
     }
   }
 
@@ -164,10 +168,11 @@
 .topbar {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   margin-bottom: 28px;
   width: 100%;
   flex-shrink: 0;
+  position: relative;
 
   &__search {
     display: flex;
@@ -203,6 +208,8 @@
     display: flex;
     align-items: center;
     gap: 12px;
+    position: absolute;
+    right: 0;
   }
 
   &__icon-btn {

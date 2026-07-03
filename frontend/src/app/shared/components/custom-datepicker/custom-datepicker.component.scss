@@ -5,8 +5,8 @@
   
   &__value {
     width: 100%;
-    padding: 14px 18px;
-    background: rgba(255, 255, 255, 0.7);
+    padding: 14px 40px 14px 18px;
+    background: rgba(255, 255, 255, 0.4);
     border: 1px solid rgba(226, 232, 240, 0.8);
     border-radius: 12px;
     font-size: 0.95rem;
@@ -52,13 +52,13 @@
     position: absolute;
     top: calc(100% + 12px);
     left: 0;
-    width: 320px;
+    width: 280px;
     background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(16px);
     border-radius: 20px;
     box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(0,0,0,0.05);
     z-index: 9999;
-    padding: 24px;
+    padding: 16px;
     animation: datepickerDropdownFade 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   }
   
@@ -103,8 +103,8 @@
   &__grid {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    gap: 8px 4px;
-    margin-bottom: 20px;
+    gap: 4px 2px;
+    margin-bottom: 12px;
   }
   
   &__weekday {
@@ -169,7 +169,7 @@
     display: flex;
     justify-content: space-between;
     border-top: 1px solid rgba(0, 0, 0, 0.04);
-    padding-top: 16px;
+    padding-top: 12px;
   }
   
   &__action-btn {

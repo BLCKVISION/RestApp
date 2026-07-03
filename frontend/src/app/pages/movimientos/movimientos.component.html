@@ -17,10 +17,10 @@
           <svg class="custom-select__icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
           @if (isOpenTipo) {
             <div class="custom-select__dropdown">
-              <div class="custom-select__option" (click)="selectTipo('')">Todos</div>
-              <div class="custom-select__option" (click)="selectTipo('ENTRADA')">Entrada</div>
-              <div class="custom-select__option" (click)="selectTipo('SALIDA')">Salida</div>
-              <div class="custom-select__option" (click)="selectTipo('TRASLADO')">Traslado</div>
+              <div class="custom-select__option" (click)="selectTipo(''); $event.stopPropagation()">Todos</div>
+              <div class="custom-select__option" (click)="selectTipo('ENTRADA'); $event.stopPropagation()">Entrada</div>
+              <div class="custom-select__option" (click)="selectTipo('SALIDA'); $event.stopPropagation()">Salida</div>
+              <div class="custom-select__option" (click)="selectTipo('TRASLADO'); $event.stopPropagation()">Traslado</div>
             </div>
           }
         </div>
@@ -34,9 +34,9 @@
           <svg class="custom-select__icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
           @if (isOpenCentro) {
             <div class="custom-select__dropdown">
-              <div class="custom-select__option" (click)="selectCentro('')">Todos</div>
+              <div class="custom-select__option" (click)="selectCentro(''); $event.stopPropagation()">Todos</div>
               @for (c of centros; track c.id) {
-                <div class="custom-select__option" (click)="selectCentro(c.id)">
+                <div class="custom-select__option" (click)="selectCentro(c.id); $event.stopPropagation()">
                   {{ c.nombre }}
                 </div>
               }
@@ -53,9 +53,9 @@
           <svg class="custom-select__icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
           @if (isOpenComida) {
             <div class="custom-select__dropdown">
-              <div class="custom-select__option" (click)="selectComida('')">Todos</div>
+              <div class="custom-select__option" (click)="selectComida(''); $event.stopPropagation()">Todos</div>
               @for (tipo of tiposComida; track tipo.id) {
-                <div class="custom-select__option" (click)="selectComida(tipo.id)">
+                <div class="custom-select__option" (click)="selectComida(tipo.id); $event.stopPropagation()">
                   {{ tipo.nombre }}
                 </div>
               }

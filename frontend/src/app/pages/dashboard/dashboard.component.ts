@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -23,11 +23,22 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   today = new Date();
   searchQuery = '';
   selectedRango = 'semanal';
+  isOpenRango = false;
+  showReportModal = false;
 
   constructor(
     private api: ApiService,
     public auth: AuthService
   ) {}
+
+  @HostListener('document:click')
+  onClickOutside() {
+    this.isOpenRango = false;
+  }
+
+  closeReportModal() {
+    this.showReportModal = false;
+  }
 
   ngOnInit() {
     this.loadData();
@@ -75,8 +86,23 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     });
   }
 
-  onRangoChange(event: any) {
-    this.selectedRango = event.target.value;
+  get rangoLabel(): string {
+    switch(this.selectedRango) {
+      case 'semanal': return 'Semanal';
+      case 'mensual': return 'Mensual';
+      case 'anual': return 'Anual';
+      default: return 'Semanal';
+    }
+  }
+
+  toggleRango(event: Event) {
+    event.stopPropagation();
+    this.isOpenRango = !this.isOpenRango;
+  }
+
+  selectRango(rango: string) {
+    this.selectedRango = rango;
+    this.isOpenRango = false;
     this.cargarGrafico();
   }
 

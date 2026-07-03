@@ -13,7 +13,7 @@
                 url('https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?q=80&w=2070&auto=format&fit=crop') center/cover no-repeat;
     position: relative;
     display: flex;
-    align-items: center;
+    align-items: flex-end;
     justify-content: center;
     color: #ffffff;
     padding: 60px;
@@ -87,16 +87,6 @@
       }
     }
   }
-}
-
-.animate-fade {
-  animation: fadeInOut 0.5s ease-in-out;
-}
-
-@keyframes fadeInOut {
-  0% { opacity: 0; transform: translateY(5px); }
-  100% { opacity: 1; transform: translateY(0); }
-}
 
   /* Right Side: Form */
   &__right {
@@ -107,6 +97,15 @@
     background: #ffffff;
     padding: 60px;
   }
+}
+
+.animate-fade {
+  animation: fadeInOut 0.5s ease-in-out;
+}
+
+@keyframes fadeInOut {
+  0% { opacity: 0; transform: translateY(5px); }
+  100% { opacity: 1; transform: translateY(0); }
 }
 
 .login-form-container {
