@@ -1,4 +1,4 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Query } from '@nestjs/common';
 import { MovimientosComidaService } from './movimientos-comida.service';
 
 @Controller('inventario')
@@ -11,10 +11,10 @@ export class InventarioController {
     return this.service.getResumen();
   }
 
-  /** GET /api/inventario/semana – Datos para gráfico semanal */
-  @Get('semana')
-  getMovimientosSemana() {
-    return this.service.getMovimientosSemana();
+  /** GET /api/inventario/grafico – Datos para grafico (semanal, mensual, anual) */
+  @Get('grafico')
+  getDatosGrafico(@Query('rango') rango: string = 'semanal') {
+    return this.service.getDatosGrafico(rango);
   }
 
   /** GET /api/inventario/distribucion – Distribución por centro */

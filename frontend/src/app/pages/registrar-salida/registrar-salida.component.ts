@@ -1,7 +1,8 @@
-import { Component, OnInit, AfterViewInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ApiService } from '../../core/services/api.service';
+import { CustomDatepickerComponent } from '../../shared/components/custom-datepicker/custom-datepicker.component';
 import {
   CentroAcopio,
   TipoComida,
@@ -13,7 +14,7 @@ import gsap from 'gsap';
 @Component({
   selector: 'app-registrar-salida',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, CustomDatepickerComponent],
   templateUrl: './registrar-salida.component.html',
   styleUrl: './registrar-salida.component.scss',
 })
@@ -32,6 +33,9 @@ export class RegistrarSalidaComponent implements OnInit, AfterViewInit {
     registradoPor: '',
     fecha: new Date().toISOString().split('T')[0],
   };
+
+  isOpenTipoComida = false;
+  isOpenCentro = false;
 
   constructor(private api: ApiService) {}
 
@@ -60,6 +64,44 @@ export class RegistrarSalidaComponent implements OnInit, AfterViewInit {
       (t) => t.tipoComidaId === this.form.tipoComidaId
     );
     return tipo ? tipo.stockActual : 0;
+  }
+
+  get selectedCentroNombre(): string {
+    const c = this.centros.find(x => x.id === this.form.centroId);
+    return c ? c.nombre : 'Seleccionar centro...';
+  }
+
+  get selectedTipoComidaNombre(): string {
+    const t = this.tiposComida.find(x => x.id === this.form.tipoComidaId);
+    return t ? t.nombre : 'Seleccionar tipo...';
+  }
+
+  @HostListener('document:click', ['$event'])
+  onClickOutside(event: Event) {
+    this.isOpenTipoComida = false;
+    this.isOpenCentro = false;
+  }
+
+  toggleCentro(event: Event) {
+    event.stopPropagation();
+    this.isOpenCentro = !this.isOpenCentro;
+    this.isOpenTipoComida = false;
+  }
+
+  selectCentro(id: string) {
+    this.form.centroId = id;
+    this.isOpenCentro = false;
+  }
+
+  toggleTipoComida(event: Event) {
+    event.stopPropagation();
+    this.isOpenTipoComida = !this.isOpenTipoComida;
+    this.isOpenCentro = false;
+  }
+
+  selectTipoComida(id: string) {
+    this.form.tipoComidaId = id;
+    this.isOpenTipoComida = false;
   }
 
   get excedido(): boolean {

@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ApiService } from '../../core/services/api.service';
+import { CustomDatepickerComponent } from '../../shared/components/custom-datepicker/custom-datepicker.component';
 import {
   MovimientoComida,
   TipoMovimiento,
@@ -13,7 +14,7 @@ import {
 @Component({
   selector: 'app-movimientos',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, CustomDatepickerComponent],
   templateUrl: './movimientos.component.html',
   styleUrl: './movimientos.component.scss',
 })
@@ -34,6 +35,17 @@ export class MovimientosComponent implements OnInit {
     fechaDesde: '',
     fechaHasta: '',
   };
+
+  isOpenTipo = false;
+  isOpenCentro = false;
+  isOpenComida = false;
+
+  @HostListener('document:click', ['$event'])
+  onClickOutside(event: Event) {
+    this.isOpenTipo = false;
+    this.isOpenCentro = false;
+    this.isOpenComida = false;
+  }
 
   constructor(private api: ApiService) {}
 
@@ -72,6 +84,67 @@ export class MovimientosComponent implements OnInit {
     this.filters = { tipo: '', centroId: '', tipoComidaId: '', fechaDesde: '', fechaHasta: '' };
     this.page = 1;
     this.loadMovimientos();
+  }
+
+  // --- Custom Select Logic ---
+  get selectedTipoNombre(): string {
+    switch(this.filters.tipo) {
+      case TipoMovimiento.ENTRADA: return 'Entrada';
+      case TipoMovimiento.SALIDA: return 'Salida';
+      case TipoMovimiento.TRASLADO: return 'Traslado';
+      default: return 'Todos';
+    }
+  }
+
+  get selectedCentroFiltroNombre(): string {
+    if (!this.filters.centroId) return 'Todos';
+    const c = this.centros.find(x => x.id === this.filters.centroId);
+    return c ? c.nombre : 'Todos';
+  }
+
+  get selectedComidaFiltroNombre(): string {
+    if (!this.filters.tipoComidaId) return 'Todos';
+    const t = this.tiposComida.find(x => x.id === this.filters.tipoComidaId);
+    return t ? t.nombre : 'Todos';
+  }
+
+  toggleTipo(event: Event) {
+    event.stopPropagation();
+    this.isOpenTipo = !this.isOpenTipo;
+    this.isOpenCentro = false;
+    this.isOpenComida = false;
+  }
+
+  selectTipo(val: any) {
+    this.filters.tipo = val;
+    this.isOpenTipo = false;
+    this.applyFilters();
+  }
+
+  toggleCentro(event: Event) {
+    event.stopPropagation();
+    this.isOpenCentro = !this.isOpenCentro;
+    this.isOpenTipo = false;
+    this.isOpenComida = false;
+  }
+
+  selectCentro(val: string) {
+    this.filters.centroId = val;
+    this.isOpenCentro = false;
+    this.applyFilters();
+  }
+
+  toggleComida(event: Event) {
+    event.stopPropagation();
+    this.isOpenComida = !this.isOpenComida;
+    this.isOpenTipo = false;
+    this.isOpenCentro = false;
+  }
+
+  selectComida(val: string) {
+    this.filters.tipoComidaId = val;
+    this.isOpenComida = false;
+    this.applyFilters();
   }
 
   goToPage(p: number) {

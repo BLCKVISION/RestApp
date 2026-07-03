@@ -15,32 +15,40 @@
     <div class="form-grid">
       <!-- Centro de Acopio -->
       <div class="form-group form-group--full">
-        <label class="form-label">Centro de Acopio *</label>
-        <select
-          class="form-control form-select"
-          [(ngModel)]="form.centroId"
-          id="centroId"
-        >
-          <option value="">Seleccionar centro...</option>
-          @for (centro of centros; track centro.id) {
-            <option [value]="centro.id">{{ centro.nombre }} — {{ centro.ubicacion }}</option>
+        <label class="form-label">Centro de Acopio Destino *</label>
+        <div class="custom-select" [class.custom-select--open]="isOpenCentro" (click)="toggleCentro($event)">
+          <div class="custom-select__value">{{ selectedCentroNombre }}</div>
+          <svg class="custom-select__icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+          
+          @if (isOpenCentro) {
+            <div class="custom-select__dropdown">
+              @for (centro of centros; track centro.id) {
+                <div class="custom-select__option" (click)="selectCentro(centro.id)">
+                  <strong>{{ centro.nombre }}</strong> — {{ centro.ubicacion }}
+                </div>
+              }
+            </div>
           }
-        </select>
+        </div>
       </div>
 
       <!-- Tipo de Comida -->
       <div class="form-group">
         <label class="form-label">Tipo de Comida *</label>
-        <select
-          class="form-control form-select"
-          [(ngModel)]="form.tipoComidaId"
-          id="tipoComidaIdSalida"
-        >
-          <option value="">Seleccionar tipo...</option>
-          @for (tipo of tiposComida; track tipo.id) {
-            <option [value]="tipo.id">{{ tipo.nombre }}</option>
+        <div class="custom-select" [class.custom-select--open]="isOpenTipoComida" (click)="toggleTipoComida($event)">
+          <div class="custom-select__value">{{ selectedTipoComidaNombre }}</div>
+          <svg class="custom-select__icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+          
+          @if (isOpenTipoComida) {
+            <div class="custom-select__dropdown">
+              @for (tipo of tiposComida; track tipo.id) {
+                <div class="custom-select__option" (click)="selectTipoComida(tipo.id)">
+                  <strong>{{ tipo.nombre }}</strong> — {{ tipo.descripcion }}
+                </div>
+              }
+            </div>
           }
-        </select>
+        </div>
         @if (form.tipoComidaId) {
           <div class="stock-info">
             <span class="stock-info__label">Stock disponible:</span>
@@ -74,12 +82,7 @@
       <!-- Fecha -->
       <div class="form-group">
         <label class="form-label">Fecha</label>
-        <input
-          type="date"
-          class="form-control"
-          [(ngModel)]="form.fecha"
-          id="fechaSalida"
-        />
+        <app-custom-datepicker [(value)]="form.fecha"></app-custom-datepicker>
       </div>
 
       <!-- Registrado Por -->

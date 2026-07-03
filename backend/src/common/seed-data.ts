@@ -64,6 +64,13 @@ function daysAgo(n: number): Date {
   return d;
 }
 
+function monthsAgo(n: number): Date {
+  const d = new Date();
+  d.setMonth(d.getMonth() - n);
+  d.setHours(8 + Math.floor(Math.random() * 10), Math.floor(Math.random() * 60), 0, 0);
+  return d;
+}
+
 function today(): Date {
   const d = new Date();
   d.setHours(8 + Math.floor(Math.random() * 4), Math.floor(Math.random() * 60), 0, 0);
@@ -337,4 +344,85 @@ export const SEED_MOVIMIENTOS: IMovimientoComida[] = [
     fecha: daysAgo(6),
     createdAt: daysAgo(6),
   },
+  // === MESES ANTERIORES (Para gráfico Anual) ===
+  {
+    id: 'mv000000-0000-0000-0000-000000000027',
+    tipo: TipoMovimiento.ENTRADA,
+    tipoComidaId: 'tc000000-0000-0000-0000-000000000001',
+    cantidad: 850,
+    origen: 'Donación Mensual',
+    registradoPor: 'Yoberlyn',
+    fecha: monthsAgo(1),
+    createdAt: monthsAgo(1),
+  },
+  {
+    id: 'mv000000-0000-0000-0000-000000000028',
+    tipo: TipoMovimiento.SALIDA,
+    centroId: 'c1a00000-0000-0000-0000-000000000001',
+    tipoComidaId: 'tc000000-0000-0000-0000-000000000001',
+    cantidad: 420,
+    registradoPor: 'Alejandro',
+    fecha: monthsAgo(1),
+    createdAt: monthsAgo(1),
+  },
+  {
+    id: 'mv000000-0000-0000-0000-000000000029',
+    tipo: TipoMovimiento.ENTRADA,
+    tipoComidaId: 'tc000000-0000-0000-0000-000000000002',
+    cantidad: 600,
+    origen: 'Donación Mensual',
+    registradoPor: 'Yosymar',
+    fecha: monthsAgo(2),
+    createdAt: monthsAgo(2),
+  },
+  {
+    id: 'mv000000-0000-0000-0000-000000000030',
+    tipo: TipoMovimiento.SALIDA,
+    centroId: 'c1a00000-0000-0000-0000-000000000002',
+    tipoComidaId: 'tc000000-0000-0000-0000-000000000002',
+    cantidad: 300,
+    registradoPor: 'Ricardo',
+    fecha: monthsAgo(2),
+    createdAt: monthsAgo(2),
+  },
+  {
+    id: 'mv000000-0000-0000-0000-000000000031',
+    tipo: TipoMovimiento.ENTRADA,
+    tipoComidaId: 'tc000000-0000-0000-0000-000000000003',
+    cantidad: 920,
+    origen: 'Donación Mensual',
+    registradoPor: 'Rodymar',
+    fecha: monthsAgo(3),
+    createdAt: monthsAgo(3),
+  },
+  {
+    id: 'mv000000-0000-0000-0000-000000000032',
+    tipo: TipoMovimiento.SALIDA,
+    centroId: 'c1a00000-0000-0000-0000-000000000001',
+    tipoComidaId: 'tc000000-0000-0000-0000-000000000003',
+    cantidad: 510,
+    registradoPor: 'Yoberlyn',
+    fecha: monthsAgo(3),
+    createdAt: monthsAgo(3),
+  },
+  {
+    id: 'mv000000-0000-0000-0000-000000000033',
+    tipo: TipoMovimiento.ENTRADA,
+    tipoComidaId: 'tc000000-0000-0000-0000-000000000001',
+    cantidad: 780,
+    origen: 'Donación Mensual',
+    registradoPor: 'Alejandro',
+    fecha: monthsAgo(4),
+    createdAt: monthsAgo(4),
+  },
+  {
+    id: 'mv000000-0000-0000-0000-000000000034',
+    tipo: TipoMovimiento.SALIDA,
+    centroId: 'c1a00000-0000-0000-0000-000000000002',
+    tipoComidaId: 'tc000000-0000-0000-0000-000000000001',
+    cantidad: 450,
+    registradoPor: 'Yosymar',
+    fecha: monthsAgo(4),
+    createdAt: monthsAgo(4),
+  }
 ];

@@ -8,7 +8,7 @@ import {
   ResumenInventario,
   PaginatedResponse,
   TipoMovimiento,
-  DatosSemana,
+  DatosGrafico,
   DistribucionCentro,
 } from '../models/models';
 
@@ -67,8 +67,8 @@ export class ApiService {
     return this.http.get<ResumenInventario>(`${API}/inventario/resumen`);
   }
 
-  getMovimientosSemana(): Observable<DatosSemana[]> {
-    return this.http.get<DatosSemana[]>(`${API}/inventario/semana`);
+  getDatosGrafico(rango: string = 'semanal'): Observable<DatosGrafico[]> {
+    return this.http.get<DatosGrafico[]>(`${API}/inventario/grafico?rango=${rango}`);
   }
 
   getDistribucionPorCentro(): Observable<DistribucionCentro[]> {

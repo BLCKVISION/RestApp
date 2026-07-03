@@ -8,7 +8,7 @@
   min-height: calc(100vh - 180px);
 
   &__header {
-    text-align: center;
+    text-align: left;
     margin-bottom: 28px;
   }
 
@@ -43,14 +43,14 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 0 auto 16px;
+    margin-bottom: 16px;
   }
 
   &__title {
     font-size: 1.15rem;
     font-weight: 700;
     color: var(--text-primary);
-    text-align: center;
+    text-align: left;
     margin-bottom: 24px;
   }
 }

@@ -4,7 +4,7 @@ import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { ApiService } from '../../core/services/api.service';
 import { AuthService } from '../../core/services/auth.service';
-import { ResumenInventario, DatosSemana, DistribucionCentro } from '../../core/models/models';
+import { ResumenInventario, DatosGrafico, DistribucionCentro } from '../../core/models/models';
 import gsap from 'gsap';
 
 @Component({
@@ -16,12 +16,13 @@ import gsap from 'gsap';
 })
 export class DashboardComponent implements OnInit, AfterViewInit {
   resumen: ResumenInventario | null = null;
-  datosSemana: DatosSemana[] = [];
+  datosGrafico: DatosGrafico[] = [];
   distribucion: DistribucionCentro[] = [];
   loading = true;
   showLoader = true;
   today = new Date();
   searchQuery = '';
+  selectedRango = 'semanal';
 
   constructor(
     private api: ApiService,
@@ -52,20 +53,38 @@ export class DashboardComponent implements OnInit, AfterViewInit {
       error: () => (this.loading = false),
     });
 
-    this.api.getMovimientosSemana().subscribe({
-      next: (data) => (this.datosSemana = data),
-    });
+    this.cargarGrafico();
 
     this.api.getDistribucionPorCentro().subscribe({
       next: (data) => (this.distribucion = data),
     });
   }
 
+  cargarGrafico() {
+    this.api.getDatosGrafico(this.selectedRango).subscribe({
+      next: (data) => {
+        this.datosGrafico = data;
+        // Re-trigger animation when data changes
+        setTimeout(() => {
+          gsap.fromTo('.bar-chart__expense-pill, .bar-chart__income-pill', 
+            { opacity: 0, scaleY: 0, transformOrigin: 'bottom' },
+            { opacity: 1, scaleY: 1, duration: 0.5, stagger: 0.05, clearProps: 'transform,opacity' }
+          );
+        }, 50);
+      },
+    });
+  }
+
+  onRangoChange(event: any) {
+    this.selectedRango = event.target.value;
+    this.cargarGrafico();
+  }
+
   animateDashboard() {
     // Staggered card reveal animation (0.6s duration)
     gsap.fromTo('.card', 
-      { opacity: 0, y: 24 },
-      { opacity: 1, y: 0, duration: 0.6, stagger: 0.08, ease: 'power3.out' }
+      { y: 30, opacity: 0 }, 
+      { y: 0, opacity: 1, duration: 0.6, stagger: 0.1, ease: 'power3.out', clearProps: 'transform' }
     );
 
     // Split text line stagger simulation for headers
@@ -106,25 +125,22 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   }
   
   get maxSemana(): number {
-    if (!this.datosSemana.length) return 1;
-    // Maximum height based on total (Income + Expense)
-    return Math.max(...this.datosSemana.map((d) => d.entradas + d.salidas), 1);
+    if (!this.datosGrafico.length) return 1;
+    return Math.max(...this.datosGrafico.map((d) => d.entradas + d.salidas), 1);
   }
 
-  getBarBgHeight(dia: any): number {
-    return ((dia.entradas + dia.salidas) / this.maxSemana) * 100;
+  getSalidasHeight(dia: any): number {
+    if (this.maxSemana === 0) return 0;
+    return (dia.salidas / this.maxSemana) * 100;
   }
 
-  getInnerBarHeight(dia: any): number {
-    const total = dia.entradas + dia.salidas;
-    if (total === 0) return 0;
-    return (dia.entradas / total) * 100;
+  getEntradasHeight(dia: any): number {
+    if (this.maxSemana === 0) return 0;
+    return (dia.entradas / this.maxSemana) * 100;
   }
 
-  getDayLabel(fecha: string): string {
-    const d = new Date(fecha);
-    const months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
-    return months[d.getMonth()];
+  getDayLabel(label: string): string {
+    return label;
   }
 
   get maxDistribucion(): number {

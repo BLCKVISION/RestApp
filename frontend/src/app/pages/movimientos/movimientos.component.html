@@ -9,43 +9,69 @@
   <!-- ═══ FILTERS ═══ -->
   <div class="filters-card card animate-fade-in-up">
     <div class="filters-grid">
+      <!-- Filtro: Tipo de Movimiento -->
       <div class="form-group">
-        <label class="form-label">Tipo</label>
-        <select class="form-control form-select" [(ngModel)]="filters.tipo" (change)="applyFilters()">
-          <option value="">Todos</option>
-          <option value="ENTRADA">Entradas</option>
-          <option value="SALIDA">Salidas</option>
-        </select>
-      </div>
-
-      <div class="form-group">
-        <label class="form-label">Centro</label>
-        <select class="form-control form-select" [(ngModel)]="filters.centroId" (change)="applyFilters()">
-          <option value="">Todos</option>
-          @for (c of centros; track c.id) {
-            <option [value]="c.id">{{ c.nombre }}</option>
+        <label class="form-label">TIPO</label>
+        <div class="custom-select" [class.custom-select--open]="isOpenTipo" (click)="toggleTipo($event)">
+          <div class="custom-select__value">{{ selectedTipoNombre }}</div>
+          <svg class="custom-select__icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+          @if (isOpenTipo) {
+            <div class="custom-select__dropdown">
+              <div class="custom-select__option" (click)="selectTipo('')">Todos</div>
+              <div class="custom-select__option" (click)="selectTipo('ENTRADA')">Entrada</div>
+              <div class="custom-select__option" (click)="selectTipo('SALIDA')">Salida</div>
+              <div class="custom-select__option" (click)="selectTipo('TRASLADO')">Traslado</div>
+            </div>
           }
-        </select>
+        </div>
       </div>
 
+      <!-- Filtro: Centro -->
       <div class="form-group">
-        <label class="form-label">Tipo Comida</label>
-        <select class="form-control form-select" [(ngModel)]="filters.tipoComidaId" (change)="applyFilters()">
-          <option value="">Todos</option>
-          @for (t of tiposComida; track t.id) {
-            <option [value]="t.id">{{ t.nombre }}</option>
+        <label class="form-label">CENTRO</label>
+        <div class="custom-select" [class.custom-select--open]="isOpenCentro" (click)="toggleCentro($event)">
+          <div class="custom-select__value">{{ selectedCentroFiltroNombre }}</div>
+          <svg class="custom-select__icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+          @if (isOpenCentro) {
+            <div class="custom-select__dropdown">
+              <div class="custom-select__option" (click)="selectCentro('')">Todos</div>
+              @for (c of centros; track c.id) {
+                <div class="custom-select__option" (click)="selectCentro(c.id)">
+                  {{ c.nombre }}
+                </div>
+              }
+            </div>
           }
-        </select>
+        </div>
+      </div>
+
+      <!-- Filtro: Tipo de Comida -->
+      <div class="form-group">
+        <label class="form-label">TIPO COMIDA</label>
+        <div class="custom-select" [class.custom-select--open]="isOpenComida" (click)="toggleComida($event)">
+          <div class="custom-select__value">{{ selectedComidaFiltroNombre }}</div>
+          <svg class="custom-select__icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+          @if (isOpenComida) {
+            <div class="custom-select__dropdown">
+              <div class="custom-select__option" (click)="selectComida('')">Todos</div>
+              @for (tipo of tiposComida; track tipo.id) {
+                <div class="custom-select__option" (click)="selectComida(tipo.id)">
+                  {{ tipo.nombre }}
+                </div>
+              }
+            </div>
+          }
+        </div>
       </div>
 
       <div class="form-group">
-        <label class="form-label">Desde</label>
-        <input type="date" class="form-control" [(ngModel)]="filters.fechaDesde" (change)="applyFilters()" />
+        <label class="form-label">DESDE</label>
+        <app-custom-datepicker [(value)]="filters.fechaDesde" (valueChange)="applyFilters()"></app-custom-datepicker>
       </div>
 
       <div class="form-group">
-        <label class="form-label">Hasta</label>
-        <input type="date" class="form-control" [(ngModel)]="filters.fechaHasta" (change)="applyFilters()" />
+        <label class="form-label">HASTA</label>
+        <app-custom-datepicker [(value)]="filters.fechaHasta" (valueChange)="applyFilters()"></app-custom-datepicker>
       </div>
 
       <div class="form-group filters-actions">

@@ -1,15 +1,16 @@
-import { Component, OnInit, AfterViewInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ApiService } from '../../core/services/api.service';
 import { TipoComida, TipoMovimiento } from '../../core/models/models';
+import { CustomDatepickerComponent } from '../../shared/components/custom-datepicker/custom-datepicker.component';
 import gsap from 'gsap';
 
 @Component({
   selector: 'app-registrar-entrada',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, CustomDatepickerComponent],
   templateUrl: './registrar-entrada.component.html',
   styleUrl: './registrar-entrada.component.scss',
 })
@@ -28,6 +29,8 @@ export class RegistrarEntradaComponent implements OnInit, AfterViewInit {
   };
 
   origenes = ['Donación', 'Producción', 'Transferencia', 'Otro'];
+  isOpenTipoComida = false;
+  isOpenOrigen = false;
 
   constructor(private api: ApiService, private router: Router) {}
 
@@ -57,6 +60,39 @@ export class RegistrarEntradaComponent implements OnInit, AfterViewInit {
       this.form.cantidad > 0 &&
       !!this.form.registradoPor
     );
+  }
+
+  get selectedTipoComidaNombre(): string {
+    const tipo = this.tiposComida.find(t => t.id === this.form.tipoComidaId);
+    return tipo ? tipo.nombre : 'Seleccionar tipo...';
+  }
+
+  @HostListener('document:click', ['$event'])
+  onClickOutside(event: Event) {
+    this.isOpenTipoComida = false;
+    this.isOpenOrigen = false;
+  }
+
+  toggleTipoComida(event: Event) {
+    event.stopPropagation();
+    this.isOpenTipoComida = !this.isOpenTipoComida;
+    this.isOpenOrigen = false;
+  }
+
+  selectTipoComida(id: string) {
+    this.form.tipoComidaId = id;
+    this.isOpenTipoComida = false;
+  }
+
+  toggleOrigen(event: Event) {
+    event.stopPropagation();
+    this.isOpenOrigen = !this.isOpenOrigen;
+    this.isOpenTipoComida = false;
+  }
+
+  selectOrigen(origen: string) {
+    this.form.origen = origen;
+    this.isOpenOrigen = false;
   }
 
   submit() {

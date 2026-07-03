@@ -1,0 +1,46 @@
+<div class="custom-datepicker" [class.custom-datepicker--open]="isOpen" (click)="toggle($event)">
+  <div class="custom-datepicker__value" [class.placeholder]="!value">{{ displayValue }}</div>
+  <svg class="custom-datepicker__icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+    <line x1="16" y1="2" x2="16" y2="6"></line>
+    <line x1="8" y1="2" x2="8" y2="6"></line>
+    <line x1="3" y1="10" x2="21" y2="10"></line>
+  </svg>
+
+  @if (isOpen) {
+    <div class="custom-datepicker__dropdown" (click)="stopPropagation($event)">
+      <div class="custom-datepicker__header">
+        <button class="custom-datepicker__nav-btn" (click)="prevMonth($event)">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+        </button>
+        <div class="custom-datepicker__month-year">{{ currentMonthName }} {{ currentYear }}</div>
+        <button class="custom-datepicker__nav-btn" (click)="nextMonth($event)">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+        </button>
+      </div>
+
+      <div class="custom-datepicker__grid">
+        @for (day of weekDays; track day) {
+          <div class="custom-datepicker__weekday">{{ day }}</div>
+        }
+        
+        @for (d of calendarDays; track $index) {
+          <button 
+            class="custom-datepicker__day"
+            [class.custom-datepicker__day--muted]="!d.isCurrentMonth"
+            [class.custom-datepicker__day--today]="d.isToday"
+            [class.custom-datepicker__day--selected]="d.isSelected"
+            (click)="selectDate(d.date)"
+          >
+            {{ d.date.getDate() }}
+          </button>
+        }
+      </div>
+
+      <div class="custom-datepicker__footer">
+        <button class="custom-datepicker__action-btn" (click)="clear($event)">Borrar</button>
+        <button class="custom-datepicker__action-btn custom-datepicker__action-btn--primary" (click)="setToday($event)">Hoy</button>
+      </div>
+    </div>
+  }
+</div>

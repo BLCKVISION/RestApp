@@ -16,16 +16,20 @@
       <!-- Tipo de Comida -->
       <div class="form-group">
         <label class="form-label">Tipo de Comida *</label>
-        <select
-          class="form-control form-select"
-          [(ngModel)]="form.tipoComidaId"
-          id="tipoComidaId"
-        >
-          <option value="">Seleccionar tipo...</option>
-          @for (tipo of tiposComida; track tipo.id) {
-            <option [value]="tipo.id">{{ tipo.nombre }} — {{ tipo.descripcion }}</option>
+        <div class="custom-select" [class.custom-select--open]="isOpenTipoComida" (click)="toggleTipoComida($event)">
+          <div class="custom-select__value">{{ selectedTipoComidaNombre }}</div>
+          <svg class="custom-select__icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+          
+          @if (isOpenTipoComida) {
+            <div class="custom-select__dropdown">
+              @for (tipo of tiposComida; track tipo.id) {
+                <div class="custom-select__option" (click)="selectTipoComida(tipo.id)">
+                  <strong>{{ tipo.nombre }}</strong> — {{ tipo.descripcion }}
+                </div>
+              }
+            </div>
           }
-        </select>
+        </div>
       </div>
 
       <!-- Cantidad -->
@@ -44,27 +48,26 @@
       <!-- Origen -->
       <div class="form-group">
         <label class="form-label">Origen</label>
-        <select
-          class="form-control form-select"
-          [(ngModel)]="form.origen"
-          id="origen"
-        >
-          <option value="">Seleccionar origen...</option>
-          @for (o of origenes; track o) {
-            <option [value]="o">{{ o }}</option>
+        <div class="custom-select" [class.custom-select--open]="isOpenOrigen" (click)="toggleOrigen($event)">
+          <div class="custom-select__value">{{ form.origen || 'Seleccionar origen...' }}</div>
+          <svg class="custom-select__icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+          
+          @if (isOpenOrigen) {
+            <div class="custom-select__dropdown">
+              @for (o of origenes; track o) {
+                <div class="custom-select__option" (click)="selectOrigen(o)">
+                  {{ o }}
+                </div>
+              }
+            </div>
           }
-        </select>
+        </div>
       </div>
 
       <!-- Fecha -->
       <div class="form-group">
-        <label class="form-label">Fecha</label>
-        <input
-          type="date"
-          class="form-control"
-          [(ngModel)]="form.fecha"
-          id="fecha"
-        />
+        <label class="form-label">FECHA</label>
+        <app-custom-datepicker [(value)]="form.fecha"></app-custom-datepicker>
       </div>
 
       <!-- Registrado Por -->

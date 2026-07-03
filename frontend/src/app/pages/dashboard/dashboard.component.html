@@ -100,7 +100,14 @@
               <h2 class="chart-card__big-value">{{ resumen.totalInventario | number }} Raciones</h2>
             </div>
             <div class="chart-card__controls">
-              <button class="btn btn--outline btn--sm" routerLink="/movimientos">Ver Reporte completo</button>
+              <div style="display: flex; gap: 8px; align-items: center;">
+                <select class="chart-card__filter" (change)="onRangoChange($event)">
+                  <option value="semanal">Semanal</option>
+                  <option value="mensual">Mensual</option>
+                  <option value="anual">Anual</option>
+                </select>
+                <button class="btn btn--secondary btn--sm">Ver Reporte</button>
+              </div>
               <div class="chart-card__legend">
                 <span class="chart-card__legend-item">
                   <span class="chart-card__dot chart-card__dot--orange"></span> Entradas
@@ -122,23 +129,26 @@
               <span>0</span>
             </div>
             <div class="bar-chart__bars">
-              @for (dia of datosSemana; track dia.fecha; let i = $index) {
+              @for (dia of datosGrafico; track dia.label; let i = $index) {
                 <div class="bar-chart__group">
                   <div class="bar-chart__bar-container">
-                    <div class="bar-chart__bar-bg" [style.height.%]="getBarBgHeight(dia)">
-                      <div class="bar-chart__bar" 
-                           [class.bar-chart__bar--orange]="i === 5"
-                           [style.height.%]="getInnerBarHeight(dia)">
+                    @if (dia.salidas > 0) {
+                      <div class="bar-chart__expense-pill" [style.height.%]="getSalidasHeight(dia)"></div>
+                    }
+                    @if (dia.entradas > 0) {
+                      <div class="bar-chart__income-pill" 
+                           [class.bar-chart__income-pill--active]="i === 5"
+                           [style.height.%]="getEntradasHeight(dia)">
                         @if (i === 5) {
                           <div class="bar-chart__tooltip">
                             <span>Entradas • {{ dia.entradas }}</span>
-                            <span>Salidas • {{ dia.salidas }}</span>
+                            <span style="color: #cbd5e1">Salidas • {{ dia.salidas }}</span>
                           </div>
                         }
                       </div>
-                    </div>
+                    }
                   </div>
-                  <span class="bar-chart__label">{{ getDayLabel(dia.fecha) }}</span>
+                  <span class="bar-chart__label">{{ dia.label }}</span>
                 </div>
               }
             </div>

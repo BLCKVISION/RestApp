@@ -56,8 +56,8 @@ export interface PaginatedResponse<T> {
   totalPages: number;
 }
 
-export interface DatosSemana {
-  fecha: string;
+export interface DatosGrafico {
+  label: string;
   entradas: number;
   salidas: number;
 }

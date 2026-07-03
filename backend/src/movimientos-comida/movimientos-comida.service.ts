@@ -154,41 +154,73 @@ export class MovimientosComidaService {
     };
   }
 
-  /** Datos para gráfico de movimientos últimos 7 días */
-  getMovimientosSemana(): { fecha: string; entradas: number; salidas: number }[] {
-    const resultado: { fecha: string; entradas: number; salidas: number }[] = [];
+  /** Datos para grafico de movimientos (semanal, mensual, anual) */
+  getDatosGrafico(rango: string): { label: string; entradas: number; salidas: number }[] {
+    const resultado: { label: string; entradas: number; salidas: number }[] = [];
+    const hoy = new Date();
 
-    for (let i = 6; i >= 0; i--) {
-      const dia = new Date();
-      dia.setDate(dia.getDate() - i);
-      dia.setHours(0, 0, 0, 0);
+    if (rango === 'anual') {
+      // 12 months of the current year
+      const currentYear = hoy.getFullYear();
+      const monthNames = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+      
+      for (let i = 0; i < 12; i++) {
+        const entradas = this.movimientos
+          .filter(m => m.tipo === TipoMovimiento.ENTRADA && new Date(m.fecha).getFullYear() === currentYear && new Date(m.fecha).getMonth() === i)
+          .reduce((sum, m) => sum + m.cantidad, 0);
+          
+        const salidas = this.movimientos
+          .filter(m => m.tipo === TipoMovimiento.SALIDA && new Date(m.fecha).getFullYear() === currentYear && new Date(m.fecha).getMonth() === i)
+          .reduce((sum, m) => sum + m.cantidad, 0);
 
-      const finDia = new Date(dia);
-      finDia.setHours(23, 59, 59, 999);
+        resultado.push({ label: monthNames[i], entradas, salidas });
+      }
+    } else if (rango === 'mensual') {
+      // 4 weeks approximation for the last 28 days
+      for (let i = 3; i >= 0; i--) {
+        const finSemana = new Date(hoy);
+        finSemana.setDate(hoy.getDate() - (i * 7));
+        finSemana.setHours(23, 59, 59, 999);
+        
+        const inicioSemana = new Date(finSemana);
+        inicioSemana.setDate(finSemana.getDate() - 6);
+        inicioSemana.setHours(0, 0, 0, 0);
 
-      const entradas = this.movimientos
-        .filter(
-          (m) =>
-            m.tipo === TipoMovimiento.ENTRADA &&
-            new Date(m.fecha) >= dia &&
-            new Date(m.fecha) <= finDia,
-        )
-        .reduce((sum, m) => sum + m.cantidad, 0);
+        const entradas = this.movimientos
+          .filter(m => m.tipo === TipoMovimiento.ENTRADA && new Date(m.fecha) >= inicioSemana && new Date(m.fecha) <= finSemana)
+          .reduce((sum, m) => sum + m.cantidad, 0);
+          
+        const salidas = this.movimientos
+          .filter(m => m.tipo === TipoMovimiento.SALIDA && new Date(m.fecha) >= inicioSemana && new Date(m.fecha) <= finSemana)
+          .reduce((sum, m) => sum + m.cantidad, 0);
 
-      const salidas = this.movimientos
-        .filter(
-          (m) =>
-            m.tipo === TipoMovimiento.SALIDA &&
-            new Date(m.fecha) >= dia &&
-            new Date(m.fecha) <= finDia,
-        )
-        .reduce((sum, m) => sum + m.cantidad, 0);
+        resultado.push({ label: `Sem ${4 - i}`, entradas, salidas });
+      }
+    } else {
+      // Semanal (last 7 days)
+      const dayNames = ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'];
+      for (let i = 6; i >= 0; i--) {
+        const dia = new Date();
+        dia.setDate(hoy.getDate() - i);
+        dia.setHours(0, 0, 0, 0);
 
-      resultado.push({
-        fecha: dia.toISOString().split('T')[0],
-        entradas,
-        salidas,
-      });
+        const finDia = new Date(dia);
+        finDia.setHours(23, 59, 59, 999);
+
+        const entradas = this.movimientos
+          .filter(m => m.tipo === TipoMovimiento.ENTRADA && new Date(m.fecha) >= dia && new Date(m.fecha) <= finDia)
+          .reduce((sum, m) => sum + m.cantidad, 0);
+
+        const salidas = this.movimientos
+          .filter(m => m.tipo === TipoMovimiento.SALIDA && new Date(m.fecha) >= dia && new Date(m.fecha) <= finDia)
+          .reduce((sum, m) => sum + m.cantidad, 0);
+
+        resultado.push({
+          label: dayNames[dia.getDay()],
+          entradas,
+          salidas,
+        });
+      }
     }
 
     return resultado;

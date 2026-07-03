@@ -22,12 +22,13 @@ export class AppComponent implements AfterViewInit {
       scaleX: 1,
       duration: 1.2,
       ease: 'power2.inOut',
+      delay: 0.2,
       onComplete: () => {
-        // Fade out loader screen
+        // Slide UP the loader screen
         gsap.to('.loader-overlay', {
-          opacity: 0,
-          duration: 0.6,
-          ease: 'power2.out',
+          yPercent: -100,
+          duration: 0.8,
+          ease: 'power3.inOut',
           onComplete: () => {
             this.showGlobalLoader = false;
             this.cdr.detectChanges();
