@@ -20,7 +20,7 @@ async function bootstrap() {
 
   // CORS para Angular dev server y producción
   app.enableCors({
-    origin: '*',
+    origin: ['https://restapp.up.railway.app', 'http://localhost:4200'],
     methods: ['GET', 'POST', 'PATCH', 'DELETE'],
     credentials: true,
   });
