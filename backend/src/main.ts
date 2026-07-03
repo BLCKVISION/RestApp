@@ -18,14 +18,15 @@ async function bootstrap() {
     }),
   );
 
-  // CORS para Angular dev server
+  // CORS para Angular dev server y producción
   app.enableCors({
-    origin: ['http://localhost:4200'],
+    origin: '*',
     methods: ['GET', 'POST', 'PATCH', 'DELETE'],
     credentials: true,
   });
 
-  await app.listen(3000);
+  const port = process.env.PORT || 3000;
+  await app.listen(port, '0.0.0.0');
   console.log('🚀 AcopioRed API corriendo en http://localhost:3000/api');
 }
 bootstrap();
