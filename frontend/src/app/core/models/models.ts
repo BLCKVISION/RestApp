@@ -7,6 +7,7 @@ export interface CentroAcopio {
   id: string;
   nombre: string;
   ubicacion: string;
+  operador: string;
   activo: boolean;
   createdAt: string;
   updatedAt: string;
@@ -45,6 +46,10 @@ export interface ResumenInventario {
   totalInventario: number;
   entradasHoy: number;
   salidasHoy: number;
+  pctEntradas: number;
+  pctSalidas: number;
+  pctVariedades: number;
+  pctStock: number;
   movimientosRecientes: MovimientoComida[];
 }
 
@@ -65,5 +70,10 @@ export interface DatosGrafico {
 export interface DistribucionCentro {
   centroId: string;
   centro: string;
-  porTipo: { tipoComida: string; cantidad: number }[];
+  ubicacion: string;
+  operador: string;
+  porTipo: {
+    tipoComida: string;
+    cantidad: number;
+  }[];
 }

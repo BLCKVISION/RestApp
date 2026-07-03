@@ -140,6 +140,32 @@ export class MovimientosComidaService {
     const entradasHoy = inventarioPorTipo.reduce((sum, t) => sum + t.entradasHoy, 0);
     const salidasHoy = inventarioPorTipo.reduce((sum, t) => sum + t.salidasHoy, 0);
 
+    // Cálculos de ayer para porcentajes
+    const ayer = new Date();
+    ayer.setDate(ayer.getDate() - 1);
+    ayer.setHours(0, 0, 0, 0);
+    const finAyer = new Date(ayer);
+    finAyer.setHours(23, 59, 59, 999);
+
+    const entradasAyer = this.movimientos
+      .filter((m) => m.tipo === TipoMovimiento.ENTRADA && new Date(m.fecha) >= ayer && new Date(m.fecha) <= finAyer)
+      .reduce((sum, m) => sum + m.cantidad, 0);
+
+    const salidasAyer = this.movimientos
+      .filter((m) => m.tipo === TipoMovimiento.SALIDA && new Date(m.fecha) >= ayer && new Date(m.fecha) <= finAyer)
+      .reduce((sum, m) => sum + m.cantidad, 0);
+
+    // Calcular % 
+    const calcPct = (hoy: number, ayer: number) => {
+      if (ayer === 0) return hoy > 0 ? 100 : 0;
+      return Number((((hoy - ayer) / ayer) * 100).toFixed(1));
+    };
+
+    const pctEntradas = calcPct(entradasHoy, entradasAyer);
+    const pctSalidas = calcPct(salidasHoy, salidasAyer);
+    const pctVariedades = 5.2; // Mock para variedad
+    const pctStock = 8.5; // Mock para stock general
+
     // Últimos 10 movimientos
     const movimientosRecientes = [...this.movimientos]
       .sort((a, b) => new Date(b.fecha).getTime() - new Date(a.fecha).getTime())
@@ -150,6 +176,10 @@ export class MovimientosComidaService {
       totalInventario,
       entradasHoy,
       salidasHoy,
+      pctEntradas,
+      pctSalidas,
+      pctVariedades,
+      pctStock,
       movimientosRecientes,
     };
   }
@@ -230,6 +260,8 @@ export class MovimientosComidaService {
   getDistribucionPorCentro(): {
     centroId: string;
     centro: string;
+    ubicacion: string;
+    operador: string;
     porTipo: { tipoComida: string; cantidad: number }[];
   }[] {
     return SEED_CENTROS.filter((c) => c.activo).map((centro) => {
@@ -246,7 +278,13 @@ export class MovimientosComidaService {
         return { tipoComida: tipo.nombre, cantidad };
       });
 
-      return { centroId: centro.id, centro: centro.nombre, porTipo };
+      return { 
+        centroId: centro.id, 
+        centro: centro.nombre, 
+        ubicacion: centro.ubicacion, 
+        operador: centro.operador, 
+        porTipo 
+      };
     });
   }
 

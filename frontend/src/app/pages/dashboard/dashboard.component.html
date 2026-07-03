@@ -36,7 +36,7 @@
             </div>
             <div class="kpi-card__bottom">
               <span class="kpi-card__period">Raciones recibidas</span>
-              <span class="kpi-card__pct">+10.8%</span>
+              <span class="kpi-card__pct">{{ resumen.pctEntradas > 0 ? '+' : '' }}{{ resumen.pctEntradas }}%</span>
             </div>
           </div>
 
@@ -53,7 +53,7 @@
             </div>
             <div class="kpi-card__bottom">
               <span class="kpi-card__period">Raciones entregadas</span>
-              <span class="kpi-card__pct">+10.8%</span>
+              <span class="kpi-card__pct">{{ resumen.pctSalidas > 0 ? '+' : '' }}{{ resumen.pctSalidas }}%</span>
             </div>
           </div>
 
@@ -70,7 +70,7 @@
             </div>
             <div class="kpi-card__bottom">
               <span class="kpi-card__period">Tipos de almuerzo</span>
-              <span class="kpi-card__pct">+10.8%</span>
+              <span class="kpi-card__pct">{{ resumen.pctVariedades > 0 ? '+' : '' }}{{ resumen.pctVariedades }}%</span>
             </div>
           </div>
 
@@ -87,7 +87,7 @@
             </div>
             <div class="kpi-card__bottom">
               <span class="kpi-card__period">Raciones totales</span>
-              <span class="kpi-card__pct">+12.8%</span>
+              <span class="kpi-card__pct">{{ resumen.pctStock > 0 ? '+' : '' }}{{ resumen.pctStock }}%</span>
             </div>
           </div>
         </div>
@@ -184,7 +184,7 @@
                     <h4 class="booking-card__name">{{ centro.centro }}</h4>
                     <p class="booking-card__location">
                       <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                      Caracas, Venezuela
+                      {{ centro.ubicacion }}
                     </p>
                   </div>
                 </div>
@@ -195,7 +195,7 @@
                   </span>
                   <span>
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-                    2 Centros
+                    {{ centro.porTipo.length }} Variedades
                   </span>
                   <span>
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
@@ -205,11 +205,11 @@
                 <div class="booking-card__footer">
                   <div class="booking-card__user">
                     <div style="width: 28px; height: 28px; border-radius: 50%; background: #cbd5e1; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700; color: #475569;">
-                      OP
+                      {{ getInitials(centro.operador) }}
                     </div>
                     <div>
                       <div class="booking-card__user-id">ID: acopio-{{ i + 1 }}</div>
-                      <div class="booking-card__user-name">Operador {{ i + 1 }}</div>
+                      <div class="booking-card__user-name">{{ centro.operador }}</div>
                     </div>
                   </div>
                   <button class="booking-card__btn" routerLink="/salida">

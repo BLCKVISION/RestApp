@@ -195,6 +195,15 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     return d.toLocaleTimeString('es-VE', { hour: '2-digit', minute: '2-digit' });
   }
 
+  getInitials(name: string): string {
+    if (!name) return 'OP';
+    const parts = name.trim().split(' ');
+    if (parts.length >= 2) {
+      return (parts[0][0] + parts[1][0]).toUpperCase();
+    }
+    return name.substring(0, 2).toUpperCase();
+  }
+
   // Inventory health percentage
   get inventoryHealth(): number {
     if (!this.resumen) return 0;
