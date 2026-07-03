@@ -12,7 +12,7 @@ import {
   DistribucionCentro,
 } from '../models/models';
 
-const API = 'http://localhost:3000/api';
+const API = 'https://restappbackend.up.railway.app/api';
 
 @Injectable({ providedIn: 'root' })
 export class ApiService {
