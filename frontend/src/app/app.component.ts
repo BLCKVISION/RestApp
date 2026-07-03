@@ -1,0 +1,47 @@
+import { Component, OnInit, AfterViewInit, ChangeDetectorRef } from '@angular/core';
+import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
+import { AuthService } from './core/services/auth.service';
+import gsap from 'gsap';
+
+@Component({
+  selector: 'app-root',
+  standalone: true,
+  imports: [RouterOutlet, RouterLink, RouterLinkActive],
+  templateUrl: './app.component.html',
+  styleUrl: './app.component.scss',
+})
+export class AppComponent implements AfterViewInit {
+  menuOpen = true;
+  showGlobalLoader = true;
+
+  constructor(public auth: AuthService, private cdr: ChangeDetectorRef) {}
+
+  ngAfterViewInit() {
+    // Start loader bar animation globally
+    gsap.to('.loader-overlay__bar-fill', {
+      scaleX: 1,
+      duration: 1.2,
+      ease: 'power2.inOut',
+      onComplete: () => {
+        // Fade out loader screen
+        gsap.to('.loader-overlay', {
+          opacity: 0,
+          duration: 0.6,
+          ease: 'power2.out',
+          onComplete: () => {
+            this.showGlobalLoader = false;
+            this.cdr.detectChanges();
+          }
+        });
+      }
+    });
+  }
+
+  navItems = [
+    { path: '/dashboard', label: 'Descripción general', icon: 'dashboard' },
+    { path: '/entrada', label: 'Registrar Entrada', icon: 'entrada' },
+    { path: '/salida', label: 'Registro de Salida', icon: 'salida' },
+    { path: '/movimientos', label: 'Analítica (Movimientos)', icon: 'historial' },
+    { path: '/reportes', label: 'Informes', icon: 'reportes' },
+  ];
+}

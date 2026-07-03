@@ -1,0 +1,83 @@
+<div class="page print-page">
+  <!-- Header inside main content -->
+  <div class="page__header no-print">
+    <div>
+      <h1 class="page__title">Informes de Operaciones</h1>
+      <p class="page__subtitle">Genera un reporte consolidado del estado actual del inventario</p>
+    </div>
+    <button class="btn btn--primary" (click)="printReport()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <polyline points="6 9 6 2 18 2 18 9"/>
+        <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
+        <rect x="6" y="14" width="12" height="8"/>
+      </svg>
+      Imprimir / PDF
+    </button>
+  </div>
+
+  <div class="report-document card" id="printableArea">
+    <div class="report-header">
+      <div class="report-logo">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <circle cx="12" cy="12" r="9"/>
+          <circle cx="12" cy="12" r="3"/>
+        </svg>
+        <span>Red</span>
+      </div>
+      <div class="report-meta">
+        <h2>Reporte General de Inventario</h2>
+        <p>Fecha de emisión: {{ today | date:'medium' }}</p>
+      </div>
+    </div>
+
+    @if (loading) {
+      <p>Cargando datos operativos...</p>
+    } @else if (resumen) {
+      <div class="report-section">
+        <h3>Resumen Operativo</h3>
+        <div class="report-summary-grid">
+          <div class="summary-box">
+            <span class="summary-label">Raciones Entregadas Hoy</span>
+            <span class="summary-value text-danger">{{ resumen.salidasHoy }}</span>
+          </div>
+          <div class="summary-box">
+            <span class="summary-label">Raciones Recibidas Hoy</span>
+            <span class="summary-value text-success">{{ resumen.entradasHoy }}</span>
+          </div>
+          <div class="summary-box">
+            <span class="summary-label">Inventario Disponible</span>
+            <span class="summary-value text-primary">{{ resumen.totalInventario }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="report-section">
+        <h3>Desglose de Raciones por Categoría</h3>
+        <table class="report-table">
+          <thead>
+            <tr>
+              <th>Tipo de Almuerzo / Ración</th>
+              <th class="text-right">Stock Disponible</th>
+              <th class="text-right">Entradas (Hoy)</th>
+              <th class="text-right">Salidas (Hoy)</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (tipo of resumen.inventarioPorTipo; track tipo.tipoComidaId) {
+              <tr>
+                <td>{{ tipo.tipoComida }}</td>
+                <td class="text-right font-bold">{{ tipo.stockActual }}</td>
+                <td class="text-right text-success">+{{ tipo.entradasHoy }}</td>
+                <td class="text-right text-danger">-{{ tipo.salidasHoy }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+      
+      <div class="report-footer">
+        <p>Documento oficial emitido por el Sistema de Gestión Operativa Red.</p>
+      </div>
+    }
+  </div>
+</div>

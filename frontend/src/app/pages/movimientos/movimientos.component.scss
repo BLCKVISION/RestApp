@@ -1,0 +1,135 @@
+/* ─── Page Layout ───────────────────────────────────────────────── */
+.page {
+  margin-top: 24px;
+  &__header {
+    margin-bottom: 24px;
+  }
+
+  &__title {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    letter-spacing: -0.02em;
+  }
+
+  &__subtitle {
+    font-size: 0.88rem;
+    color: var(--text-secondary);
+    margin-top: 4px;
+  }
+}
+
+/* ─── Filters Card ──────────────────────────────────────────────── */
+.filters-card {
+  margin-bottom: 24px;
+  padding: 20px 24px;
+}
+
+.filters-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  align-items: end;
+}
+
+.filters-actions {
+  display: flex;
+  justify-content: flex-end;
+  height: 40px; /* match input height */
+}
+
+/* ─── Table Card ────────────────────────────────────────────────── */
+.table-card {
+  padding: 0;
+  overflow: hidden;
+}
+
+.table-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 60px;
+  color: var(--text-muted);
+
+  &__spinner {
+    width: 24px;
+    height: 24px;
+    border: 2px solid var(--border);
+    border-top-color: var(--primary);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.table-wrapper {
+  overflow-x: auto;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+
+  th {
+    text-align: left;
+    padding: 14px 20px;
+    font-size: 0.76rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    border-bottom: 1px solid var(--border-light);
+    background: var(--bg-main);
+  }
+
+  td {
+    padding: 14px 20px;
+    font-size: 0.875rem;
+    color: var(--text-primary);
+    border-bottom: 1px solid var(--border-light);
+  }
+
+  tbody tr {
+    transition: var(--transition);
+
+    &:hover {
+      background: var(--bg-main);
+    }
+  }
+
+  &__cantidad {
+    font-weight: 700;
+    font-size: 0.95rem;
+  }
+
+  &__time {
+    color: var(--text-muted);
+    font-size: 0.82rem;
+  }
+
+  &__empty {
+    text-align: center !important;
+    padding: 40px !important;
+    color: var(--text-muted) !important;
+    font-style: italic;
+  }
+}
+
+/* ─── Pagination ────────────────────────────────────────────────── */
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-top: 1px solid var(--border-light);
+
+  &__info {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+  }
+}

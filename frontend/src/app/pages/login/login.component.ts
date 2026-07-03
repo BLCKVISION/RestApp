@@ -1,0 +1,70 @@
+import { Component, AfterViewInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { AuthService } from '../../core/services/auth.service';
+import { gsap } from 'gsap';
+
+@Component({
+  selector: 'app-login',
+  standalone: true,
+  imports: [CommonModule, FormsModule],
+  templateUrl: './login.component.html',
+  styleUrl: './login.component.scss'
+})
+export class LoginComponent implements AfterViewInit {
+  username = '';
+  password = '';
+  error = false;
+
+  constructor(private auth: AuthService) {}
+
+  ngAfterViewInit() {
+    // GSAP clean entrance animation
+    gsap.from('.login-card', {
+      opacity: 0,
+      x: -40,
+      duration: 0.7,
+      ease: 'power3.out'
+    });
+
+    gsap.from('.login-title, .login-subtitle', {
+      opacity: 0,
+      y: 12,
+      duration: 0.5,
+      stagger: 0.1,
+      ease: 'power2.out',
+      delay: 0.2
+    });
+
+    gsap.from('.form-group', {
+      opacity: 0,
+      y: 10,
+      duration: 0.5,
+      stagger: 0.08,
+      ease: 'power2.out',
+      delay: 0.3
+    });
+
+    gsap.from('.login-btn', {
+      opacity: 0,
+      y: 10,
+      duration: 0.5,
+      ease: 'power2.out',
+      delay: 0.5
+    });
+  }
+
+  onSubmit() {
+    this.error = false;
+    const success = this.auth.login(this.username, this.password);
+    if (!success) {
+      this.error = true;
+      
+      // Shake animation on error
+      gsap.fromTo('.login-card', 
+        { x: -10 },
+        { x: 0, duration: 0.5, ease: 'rough({template: none, strength: 1, points: 20, taper: none, randomize: true, clamp: false})', clearProps: 'x' }
+      );
+    }
+  }
+}

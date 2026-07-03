@@ -1,0 +1,120 @@
+<div class="page">
+  <div class="page__header">
+    <div>
+      <h1 class="page__title">Historial de Movimientos</h1>
+      <p class="page__subtitle">{{ total }} movimientos registrados</p>
+    </div>
+  </div>
+
+  <!-- ═══ FILTERS ═══ -->
+  <div class="filters-card card animate-fade-in-up">
+    <div class="filters-grid">
+      <div class="form-group">
+        <label class="form-label">Tipo</label>
+        <select class="form-control form-select" [(ngModel)]="filters.tipo" (change)="applyFilters()">
+          <option value="">Todos</option>
+          <option value="ENTRADA">Entradas</option>
+          <option value="SALIDA">Salidas</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Centro</label>
+        <select class="form-control form-select" [(ngModel)]="filters.centroId" (change)="applyFilters()">
+          <option value="">Todos</option>
+          @for (c of centros; track c.id) {
+            <option [value]="c.id">{{ c.nombre }}</option>
+          }
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Tipo Comida</label>
+        <select class="form-control form-select" [(ngModel)]="filters.tipoComidaId" (change)="applyFilters()">
+          <option value="">Todos</option>
+          @for (t of tiposComida; track t.id) {
+            <option [value]="t.id">{{ t.nombre }}</option>
+          }
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Desde</label>
+        <input type="date" class="form-control" [(ngModel)]="filters.fechaDesde" (change)="applyFilters()" />
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Hasta</label>
+        <input type="date" class="form-control" [(ngModel)]="filters.fechaHasta" (change)="applyFilters()" />
+      </div>
+
+      <div class="form-group filters-actions">
+        <button class="btn btn--ghost btn--sm" (click)="clearFilters()">Limpiar filtros</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ TABLE ═══ -->
+  <div class="table-card card animate-fade-in-up" style="animation-delay: 0.1s">
+    @if (loading) {
+      <div class="table-loading">
+        <div class="table-loading__spinner"></div>
+        Cargando...
+      </div>
+    } @else {
+      <div class="table-wrapper">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Tipo</th>
+              <th>Comida</th>
+              <th>Cantidad</th>
+              <th>Centro</th>
+              <th>Origen</th>
+              <th>Registrado por</th>
+              <th>Fecha</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (mov of movimientos; track mov.id) {
+              <tr>
+                <td>
+                  <span class="badge" [class]="mov.tipo === 'ENTRADA' ? 'badge--success' : 'badge--danger'">
+                    {{ mov.tipo === 'ENTRADA' ? '↓ Entrada' : '↑ Salida' }}
+                  </span>
+                </td>
+                <td>{{ getTipoComidaNombre(mov.tipoComidaId) }}</td>
+                <td class="data-table__cantidad">{{ mov.cantidad }}</td>
+                <td>{{ getCentroNombre(mov.centroId) }}</td>
+                <td>{{ mov.origen || '—' }}</td>
+                <td>{{ mov.registradoPor }}</td>
+                <td class="data-table__time">{{ formatFecha(mov.fecha) }}</td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="7" class="data-table__empty">
+                  No se encontraron movimientos con estos filtros
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      @if (totalPages > 1) {
+        <div class="pagination">
+          <button class="btn btn--ghost btn--sm" [disabled]="page <= 1" (click)="goToPage(page - 1)">
+            ← Anterior
+          </button>
+          <span class="pagination__info">
+            Página {{ page }} de {{ totalPages }}
+          </span>
+          <button class="btn btn--ghost btn--sm" [disabled]="page >= totalPages" (click)="goToPage(page + 1)">
+            Siguiente →
+          </button>
+        </div>
+      }
+    }
+  </div>
+</div>

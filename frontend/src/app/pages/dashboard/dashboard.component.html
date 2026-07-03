@@ -1,0 +1,282 @@
+
+<div class="dash">
+  <!-- ═══ HEADER / GREETING ═══ -->
+  <div class="dash__greeting animate-fade-in-up">
+    <h1 class="dash__title">Hola, {{ auth.currentUser()?.username }}. ¿Listo para gestionar?</h1>
+    <button class="btn btn--outline" routerLink="/entrada">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Registrar Entrada
+    </button>
+  </div>
+
+  @if (loading) {
+    <div class="dash__loading">
+      <div class="dash__spinner"></div>
+      <p>Cargando información operativa...</p>
+    </div>
+  } @else if (resumen) {
+    <!-- ═══ MAIN GRID ═══ -->
+    <div class="dash__grid">
+      
+      <!-- ─── LEFT SIDE (KPIs + Revenue Chart + Bottom Cards) ─── -->
+      <div class="dash__left">
+        
+        <!-- Top KPI Cards Row -->
+        <div class="kpi-row">
+          <!-- Total Booking -> Entradas Hoy -->
+          <div class="kpi-card card">
+            <div class="kpi-card__top">
+              <div class="kpi-card__icon-box">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+              </div>
+              <span class="kpi-card__label">Entradas Hoy</span>
+            </div>
+            <div class="kpi-card__middle">
+              <div class="kpi-card__value">{{ resumen.entradasHoy | number }}</div>
+            </div>
+            <div class="kpi-card__bottom">
+              <span class="kpi-card__period">Raciones recibidas</span>
+              <span class="kpi-card__pct">+10.8%</span>
+            </div>
+          </div>
+
+          <!-- Active Properties -> Salidas Hoy -->
+          <div class="kpi-card card">
+            <div class="kpi-card__top">
+              <div class="kpi-card__icon-box">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"/></svg>
+              </div>
+              <span class="kpi-card__label">Salidas Hoy</span>
+            </div>
+            <div class="kpi-card__middle">
+              <div class="kpi-card__value">{{ resumen.salidasHoy | number }}</div>
+            </div>
+            <div class="kpi-card__bottom">
+              <span class="kpi-card__period">Raciones entregadas</span>
+              <span class="kpi-card__pct">+10.8%</span>
+            </div>
+          </div>
+
+          <!-- Total Guests -> Tipos de Almuerzos -->
+          <div class="kpi-card card">
+            <div class="kpi-card__top">
+              <div class="kpi-card__icon-box">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+              </div>
+              <span class="kpi-card__label">Variedades</span>
+            </div>
+            <div class="kpi-card__middle">
+              <div class="kpi-card__value">{{ resumen.inventarioPorTipo.length }}</div>
+            </div>
+            <div class="kpi-card__bottom">
+              <span class="kpi-card__period">Tipos de almuerzo</span>
+              <span class="kpi-card__pct">+10.8%</span>
+            </div>
+          </div>
+
+          <!-- Total Revenue -> Inventario Total -->
+          <div class="kpi-card card">
+            <div class="kpi-card__top">
+              <div class="kpi-card__icon-box">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><line x1="12" y1="4" x2="12" y2="20"/></svg>
+              </div>
+              <span class="kpi-card__label">Stock General</span>
+            </div>
+            <div class="kpi-card__middle">
+              <div class="kpi-card__value">{{ resumen.totalInventario | number }}</div>
+            </div>
+            <div class="kpi-card__bottom">
+              <span class="kpi-card__period">Raciones totales</span>
+              <span class="kpi-card__pct">+12.8%</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Revenue Snapshot Section -> Flujo de Alimentos -->
+        <div class="chart-card card">
+          <div class="chart-card__header">
+            <div>
+              <span class="chart-card__label">Flujo de Inventario</span>
+              <h2 class="chart-card__big-value">{{ resumen.totalInventario | number }} Raciones</h2>
+            </div>
+            <div class="chart-card__controls">
+              <button class="btn btn--outline btn--sm" routerLink="/movimientos">Ver Reporte completo</button>
+              <div class="chart-card__legend">
+                <span class="chart-card__legend-item">
+                  <span class="chart-card__dot chart-card__dot--orange"></span> Entradas
+                </span>
+                <span class="chart-card__legend-item">
+                  <span class="chart-card__dot chart-card__dot--gray"></span> Salidas
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bar Chart -->
+          <div class="bar-chart">
+            <div class="bar-chart__y-axis">
+              <span>{{ maxSemana }}</span>
+              <span>{{ (maxSemana * 0.75) | number:'1.0-0' }}</span>
+              <span>{{ (maxSemana * 0.5) | number:'1.0-0' }}</span>
+              <span>{{ (maxSemana * 0.25) | number:'1.0-0' }}</span>
+              <span>0</span>
+            </div>
+            <div class="bar-chart__bars">
+              @for (dia of datosSemana; track dia.fecha; let i = $index) {
+                <div class="bar-chart__group">
+                  <div class="bar-chart__bar-container">
+                    <div class="bar-chart__bar-bg" [style.height.%]="getBarBgHeight(dia)">
+                      <div class="bar-chart__bar" 
+                           [class.bar-chart__bar--orange]="i === 5"
+                           [style.height.%]="getInnerBarHeight(dia)">
+                        @if (i === 5) {
+                          <div class="bar-chart__tooltip">
+                            <span>Entradas • {{ dia.entradas }}</span>
+                            <span>Salidas • {{ dia.salidas }}</span>
+                          </div>
+                        }
+                      </div>
+                    </div>
+                  </div>
+                  <span class="bar-chart__label">{{ getDayLabel(dia.fecha) }}</span>
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+
+        <!-- Bottom Today's Booking Section -> Centros de Acopio -->
+        <div class="today-booking">
+          <div class="today-booking__header">
+            <h3 class="today-booking__title">
+              Centros de Acopio Activos
+              <span class="today-booking__count">{{ distribucion.length }}</span>
+            </h3>
+            <div class="today-booking__search">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+              <input type="text" placeholder="Buscar centros...">
+            </div>
+          </div>
+          <div class="today-booking__grid">
+            @for (centro of distribucion; track centro.centroId; let i = $index) {
+              <div class="booking-card card">
+                <div class="booking-card__top">
+                  <div class="booking-card__img" style="background: var(--primary-bg); color: var(--primary); display: flex; align-items: center; justify-content: center; font-weight: 800; border-radius: 10px;">
+                    C{{ i + 1 }}
+                  </div>
+                  <div>
+                    <h4 class="booking-card__name">{{ centro.centro }}</h4>
+                    <p class="booking-card__location">
+                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                      Caracas, Venezuela
+                    </p>
+                  </div>
+                </div>
+                <div class="booking-card__meta">
+                  <span>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+                    Hoy
+                  </span>
+                  <span>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                    2 Centros
+                  </span>
+                  <span>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+                    Activo
+                  </span>
+                </div>
+                <div class="booking-card__footer">
+                  <div class="booking-card__user">
+                    <div style="width: 28px; height: 28px; border-radius: 50%; background: #cbd5e1; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700; color: #475569;">
+                      OP
+                    </div>
+                    <div>
+                      <div class="booking-card__user-id">ID: acopio-{{ i + 1 }}</div>
+                      <div class="booking-card__user-name">Operador {{ i + 1 }}</div>
+                    </div>
+                  </div>
+                  <button class="booking-card__btn" routerLink="/salida">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+                  </button>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ─── RIGHT SIDE (Forecast + Availability + Transactions) ─── -->
+      <div class="dash__right">
+        
+        <!-- Occupancy Forecast Update -> Estado del Inventario -->
+        <div class="forecast-card">
+          <div class="forecast-card__rocket">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-1.5 1.25-2.5 3.5-2.5 3.5s2.25-1 3.5-2.5L17.5 5.5l-3-3L4.5 16.5z"/><path d="m12 6.5 5.5 5.5"/><path d="M9 15c-1.5-1.5-2.5-3.5-2.5-3.5s2 1 3.5 2.5"/></svg>
+          </div>
+          <h3 class="forecast-card__title">Estado de Suministros<br>Operación de Ayuda</h3>
+          <p class="forecast-card__desc">El stock actual cubre holgadamente el {{ inventoryHealth }}% de la meta mensual para la entrega de almuerzos.</p>
+          <button class="forecast-card__btn" routerLink="/reportes">Optimizar Reservas</button>
+        </div>
+
+        <!-- Room Availability -> Disponibilidad de Raciones por Almuerzo -->
+        <div class="availability-card card">
+          <span class="availability-card__label">Disponibilidad por comida</span>
+          <h2 class="availability-card__big-value">{{ resumen.totalInventario | number }}</h2>
+          <span class="availability-card__sub-label">Raciones en Stock</span>
+          
+          <div class="availability-card__indicators">
+            @for (color of availabilityPills; track $index) {
+              <div class="availability-card__indicator-pill" 
+                   [class.availability-card__indicator-pill--orange]="color === 'orange'"
+                   [class.availability-card__indicator-pill--yellow]="color === 'yellow'"
+                   [class.availability-card__indicator-pill--grey]="color === 'grey'"></div>
+            }
+          </div>
+
+          <div class="availability-card__legend">
+            @for (tipo of resumen.inventarioPorTipo; track tipo.tipoComidaId; let i = $index) {
+              @if (i < 3) {
+                <span class="availability-card__legend-item">
+                  <span class="availability-card__dot" 
+                        [class.availability-card__dot--orange]="i === 0"
+                        [class.availability-card__dot--yellow]="i === 1"
+                        [class.availability-card__dot--grey]="i >= 2"></span> 
+                  <strong style="color: #1e293b; margin-right: 2px;">{{ tipo.stockActual }}</strong> {{ tipo.tipoComida }}
+                </span>
+              }
+            }
+          </div>
+        </div>
+
+        <!-- Latest Transactions -> Últimos Movimientos -->
+        <div class="transactions-card card">
+          <h3 class="transactions-card__title">Últimos Pedidos / Entregas</h3>
+          
+          <div class="transactions-card__list">
+            @for (mov of resumen.movimientosRecientes.slice(0, 4); track mov.id) {
+              <div class="tx-item">
+                <div class="tx-item__logo" [class.tx-item__logo--paypal]="mov.tipo === 'ENTRADA'" [style.background]="mov.tipo === 'SALIDA' ? 'rgba(239,68,68,0.1)' : ''" [style.color]="mov.tipo === 'SALIDA' ? '#ef4444' : ''">
+                  {{ mov.tipo === 'ENTRADA' ? 'E' : 'S' }}
+                </div>
+                <div class="tx-item__info">
+                  <h4 class="tx-item__name">{{ getMovimientoTipoComida(mov.tipoComidaId) }}</h4>
+                  <p class="tx-item__date">{{ mov.registradoPor }}</p>
+                </div>
+                <div class="tx-item__right">
+                  <div class="tx-item__amount">{{ mov.cantidad }} Unidades</div>
+                  <div class="tx-item__status" [class.tx-item__status--success]="mov.tipo === 'ENTRADA'" [class.tx-item__status--danger]="mov.tipo === 'SALIDA'">
+                    {{ mov.tipo === 'ENTRADA' ? 'Entrada' : 'Salida' }}
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  }
+</div>

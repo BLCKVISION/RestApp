@@ -1,0 +1,71 @@
+<div class="public-wrapper">
+  <div class="public-card card">
+    @if (!success) {
+      <div class="public-header">
+        <div class="public-logo">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
+            <rect width="24" height="24" rx="6" fill="var(--primary)"/>
+            <path d="M7 12l3 3 7-7" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <h1 class="public-title">Solicitar Comidas</h1>
+        <p class="public-subtitle">Formulario para centros de acopio</p>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Centro de Acopio *</label>
+        <select class="form-control form-select" [(ngModel)]="form.centroId">
+          <option value="">Seleccionar centro...</option>
+          @for (centro of centros; track centro.id) {
+            <option [value]="centro.id">{{ centro.nombre }}</option>
+          }
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Tipo de Comida *</label>
+        <select class="form-control form-select" [(ngModel)]="form.tipoComidaId">
+          <option value="">Seleccionar comida...</option>
+          @for (tipo of tiposComida; track tipo.id) {
+            <option [value]="tipo.id">{{ tipo.nombre }}</option>
+          }
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Cantidad Requerida *</label>
+        <input type="number" class="form-control" [(ngModel)]="form.cantidad" placeholder="Ej: 100" min="1">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Tu Nombre *</label>
+        <input type="text" class="form-control" [(ngModel)]="form.solicitante" placeholder="Nombre de quien solicita">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Nota (Opcional)</label>
+        <textarea class="form-control" [(ngModel)]="form.nota" rows="2" placeholder="Información adicional..."></textarea>
+      </div>
+
+      <button class="btn btn--primary btn--lg btn--block" [disabled]="!isValid || submitting" (click)="submit()">
+        @if (submitting) {
+          Enviando solicitud...
+        } @else {
+          Enviar Solicitud
+        }
+      </button>
+    } @else {
+      <div class="success-view">
+        <div class="success-icon">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="2">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M22 4L12 14.01l-3-3" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <h2 class="success-title">Formulario Generado</h2>
+        <p class="success-desc">Serás redirigido a WhatsApp para enviar la solicitud al centro de acopio principal con el formato correcto.</p>
+        <button class="btn btn--ghost btn--block" (click)="reset()">Generar otra solicitud</button>
+      </div>
+    }
+  </div>
+</div>

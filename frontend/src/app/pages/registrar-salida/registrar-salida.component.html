@@ -1,0 +1,134 @@
+<div class="page">
+  <div class="page__header">
+    <h1 class="page__title">Registrar Salida</h1>
+    <p class="page__subtitle">Registra la entrega de comidas a un centro de acopio</p>
+  </div>
+
+  <div class="form-card card animate-fade-in-up">
+    <div class="form-card__icon form-card__icon--danger">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M12 19V5m-7 7l7-7 7 7"/>
+      </svg>
+    </div>
+    <h2 class="form-card__title">Nueva Salida de Comida</h2>
+
+    <div class="form-grid">
+      <!-- Centro de Acopio -->
+      <div class="form-group form-group--full">
+        <label class="form-label">Centro de Acopio *</label>
+        <select
+          class="form-control form-select"
+          [(ngModel)]="form.centroId"
+          id="centroId"
+        >
+          <option value="">Seleccionar centro...</option>
+          @for (centro of centros; track centro.id) {
+            <option [value]="centro.id">{{ centro.nombre }} — {{ centro.ubicacion }}</option>
+          }
+        </select>
+      </div>
+
+      <!-- Tipo de Comida -->
+      <div class="form-group">
+        <label class="form-label">Tipo de Comida *</label>
+        <select
+          class="form-control form-select"
+          [(ngModel)]="form.tipoComidaId"
+          id="tipoComidaIdSalida"
+        >
+          <option value="">Seleccionar tipo...</option>
+          @for (tipo of tiposComida; track tipo.id) {
+            <option [value]="tipo.id">{{ tipo.nombre }}</option>
+          }
+        </select>
+        @if (form.tipoComidaId) {
+          <div class="stock-info">
+            <span class="stock-info__label">Stock disponible:</span>
+            <span class="stock-info__value" [class.stock-info__value--low]="stockDisponible < 20">
+              {{ stockDisponible }} raciones
+            </span>
+          </div>
+        }
+      </div>
+
+      <!-- Cantidad -->
+      <div class="form-group">
+        <label class="form-label">Cantidad *</label>
+        <input
+          type="number"
+          class="form-control"
+          [class.form-control--error]="excedido"
+          [(ngModel)]="form.cantidad"
+          placeholder="Ej: 50"
+          min="1"
+          [max]="stockDisponible"
+          id="cantidadSalida"
+        />
+        @if (excedido) {
+          <span class="form-error">
+            ⚠ Excede el stock disponible ({{ stockDisponible }})
+          </span>
+        }
+      </div>
+
+      <!-- Fecha -->
+      <div class="form-group">
+        <label class="form-label">Fecha</label>
+        <input
+          type="date"
+          class="form-control"
+          [(ngModel)]="form.fecha"
+          id="fechaSalida"
+        />
+      </div>
+
+      <!-- Registrado Por -->
+      <div class="form-group">
+        <label class="form-label">Registrado por *</label>
+        <input
+          type="text"
+          class="form-control"
+          [(ngModel)]="form.registradoPor"
+          placeholder="Tu nombre"
+          id="registradoPorSalida"
+        />
+      </div>
+
+      <!-- Nota -->
+      <div class="form-group form-group--full">
+        <label class="form-label">Nota (opcional)</label>
+        <textarea
+          class="form-control"
+          [(ngModel)]="form.nota"
+          placeholder="Detalles adicionales..."
+          rows="3"
+          id="notaSalida"
+        ></textarea>
+      </div>
+    </div>
+
+    <!-- Submit -->
+    <div class="form-actions">
+      <button
+        class="btn btn--accent btn--lg btn--block"
+        [disabled]="!isValid || submitting"
+        (click)="submit()"
+        id="submitSalida"
+      >
+        @if (submitting) {
+          <span class="btn-spinner"></span>
+          Registrando...
+        } @else {
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M12 19V5m-7 7l7-7 7 7"/>
+          </svg>
+          Registrar Salida
+        }
+      </button>
+    </div>
+  </div>
+
+  @if (toast) {
+    <div class="toast" [class]="'toast--' + toast.type">{{ toast.message }}</div>
+  }
+</div>

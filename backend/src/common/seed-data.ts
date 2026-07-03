@@ -1,0 +1,340 @@
+import { ICentroAcopio, ITipoComida, IMovimientoComida, TipoMovimiento } from './interfaces';
+
+// ─── Centros de Acopio ────────────────────────────────────────────
+export const SEED_CENTROS: ICentroAcopio[] = [
+  {
+    id: 'c1a00000-0000-0000-0000-000000000001',
+    nombre: 'Centro La Esperanza',
+    ubicacion: 'Av. Principal, Sector La Esperanza, Valencia',
+    activo: true,
+    createdAt: new Date('2025-01-15'),
+    updatedAt: new Date('2025-01-15'),
+  },
+  {
+    id: 'c1a00000-0000-0000-0000-000000000002',
+    nombre: 'Centro San José',
+    ubicacion: 'Calle 5, Barrio San José, Maracay',
+    activo: true,
+    createdAt: new Date('2025-01-20'),
+    updatedAt: new Date('2025-01-20'),
+  },
+];
+
+// ─── Tipos de Comida ──────────────────────────────────────────────
+export const SEED_TIPOS_COMIDA: ITipoComida[] = [
+  {
+    id: 'tc000000-0000-0000-0000-000000000001',
+    nombre: 'Almuerzo Regular',
+    descripcion: 'Almuerzo estándar con proteína animal (carne/pollo)',
+    activo: true,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    id: 'tc000000-0000-0000-0000-000000000002',
+    nombre: 'Almuerzo Vegetariano',
+    descripcion: 'Almuerzo sin proteína animal',
+    activo: true,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    id: 'tc000000-0000-0000-0000-000000000003',
+    nombre: 'Sopa / Hervido',
+    descripcion: 'Ración de sopa',
+    activo: true,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    id: 'tc000000-0000-0000-0000-000000000004',
+    nombre: 'Desayuno / Merienda',
+    descripcion: 'Ración ligera para mañana o tarde',
+    activo: true,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+];
+
+// ─── Helper: generar fechas relativas a hoy ───────────────────────
+function daysAgo(n: number): Date {
+  const d = new Date();
+  d.setDate(d.getDate() - n);
+  d.setHours(8 + Math.floor(Math.random() * 10), Math.floor(Math.random() * 60), 0, 0);
+  return d;
+}
+
+function today(): Date {
+  const d = new Date();
+  d.setHours(8 + Math.floor(Math.random() * 4), Math.floor(Math.random() * 60), 0, 0);
+  return d;
+}
+
+// ─── Movimientos de Comida (seed) ─────────────────────────────────
+export const SEED_MOVIMIENTOS: IMovimientoComida[] = [
+  // === Entradas de hoy ===
+  {
+    id: 'mv000000-0000-0000-0000-000000000001',
+    tipo: TipoMovimiento.ENTRADA,
+    tipoComidaId: 'tc000000-0000-0000-0000-000000000001',
+    cantidad: 200,
+    origen: 'Donación',
+    nota: 'Donación de empresa local',
+    registradoPor: 'Yoberlyn',
+    fecha: today(),
+    createdAt: today(),
+  },
+  {
+    id: 'mv000000-0000-0000-0000-000000000002',
+    tipo: TipoMovimiento.ENTRADA,
+    tipoComidaId: 'tc000000-0000-0000-0000-000000000002',
+    cantidad: 120,
+    origen: 'Producción',
+    nota: 'Cocina central',
+    registradoPor: 'Alejandro',
+    fecha: today(),
+    createdAt: today(),
+  },
+  {
+    id: 'mv000000-0000-0000-0000-000000000003',
+    tipo: TipoMovimiento.ENTRADA,
+    tipoComidaId: 'tc000000-0000-0000-0000-000000000003',
+    cantidad: 45,
+    origen: 'Donación',
+    nota: 'ONG Internacional',
+    registradoPor: 'Ricardo',
+    fecha: today(),
+    createdAt: today(),
+  },
+  {
+    id: 'mv000000-0000-0000-0000-000000000004',
+    tipo: TipoMovimiento.ENTRADA,
+    tipoComidaId: 'tc000000-0000-0000-0000-000000000004',
+    cantidad: 30,
+    origen: 'Donación',
+    nota: 'Dietas especiales',
+    registradoPor: 'Rodymar',
+    fecha: today(),
+    createdAt: today(),
+  },
+
+  // === Salidas de hoy ===
+  {
+    id: 'mv000000-0000-0000-0000-000000000005',
+    tipo: TipoMovimiento.SALIDA,
+    centroId: 'c1a00000-0000-0000-0000-000000000001',
+    tipoComidaId: 'tc000000-0000-0000-0000-000000000001',
+    cantidad: 80,
+    registradoPor: 'Yoberlyn',
+    fecha: today(),
+    createdAt: today(),
+  },
+  {
+    id: 'mv000000-0000-0000-0000-000000000006',
+    tipo: TipoMovimiento.SALIDA,
+    centroId: 'c1a00000-0000-0000-0000-000000000002',
+    tipoComidaId: 'tc000000-0000-0000-0000-000000000001',
+    cantidad: 50,
+    registradoPor: 'Alejandro',
+    fecha: today(),
+    createdAt: today(),
+  },
+  {
+    id: 'mv000000-0000-0000-0000-000000000007',
+    tipo: TipoMovimiento.SALIDA,
+    centroId: 'c1a00000-0000-0000-0000-000000000001',
+    tipoComidaId: 'tc000000-0000-0000-0000-000000000002',
+    cantidad: 40,
+    registradoPor: 'Yosymar',
+    fecha: today(),
+    createdAt: today(),
+  },
+  {
+    id: 'mv000000-0000-0000-0000-000000000008',
+    tipo: TipoMovimiento.SALIDA,
+    centroId: 'c1a00000-0000-0000-0000-000000000002',
+    tipoComidaId: 'tc000000-0000-0000-0000-000000000003',
+    cantidad: 15,
+    registradoPor: 'Ricardo',
+    fecha: today(),
+    createdAt: today(),
+  },
+
+  // === Movimientos de días anteriores (para gráficos) ===
+  // Día -1
+  {
+    id: 'mv000000-0000-0000-0000-000000000010',
+    tipo: TipoMovimiento.ENTRADA,
+    tipoComidaId: 'tc000000-0000-0000-0000-000000000001',
+    cantidad: 180,
+    origen: 'Donación',
+    registradoPor: 'Yoberlyn',
+    fecha: daysAgo(1),
+    createdAt: daysAgo(1),
+  },
+  {
+    id: 'mv000000-0000-0000-0000-000000000011',
+    tipo: TipoMovimiento.SALIDA,
+    centroId: 'c1a00000-0000-0000-0000-000000000001',
+    tipoComidaId: 'tc000000-0000-0000-0000-000000000001',
+    cantidad: 90,
+    registradoPor: 'Alejandro',
+    fecha: daysAgo(1),
+    createdAt: daysAgo(1),
+  },
+  {
+    id: 'mv000000-0000-0000-0000-000000000012',
+    tipo: TipoMovimiento.ENTRADA,
+    tipoComidaId: 'tc000000-0000-0000-0000-000000000002',
+    cantidad: 100,
+    origen: 'Producción',
+    registradoPor: 'Ricardo',
+    fecha: daysAgo(1),
+    createdAt: daysAgo(1),
+  },
+  {
+    id: 'mv000000-0000-0000-0000-000000000013',
+    tipo: TipoMovimiento.SALIDA,
+    centroId: 'c1a00000-0000-0000-0000-000000000002',
+    tipoComidaId: 'tc000000-0000-0000-0000-000000000002',
+    cantidad: 60,
+    registradoPor: 'Rodymar',
+    fecha: daysAgo(1),
+    createdAt: daysAgo(1),
+  },
+  // Día -2
+  {
+    id: 'mv000000-0000-0000-0000-000000000014',
+    tipo: TipoMovimiento.ENTRADA,
+    tipoComidaId: 'tc000000-0000-0000-0000-000000000001',
+    cantidad: 150,
+    origen: 'Donación',
+    registradoPor: 'Yoberlyn',
+    fecha: daysAgo(2),
+    createdAt: daysAgo(2),
+  },
+  {
+    id: 'mv000000-0000-0000-0000-000000000015',
+    tipo: TipoMovimiento.SALIDA,
+    centroId: 'c1a00000-0000-0000-0000-000000000001',
+    tipoComidaId: 'tc000000-0000-0000-0000-000000000001',
+    cantidad: 70,
+    registradoPor: 'Alejandro',
+    fecha: daysAgo(2),
+    createdAt: daysAgo(2),
+  },
+  {
+    id: 'mv000000-0000-0000-0000-000000000016',
+    tipo: TipoMovimiento.ENTRADA,
+    tipoComidaId: 'tc000000-0000-0000-0000-000000000003',
+    cantidad: 50,
+    origen: 'Donación',
+    registradoPor: 'Yosymar',
+    fecha: daysAgo(2),
+    createdAt: daysAgo(2),
+  },
+  // Día -3
+  {
+    id: 'mv000000-0000-0000-0000-000000000017',
+    tipo: TipoMovimiento.ENTRADA,
+    tipoComidaId: 'tc000000-0000-0000-0000-000000000001',
+    cantidad: 220,
+    origen: 'Producción',
+    registradoPor: 'Alejandro',
+    fecha: daysAgo(3),
+    createdAt: daysAgo(3),
+  },
+  {
+    id: 'mv000000-0000-0000-0000-000000000018',
+    tipo: TipoMovimiento.SALIDA,
+    centroId: 'c1a00000-0000-0000-0000-000000000002',
+    tipoComidaId: 'tc000000-0000-0000-0000-000000000001',
+    cantidad: 100,
+    registradoPor: 'Yoberlyn',
+    fecha: daysAgo(3),
+    createdAt: daysAgo(3),
+  },
+  {
+    id: 'mv000000-0000-0000-0000-000000000019',
+    tipo: TipoMovimiento.SALIDA,
+    centroId: 'c1a00000-0000-0000-0000-000000000001',
+    tipoComidaId: 'tc000000-0000-0000-0000-000000000002',
+    cantidad: 35,
+    registradoPor: 'Ricardo',
+    fecha: daysAgo(3),
+    createdAt: daysAgo(3),
+  },
+  // Día -4
+  {
+    id: 'mv000000-0000-0000-0000-000000000020',
+    tipo: TipoMovimiento.ENTRADA,
+    tipoComidaId: 'tc000000-0000-0000-0000-000000000001',
+    cantidad: 190,
+    origen: 'Donación',
+    registradoPor: 'Rodymar',
+    fecha: daysAgo(4),
+    createdAt: daysAgo(4),
+  },
+  {
+    id: 'mv000000-0000-0000-0000-000000000021',
+    tipo: TipoMovimiento.SALIDA,
+    centroId: 'c1a00000-0000-0000-0000-000000000001',
+    tipoComidaId: 'tc000000-0000-0000-0000-000000000001',
+    cantidad: 85,
+    registradoPor: 'Yoberlyn',
+    fecha: daysAgo(4),
+    createdAt: daysAgo(4),
+  },
+  {
+    id: 'mv000000-0000-0000-0000-000000000022',
+    tipo: TipoMovimiento.ENTRADA,
+    tipoComidaId: 'tc000000-0000-0000-0000-000000000002',
+    cantidad: 90,
+    origen: 'Producción',
+    registradoPor: 'Alejandro',
+    fecha: daysAgo(4),
+    createdAt: daysAgo(4),
+  },
+  // Día -5
+  {
+    id: 'mv000000-0000-0000-0000-000000000023',
+    tipo: TipoMovimiento.ENTRADA,
+    tipoComidaId: 'tc000000-0000-0000-0000-000000000001',
+    cantidad: 170,
+    origen: 'Donación',
+    registradoPor: 'Yoberlyn',
+    fecha: daysAgo(5),
+    createdAt: daysAgo(5),
+  },
+  {
+    id: 'mv000000-0000-0000-0000-000000000024',
+    tipo: TipoMovimiento.SALIDA,
+    centroId: 'c1a00000-0000-0000-0000-000000000002',
+    tipoComidaId: 'tc000000-0000-0000-0000-000000000001',
+    cantidad: 75,
+    registradoPor: 'Alejandro',
+    fecha: daysAgo(5),
+    createdAt: daysAgo(5),
+  },
+  // Día -6
+  {
+    id: 'mv000000-0000-0000-0000-000000000025',
+    tipo: TipoMovimiento.ENTRADA,
+    tipoComidaId: 'tc000000-0000-0000-0000-000000000001',
+    cantidad: 160,
+    origen: 'Producción',
+    registradoPor: 'Ricardo',
+    fecha: daysAgo(6),
+    createdAt: daysAgo(6),
+  },
+  {
+    id: 'mv000000-0000-0000-0000-000000000026',
+    tipo: TipoMovimiento.SALIDA,
+    centroId: 'c1a00000-0000-0000-0000-000000000001',
+    tipoComidaId: 'tc000000-0000-0000-0000-000000000001',
+    cantidad: 80,
+    registradoPor: 'Yosymar',
+    fecha: daysAgo(6),
+    createdAt: daysAgo(6),
+  },
+];
