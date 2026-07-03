@@ -39,9 +39,9 @@ export class AppComponent implements AfterViewInit {
   }
 
   navItems = [
-    { path: '/dashboard', label: 'Descripción general', icon: 'dashboard' },
-    { path: '/entrada', label: 'Registrar Entrada', icon: 'entrada' },
-    { path: '/salida', label: 'Registro de Salida', icon: 'salida' },
+    { path: '/dashboard', label: 'Inicio', icon: 'home' },
+    { path: '/entrada', label: 'Registrar Pedido', icon: 'entrada' },
+    { path: '/salida', label: 'Salida de Pedido', icon: 'salida' },
     { path: '/movimientos', label: 'Analítica (Movimientos)', icon: 'historial' },
     { path: '/reportes', label: 'Informes', icon: 'reportes' },
   ];

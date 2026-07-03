@@ -1,133 +1,188 @@
 <div class="page">
   <div class="page__header">
-    <h1 class="page__title">Registrar Salida</h1>
-    <p class="page__subtitle">Registra la entrega de comidas a un centro de acopio</p>
+    <h1 class="page__title">Salida de Pedido</h1>
+    <p class="page__subtitle">Registra el despacho de comidas a beneficiarios o centros.</p>
   </div>
 
-  <div class="form-card card animate-fade-in-up">
-    <div class="form-card__icon form-card__icon--danger">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M12 19V5m-7 7l7-7 7 7"/>
-      </svg>
-    </div>
-    <h2 class="form-card__title">Nueva Salida de Comida</h2>
-
-    <div class="form-grid">
-      <!-- Centro de Acopio -->
-      <div class="form-group form-group--full">
-        <label class="form-label">Centro de Acopio Destino *</label>
-        <div class="custom-select" [class.custom-select--open]="isOpenCentro" (click)="toggleCentro($event)">
-          <div class="custom-select__value">{{ selectedCentroNombre }}</div>
-          <svg class="custom-select__icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
-          
-          @if (isOpenCentro) {
-            <div class="custom-select__dropdown">
-              @for (centro of centros; track centro.id) {
-                <div class="custom-select__option" (click)="selectCentro(centro.id)">
-                  <strong>{{ centro.nombre }}</strong> — {{ centro.ubicacion }}
-                </div>
-              }
-            </div>
-          }
-        </div>
+  <div class="layout-grid">
+    <!-- Left Column: Form -->
+    <div class="form-card card animate-fade-in-up">
+      <div class="form-card__icon form-card__icon--danger">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 19V5m-7 7l7-7 7 7"/>
+        </svg>
       </div>
+      <h2 class="form-card__title">Nueva Salida de Pedido</h2>
 
-      <!-- Tipo de Comida -->
-      <div class="form-group">
-        <label class="form-label">Tipo de Comida *</label>
-        <div class="custom-select" [class.custom-select--open]="isOpenTipoComida" (click)="toggleTipoComida($event)">
-          <div class="custom-select__value">{{ selectedTipoComidaNombre }}</div>
-          <svg class="custom-select__icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
-          
-          @if (isOpenTipoComida) {
-            <div class="custom-select__dropdown">
-              @for (tipo of tiposComida; track tipo.id) {
-                <div class="custom-select__option" (click)="selectTipoComida(tipo.id)">
-                  <strong>{{ tipo.nombre }}</strong> — {{ tipo.descripcion }}
-                </div>
-              }
-            </div>
-          }
-        </div>
-        @if (form.tipoComidaId) {
-          <div class="stock-info">
-            <span class="stock-info__label">Stock disponible:</span>
-            <span class="stock-info__value" [class.stock-info__value--low]="stockDisponible < 20">
-              {{ stockDisponible }} raciones
-            </span>
+      <div class="form-grid">
+        <!-- Centro de Acopio -->
+        <div class="form-group form-group--full">
+          <label class="form-label">Centro de Acopio Origen *</label>
+          <div class="custom-select" [class.custom-select--open]="isOpenCentro" (click)="toggleCentro($event)">
+            <div class="custom-select__value">{{ selectedCentroNombre || 'Seleccionar centro...' }}</div>
+            <svg class="custom-select__icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+            
+            @if (isOpenCentro) {
+              <div class="custom-select__dropdown">
+                @for (centro of centros; track centro.id) {
+                  <div class="custom-select__option" (click)="selectCentro(centro.id)">
+                    <strong>{{ centro.nombre }}</strong> — {{ centro.ubicacion }}
+                  </div>
+                }
+              </div>
+            }
           </div>
-        }
+        </div>
+
+        <!-- Tipo de Comida -->
+        <div class="form-group">
+          <label class="form-label">Tipo de Comida *</label>
+          <div class="custom-select" [class.custom-select--open]="isOpenTipoComida" (click)="toggleTipoComida($event)">
+            <div class="custom-select__value">{{ selectedTipoComidaNombre || 'Seleccionar comida...' }}</div>
+            <svg class="custom-select__icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+            
+            @if (isOpenTipoComida) {
+              <div class="custom-select__dropdown">
+                @for (tipo of tiposComida; track tipo.id) {
+                  <div class="custom-select__option" (click)="selectTipoComida(tipo.id)">
+                    <strong>{{ tipo.nombre }}</strong> — {{ tipo.descripcion }}
+                  </div>
+                }
+              </div>
+            }
+          </div>
+          @if (form.tipoComidaId) {
+            <div class="stock-info">
+              <span class="stock-info__label">Stock disponible:</span>
+              <span class="stock-info__value" [class.stock-info__value--low]="stockDisponible < 20">
+                {{ stockDisponible }} raciones
+              </span>
+            </div>
+          }
+        </div>
+
+        <!-- Cantidad -->
+        <div class="form-group">
+          <label class="form-label">Cantidad *</label>
+          <input
+            type="number"
+            class="form-control"
+            [class.form-control--error]="excedido"
+            [(ngModel)]="form.cantidad"
+            placeholder="Ej: 50"
+            min="1"
+            [max]="stockDisponible"
+            id="cantidadSalida"
+          />
+          @if (excedido) {
+            <span class="form-error">
+              ⚠ Excede el stock disponible ({{ stockDisponible }})
+            </span>
+          }
+        </div>
+
+        <!-- Destino -->
+        <div class="form-group">
+          <label class="form-label">Destino / Beneficiario *</label>
+          <input
+            type="text"
+            class="form-control"
+            [(ngModel)]="form.destino"
+            placeholder="Ej: Comedor Central"
+            id="destinoSalida"
+          />
+        </div>
+
+        <!-- Fecha -->
+        <div class="form-group">
+          <label class="form-label">Fecha</label>
+          <app-custom-datepicker [(value)]="form.fecha"></app-custom-datepicker>
+        </div>
+
+        <!-- Registrado Por -->
+        <div class="form-group">
+          <label class="form-label">Registrado por *</label>
+          <input
+            type="text"
+            class="form-control"
+            [(ngModel)]="form.registradoPor"
+            placeholder="Tu nombre"
+            id="registradoPorSalida"
+          />
+        </div>
+
+        <!-- Nota -->
+        <div class="form-group form-group--full">
+          <label class="form-label">Nota (opcional)</label>
+          <textarea
+            class="form-control"
+            [(ngModel)]="form.nota"
+            placeholder="Detalles adicionales..."
+            rows="3"
+            id="notaSalida"
+          ></textarea>
+        </div>
       </div>
 
-      <!-- Cantidad -->
-      <div class="form-group">
-        <label class="form-label">Cantidad *</label>
-        <input
-          type="number"
-          class="form-control"
-          [class.form-control--error]="excedido"
-          [(ngModel)]="form.cantidad"
-          placeholder="Ej: 50"
-          min="1"
-          [max]="stockDisponible"
-          id="cantidadSalida"
-        />
-        @if (excedido) {
-          <span class="form-error">
-            ⚠ Excede el stock disponible ({{ stockDisponible }})
-          </span>
-        }
-      </div>
-
-      <!-- Fecha -->
-      <div class="form-group">
-        <label class="form-label">Fecha</label>
-        <app-custom-datepicker [(value)]="form.fecha"></app-custom-datepicker>
-      </div>
-
-      <!-- Registrado Por -->
-      <div class="form-group">
-        <label class="form-label">Registrado por *</label>
-        <input
-          type="text"
-          class="form-control"
-          [(ngModel)]="form.registradoPor"
-          placeholder="Tu nombre"
-          id="registradoPorSalida"
-        />
-      </div>
-
-      <!-- Nota -->
-      <div class="form-group form-group--full">
-        <label class="form-label">Nota (opcional)</label>
-        <textarea
-          class="form-control"
-          [(ngModel)]="form.nota"
-          placeholder="Detalles adicionales..."
-          rows="3"
-          id="notaSalida"
-        ></textarea>
+      <!-- Submit -->
+      <div class="form-actions">
+        <button
+          class="btn btn--accent btn--lg btn--block"
+          [disabled]="!isValid || submitting"
+          (click)="submit()"
+          id="submitSalida"
+        >
+          @if (submitting) {
+            <span class="btn-spinner"></span>
+            Registrando...
+          } @else {
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <path d="M12 19V5m-7 7l7-7 7 7"/>
+            </svg>
+            Registrar Salida
+          }
+        </button>
       </div>
     </div>
 
-    <!-- Submit -->
-    <div class="form-actions">
-      <button
-        class="btn btn--accent btn--lg btn--block"
-        [disabled]="!isValid || submitting"
-        (click)="submit()"
-        id="submitSalida"
-      >
-        @if (submitting) {
-          <span class="btn-spinner"></span>
-          Registrando...
-        } @else {
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-            <path d="M12 19V5m-7 7l7-7 7 7"/>
-          </svg>
-          Registrar Salida
-        }
-      </button>
+    <!-- Right Column: Summary Placeholder -->
+    <div class="summary-card animate-fade-in-up" style="animation-delay: 0.1s;">
+      <h3 class="summary-card__title">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+          <polyline points="14 2 14 8 20 8"></polyline>
+          <line x1="16" y1="13" x2="8" y2="13"></line>
+          <line x1="16" y1="17" x2="8" y2="17"></line>
+          <polyline points="10 9 9 9 8 9"></polyline>
+        </svg>
+        Resumen de Salida
+      </h3>
+      
+      <div class="summary-card__item">
+        <span>Comida:</span>
+        <strong>{{ selectedTipoComidaNombre || '---' }}</strong>
+      </div>
+      <div class="summary-card__item">
+        <span>Cantidad:</span>
+        <strong>{{ form.cantidad || '0' }} uds</strong>
+      </div>
+      <div class="summary-card__item">
+        <span>Destino:</span>
+        <strong>{{ form.destino || 'No definido' }}</strong>
+      </div>
+      <div class="summary-card__item">
+        <span>Centro:</span>
+        <strong>{{ selectedCentroNombre || '---' }}</strong>
+      </div>
+
+      <div class="summary-card__info-box">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="16" x2="12" y2="12"></line>
+          <line x1="12" y1="8" x2="12.01" y2="8"></line>
+        </svg>
+        <p>Asegúrate de confirmar que el inventario del centro seleccionado es suficiente para esta salida.</p>
+      </div>
     </div>
   </div>
 

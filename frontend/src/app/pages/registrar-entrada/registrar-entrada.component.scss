@@ -1,11 +1,12 @@
 /* ─── Page Layout (Lightbox Style - Ref Ultimate Match) ─────────── */
 .page {
-  max-width: 620px;
-  margin: 40px auto;
+  width: 100%;
+  max-width: 1400px;
+  margin: 20px auto;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  min-height: calc(100vh - 180px);
+  min-height: calc(100vh - 120px);
+  padding: 0 24px;
 
   &__header {
     text-align: left;
@@ -26,6 +27,14 @@
   }
 }
 
+/* ─── Layout ─── */
+.layout-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 32px;
+  width: 100%;
+}
+
 /* ─── Form Card ─── */
 .form-card {
   padding: 32px;
@@ -33,6 +42,7 @@
   border: 1px solid var(--border-glass);
   background: var(--bg-card);
   backdrop-filter: var(--glass-blur);
+  width: 100%;
 
   &__icon {
     width: 44px;
@@ -93,7 +103,71 @@ button:disabled {
   box-shadow: none !important;
 }
 
+/* ─── Summary Card (Relleno) ─── */
+.summary-card {
+  padding: 32px;
+  border-radius: var(--radius-lg);
+  background: linear-gradient(135deg, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0.4) 100%);
+  border: 1px solid var(--border-glass);
+  backdrop-filter: var(--glass-blur);
+  height: max-content;
+
+  &__title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  &__item {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px dashed rgba(0,0,0,0.1);
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    strong {
+      color: var(--text-primary);
+    }
+  }
+
+  &__info-box {
+    margin-top: 24px;
+    padding: 16px;
+    background: rgba(var(--primary-rgb, 255, 90, 54), 0.05);
+    border-radius: 8px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+
+    p {
+      margin: 0;
+      font-size: 0.85rem;
+      color: var(--text-primary);
+      line-height: 1.4;
+    }
+
+    svg {
+      color: var(--primary, #ff5a36);
+      flex-shrink: 0;
+    }
+  }
+}
+
 /* ─── Responsive ─── */
+@media (max-width: 900px) {
+  .layout-grid {
+    grid-template-columns: 1fr;
+  }
+}
 @media (max-width: 600px) {
   .form-grid {
     grid-template-columns: 1fr;
