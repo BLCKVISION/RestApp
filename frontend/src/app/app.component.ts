@@ -13,6 +13,12 @@ import gsap from 'gsap';
 export class AppComponent implements AfterViewInit {
   menuOpen = true;
   showGlobalLoader = true;
+  isUserMenuOpen = false;
+
+  toggleUserMenu() {
+    this.isUserMenuOpen = !this.isUserMenuOpen;
+  }
+
 
   constructor(public auth: AuthService, private cdr: ChangeDetectorRef) {}
 
