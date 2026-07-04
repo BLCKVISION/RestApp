@@ -110,7 +110,10 @@
       "Bash(wsl.exe -d Ubuntu -- bash -lc \"cd /home/ema/personal-repos/RestApp/frontend && timeout 150 ./node_modules/.bin/ng build --configuration development 2>&1 | tail -100\")",
       "Bash(wsl.exe -d Ubuntu -- bash -lc \"cd /home/ema/personal-repos/RestApp/frontend && timeout 150 ./node_modules/.bin/ng build --configuration development 2>&1 | tail -60\")",
       "Read(//mnt/**)",
-      "Bash(wslpath -u '\\\\\\\\wsl.localhost\\\\Ubuntu\\\\home\\\\ema\\\\personal-repos\\\\RestApp')"
+      "Bash(wslpath -u '\\\\\\\\wsl.localhost\\\\Ubuntu\\\\home\\\\ema\\\\personal-repos\\\\RestApp')",
+      "Bash(wsl.exe -d Ubuntu -- bash -lc \"cd /home/ema/personal-repos/RestApp/backend && timeout 150 npx tsc --noEmit -p tsconfig.json 2>&1 | tail -100\")",
+      "Bash(wsl.exe -d Ubuntu -- bash -lc \"cd /home/ema/personal-repos/RestApp/backend && timeout 150 npx tsc --noEmit -p tsconfig.json 2>&1 | grep -v '\\\\.spec\\\\.ts'\")",
+      "Bash(wsl.exe -d Ubuntu -- bash -lc \"cd /home/ema/personal-repos/RestApp/backend && timeout 150 npx nest build 2>&1 | tail -100\")"
     ]
   }
 }
