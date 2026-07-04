@@ -164,14 +164,6 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     return label;
   }
 
-  get maxDistribucion(): number {
-    return 1;
-  }
-
-  getDistBarHeight(value: number): number {
-    return 0;
-  }
-
   getMovimientoTipoComida(tipoComidaId: string): string {
     if (!tipoComidaId) return 'General';
     if (!this.resumen) return '';
@@ -193,10 +185,4 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     return name.substring(0, 2).toUpperCase();
   }
 
-  // Inventory health percentage
-  get inventoryHealth(): number {
-    if (!this.resumen) return 0;
-    const total = this.resumen.totalInventario;
-    return Math.min(Math.round((total / 2000) * 100), 100);
-  }
 }

@@ -8,26 +8,15 @@
     <!-- Left Column: User Info Card -->
     <div class="perfil-card user-info-card">
       <div class="user-avatar-wrapper">
-        <div class="user-avatar">A</div>
-        <button class="edit-avatar-btn" title="Cambiar foto">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-        </button>
+        <div class="user-avatar">{{ (auth.currentUser()?.nombre || '?').charAt(0).toUpperCase() }}</div>
       </div>
-      <h2 class="user-name">Admin Central</h2>
-      <p class="user-role">Administrador del Sistema</p>
-      
+      <h2 class="user-name">{{ auth.currentUser()?.nombre }}</h2>
+      <p class="user-role">{{ auth.currentUser()?.role }}</p>
+
       <div class="user-details">
         <div class="detail-item">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><polyline points="3 7 12 13 21 7"/></svg>
-          <span>admin&#64;acopio.red</span>
-        </div>
-        <div class="detail-item">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-          <span>+1 234 567 890</span>
-        </div>
-        <div class="detail-item">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-          <span>Sede Principal</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+          <span>&#64;{{ auth.currentUser()?.username }}</span>
         </div>
       </div>
     </div>
@@ -35,19 +24,19 @@
     <!-- Right Column: Settings & Password -->
     <div class="perfil-card settings-card">
       <h3 class="card-title">Actualizar Información</h3>
-      
+
       <form class="settings-form">
         <div class="form-row">
           <div class="form-group">
             <label>Nombre Completo</label>
-            <input type="text" class="form-control" value="Admin Central">
+            <input type="text" class="form-control" [value]="auth.currentUser()?.nombre" disabled>
           </div>
           <div class="form-group">
-            <label>Correo Electrónico</label>
-            <input type="email" class="form-control" value="admin@acopio.red">
+            <label>Usuario</label>
+            <input type="text" class="form-control" [value]="auth.currentUser()?.username" disabled>
           </div>
         </div>
-        
+
         <h3 class="card-title mt-4">Cambiar Contraseña</h3>
         <div class="form-group">
           <label>Contraseña Actual</label>
@@ -65,8 +54,8 @@
         </div>
 
         <div class="form-actions">
-          <button type="button" class="btn btn--outline">Cancelar</button>
-          <button type="button" class="btn btn--primary">Guardar Cambios</button>
+          <button type="button" class="btn btn--outline" disabled>Cancelar</button>
+          <button type="button" class="btn btn--primary" disabled title="Funcionalidad no disponible aún">Guardar Cambios</button>
         </div>
       </form>
     </div>

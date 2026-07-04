@@ -108,7 +108,9 @@
       "Bash(wsl.exe -d Ubuntu -- bash -lc \"cd /home/ema/personal-repos/RestApp/frontend && ls node_modules/.bin/ng 2>&1 | head -5\")",
       "Bash(wsl.exe -d Ubuntu -- bash -lc \"cd /home/ema/personal-repos/RestApp/frontend && timeout 150 ./node_modules/.bin/ng build --configuration development 2>&1 | tail -150\")",
       "Bash(wsl.exe -d Ubuntu -- bash -lc \"cd /home/ema/personal-repos/RestApp/frontend && timeout 150 ./node_modules/.bin/ng build --configuration development 2>&1 | tail -100\")",
-      "Bash(wsl.exe -d Ubuntu -- bash -lc \"cd /home/ema/personal-repos/RestApp/frontend && timeout 150 ./node_modules/.bin/ng build --configuration development 2>&1 | tail -60\")"
+      "Bash(wsl.exe -d Ubuntu -- bash -lc \"cd /home/ema/personal-repos/RestApp/frontend && timeout 150 ./node_modules/.bin/ng build --configuration development 2>&1 | tail -60\")",
+      "Read(//mnt/**)",
+      "Bash(wslpath -u '\\\\\\\\wsl.localhost\\\\Ubuntu\\\\home\\\\ema\\\\personal-repos\\\\RestApp')"
     ]
   }
 }

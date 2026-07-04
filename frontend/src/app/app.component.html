@@ -101,15 +101,15 @@
           <!-- Avatar con Dropdown -->
           <div class="topbar__profile-wrapper">
             <div class="topbar__profile" (click)="toggleUserMenu()">
-              <div class="topbar__avatar-img" style="background: var(--primary); display: flex; align-items: center; justify-content: center; height: 100%; color: #fff; font-weight: 700; font-size: 0.95rem;">A</div>
+              <div class="topbar__avatar-img" style="background: var(--primary); display: flex; align-items: center; justify-content: center; height: 100%; color: #fff; font-weight: 700; font-size: 0.95rem;">{{ (auth.currentUser()?.nombre || '?').charAt(0).toUpperCase() }}</div>
             </div>
 
             <!-- Dropdown Menu -->
             @if (isUserMenuOpen) {
               <div class="user-dropdown animate-fade-in-up">
                 <div class="user-dropdown__header">
-                  <span class="user-dropdown__name">Admin Central</span>
-                  <span class="user-dropdown__email">admin&#64;acopio.red</span>
+                  <span class="user-dropdown__name">{{ auth.currentUser()?.nombre }}</span>
+                  <span class="user-dropdown__email">&#64;{{ auth.currentUser()?.username }}</span>
                 </div>
                 
                 <div class="user-dropdown__body">

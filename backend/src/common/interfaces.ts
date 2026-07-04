@@ -80,7 +80,9 @@ export interface ResumenInventario {
   pedidosProgramadosHoy: number;
   salidasHoy: number;
   totalInventario: number;
-  
+  metaMensualInventario: number;
+  pctMetaMensual: number;
+
   pctPendientes: number;
   pctProgramados: number;
   pctSalidas: number;

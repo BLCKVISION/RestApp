@@ -8,6 +8,7 @@ import {
   EstadoSolicitud,
 } from '../common/interfaces';
 import { SEED_MOVIMIENTOS, SEED_TIPOS_COMIDA, SEED_CENTROS, SEED_SOLICITUDES } from '../common/seed-data';
+import { META_MENSUAL_INVENTARIO } from '../common/config';
 import { CreateMovimientoDto, FilterMovimientoDto } from './dto/movimientos-comida.dto';
 import { SolicitudesService } from '../solicitudes/solicitudes.service';
 import { v4 as uuidv4 } from 'uuid';
@@ -149,6 +150,10 @@ export class MovimientosComidaService {
     const totalInventario = inventarioPorTipo.reduce((sum, t) => sum + t.stockActual, 0);
     const entradasHoy = inventarioPorTipo.reduce((sum, t) => sum + t.entradasHoy, 0);
     const salidasHoy = inventarioPorTipo.reduce((sum, t) => sum + t.salidasHoy, 0);
+    const pctMetaMensual = Math.min(
+      Math.round((totalInventario / META_MENSUAL_INVENTARIO) * 100),
+      100,
+    );
 
     // Nuevas métricas operativas
     const allSolicitudes = this.solicitudesService.findAllSorted();
@@ -184,6 +189,8 @@ export class MovimientosComidaService {
       pedidosProgramadosHoy,
       salidasHoy,
       totalInventario,
+      metaMensualInventario: META_MENSUAL_INVENTARIO,
+      pctMetaMensual,
       pctPendientes,
       pctProgramados,
       pctSalidas,
