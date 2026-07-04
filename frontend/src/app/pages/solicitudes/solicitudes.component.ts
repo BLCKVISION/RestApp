@@ -85,10 +85,10 @@ export class SolicitudesComponent implements OnInit {
     this.solicitudEnEdicion = solicitud;
     this.editForm = {
       cantidadSolicitada: solicitud.cantidadSolicitada,
-      horaEntrega: solicitud.horaEntrega,
+      horaEntrega: solicitud.horaEntrega || '',
       observaciones: solicitud.observaciones || '',
       centroId: solicitud.centroId,
-      tipoComidaId: solicitud.tipoComidaId,
+      tipoComidaId: solicitud.tipoComidaId || '',
       responsable: solicitud.responsable
     };
     this.isEditModalOpen = true;
