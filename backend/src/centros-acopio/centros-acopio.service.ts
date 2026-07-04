@@ -24,6 +24,7 @@ export class CentrosAcopioService {
       id: uuidv4(),
       nombre: dto.nombre,
       ubicacion: dto.ubicacion,
+      operador: dto.operador,
       activo: true,
       createdAt: new Date(),
       updatedAt: new Date(),

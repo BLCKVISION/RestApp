@@ -10,6 +10,10 @@ export class CreateCentroAcopioDto {
   @IsNotEmpty()
   @MaxLength(300)
   ubicacion: string;
+
+  @IsString()
+  @IsNotEmpty()
+  operador: string;
 }
 
 export class UpdateCentroAcopioDto {
@@ -22,6 +26,10 @@ export class UpdateCentroAcopioDto {
   @IsOptional()
   @MaxLength(300)
   ubicacion?: string;
+
+  @IsString()
+  @IsOptional()
+  operador?: string;
 
   @IsBoolean()
   @IsOptional()
