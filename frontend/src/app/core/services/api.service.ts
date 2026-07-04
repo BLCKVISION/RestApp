@@ -10,6 +10,8 @@ import {
   TipoMovimiento,
   DatosGrafico,
   DistribucionCentro,
+  SolicitudComida,
+  EstadoSolicitud,
 } from '../models/models';
 
 const API = 'https://restappbackend.up.railway.app/api';
@@ -73,5 +75,14 @@ export class ApiService {
 
   getDistribucionPorCentro(): Observable<DistribucionCentro[]> {
     return this.http.get<DistribucionCentro[]>(`${API}/inventario/distribucion`);
+  }
+
+  // ─── Solicitudes ────────────────────────────────────────────────
+  getSolicitudes(): Observable<SolicitudComida[]> {
+    return this.http.get<SolicitudComida[]>(`${API}/solicitudes`);
+  }
+
+  updateSolicitudEstado(id: string, estado: EstadoSolicitud): Observable<SolicitudComida> {
+    return this.http.patch<SolicitudComida>(`${API}/solicitudes/${id}/estado`, { estado });
   }
 }

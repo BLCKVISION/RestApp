@@ -1,0 +1,91 @@
+<div class="page">
+  <div class="page__header">
+    <div>
+      <h1 class="page__title">Gestión de Pedidos</h1>
+      <p class="page__subtitle">Administra, aprueba y haz seguimiento a las solicitudes de raciones.</p>
+    </div>
+    <button class="btn btn--primary" routerLink="/solicitar">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Nuevo Pedido Interno
+    </button>
+  </div>
+
+  <div class="card">
+    @if (loading) {
+      <div style="padding: 24px; text-align: center; color: #64748b;">
+        Cargando pedidos...
+      </div>
+    } @else {
+      <div class="table-container">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>ID Pedido</th>
+              <th>Responsable</th>
+              <th>Fecha y Hora</th>
+              <th>Cantidad</th>
+              <th>Estado</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (sol of solicitudes; track sol.id) {
+              <tr>
+                <td style="font-weight: 500;">#{{ sol.id.substring(sol.id.length - 6) | uppercase }}</td>
+                <td>
+                  <div style="display: flex; align-items: center; gap: 8px;">
+                    <div class="avatar">{{ sol.responsable.substring(0, 2) | uppercase }}</div>
+                    <div>
+                      <div style="font-weight: 500;">{{ sol.responsable }}</div>
+                      <div style="font-size: 0.75rem; color: var(--text-secondary);">Destino Asignado</div>
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <div>{{ sol.fechaSolicitada | date:'dd/MM/yyyy' }}</div>
+                  <div style="font-size: 0.75rem; color: var(--text-secondary);">Entrega: {{ sol.horaEntrega || 'ASAP' }}</div>
+                </td>
+                <td>
+                  <div style="font-weight: 600;">{{ sol.cantidadSolicitada }}</div>
+                  <div style="font-size: 0.75rem; color: var(--text-secondary);">Raciones</div>
+                </td>
+                <td>
+                  <span class="badge" 
+                    [class.badge--warning]="sol.estado === 'PENDIENTE'"
+                    [class.badge--info]="sol.estado === 'APROBADA' || sol.estado === 'EN_PREPARACION'"
+                    [class.badge--success]="sol.estado === 'ENTREGADA'"
+                    [class.badge--primary]="sol.estado === 'LISTA'">
+                    {{ sol.estado }}
+                  </span>
+                </td>
+                <td>
+                  <div class="actions">
+                    @if (sol.estado === 'PENDIENTE') {
+                      <button class="btn btn--sm btn--primary" (click)="aprobar(sol)">Aprobar</button>
+                    }
+                    @if (sol.estado === 'APROBADA') {
+                      <button class="btn btn--sm" style="background: var(--blue-100); color: var(--blue-700);" (click)="preparar(sol)">A Cocina</button>
+                    }
+                    @if (sol.estado === 'EN_PREPARACION') {
+                      <button class="btn btn--sm" style="background: var(--indigo-100); color: var(--indigo-700);" (click)="listar(sol)">Marcar Lista</button>
+                    }
+                    @if (sol.estado === 'LISTA') {
+                      <button class="btn btn--sm btn--outline" routerLink="/salida" [queryParams]="{ solicitudId: sol.id }">Despachar</button>
+                    }
+                  </div>
+                </td>
+              </tr>
+            }
+            @if (solicitudes.length === 0) {
+              <tr>
+                <td colspan="6" style="text-align: center; padding: 24px; color: #64748b;">
+                  No hay pedidos registrados en el sistema.
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </div>
+</div>
