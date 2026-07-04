@@ -4,14 +4,17 @@ import {
   TipoMovimiento,
   ResumenInventario,
   PaginatedResponse,
+  ISolicitudComida,
+  EstadoSolicitud,
 } from '../common/interfaces';
-import { SEED_MOVIMIENTOS, SEED_TIPOS_COMIDA, SEED_CENTROS } from '../common/seed-data';
+import { SEED_MOVIMIENTOS, SEED_TIPOS_COMIDA, SEED_CENTROS, SEED_SOLICITUDES } from '../common/seed-data';
 import { CreateMovimientoDto, FilterMovimientoDto } from './dto/movimientos-comida.dto';
 import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class MovimientosComidaService {
   private movimientos: IMovimientoComida[] = [...SEED_MOVIMIENTOS];
+  private solicitudes: ISolicitudComida[] = [...SEED_SOLICITUDES];
 
   /** Registrar un nuevo movimiento (entrada o salida) */
   create(dto: CreateMovimientoDto): IMovimientoComida {
@@ -140,31 +143,28 @@ export class MovimientosComidaService {
     const entradasHoy = inventarioPorTipo.reduce((sum, t) => sum + t.entradasHoy, 0);
     const salidasHoy = inventarioPorTipo.reduce((sum, t) => sum + t.salidasHoy, 0);
 
-    // Cálculos de ayer para porcentajes
-    const ayer = new Date();
-    ayer.setDate(ayer.getDate() - 1);
-    ayer.setHours(0, 0, 0, 0);
-    const finAyer = new Date(ayer);
-    finAyer.setHours(23, 59, 59, 999);
+    // Nuevas métricas operativas
+    const pedidosPendientes = this.solicitudes.filter((s) => s.estado === EstadoSolicitud.PENDIENTE).length;
+    const pedidosProgramadosHoy = this.solicitudes.filter(
+      (s) => s.estado === EstadoSolicitud.APROBADA || s.estado === EstadoSolicitud.EN_PREPARACION || s.estado === EstadoSolicitud.LISTA
+    ).length;
 
-    const entradasAyer = this.movimientos
-      .filter((m) => m.tipo === TipoMovimiento.ENTRADA && new Date(m.fecha) >= ayer && new Date(m.fecha) <= finAyer)
-      .reduce((sum, m) => sum + m.cantidad, 0);
+    // Cálculos de ayer para porcentajes (Mocks por ahora en solicitudes)
+    const pctPendientes = -5.0; // Simulando que bajaron los pendientes
+    const pctProgramados = 12.5; // Simulando que hay más programados
+    const pctSalidas = 2.0; 
+    const pctInventario = 8.5; 
 
-    const salidasAyer = this.movimientos
-      .filter((m) => m.tipo === TipoMovimiento.SALIDA && new Date(m.fecha) >= ayer && new Date(m.fecha) <= finAyer)
-      .reduce((sum, m) => sum + m.cantidad, 0);
+    // Últimas solicitudes completadas
+    const solicitudesRecientes = [...this.solicitudes]
+      .filter((s) => s.estado === EstadoSolicitud.ENTREGADA)
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+      .slice(0, 10);
 
-    // Calcular % 
-    const calcPct = (hoy: number, ayer: number) => {
-      if (ayer === 0) return hoy > 0 ? 100 : 0;
-      return Number((((hoy - ayer) / ayer) * 100).toFixed(1));
-    };
-
-    const pctEntradas = calcPct(entradasHoy, entradasAyer);
-    const pctSalidas = calcPct(salidasHoy, salidasAyer);
-    const pctVariedades = 5.2; // Mock para variedad
-    const pctStock = 8.5; // Mock para stock general
+    // Solicitudes programadas para el dashboard central
+    const solicitudesProgramadas = [...this.solicitudes]
+      .filter((s) => [EstadoSolicitud.PENDIENTE, EstadoSolicitud.APROBADA, EstadoSolicitud.EN_PREPARACION, EstadoSolicitud.LISTA].includes(s.estado))
+      .sort((a, b) => new Date(a.fechaSolicitada).getTime() - new Date(b.fechaSolicitada).getTime());
 
     // Últimos 10 movimientos
     const movimientosRecientes = [...this.movimientos]
@@ -172,14 +172,17 @@ export class MovimientosComidaService {
       .slice(0, 10);
 
     return {
-      inventarioPorTipo,
-      totalInventario,
-      entradasHoy,
+      pedidosPendientes,
+      pedidosProgramadosHoy,
       salidasHoy,
-      pctEntradas,
+      totalInventario,
+      pctPendientes,
+      pctProgramados,
       pctSalidas,
-      pctVariedades,
-      pctStock,
+      pctInventario,
+      inventarioPorTipo,
+      solicitudesRecientes,
+      solicitudesProgramadas,
       movimientosRecientes,
     };
   }

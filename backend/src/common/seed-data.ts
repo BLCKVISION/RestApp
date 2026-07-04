@@ -1,4 +1,4 @@
-import { ICentroAcopio, ITipoComida, IMovimientoComida, TipoMovimiento } from './interfaces';
+import { ICentroAcopio, ITipoComida, IMovimientoComida, TipoMovimiento, ISolicitudComida, EstadoSolicitud } from './interfaces';
 
 // ─── Centros de Acopio ────────────────────────────────────────────
 export const SEED_CENTROS: ICentroAcopio[] = [
@@ -78,6 +78,66 @@ function today(): Date {
   d.setHours(8 + Math.floor(Math.random() * 4), Math.floor(Math.random() * 60), 0, 0);
   return d;
 }
+
+// ─── Solicitudes de Comida (seed) ─────────────────────────────────
+export const SEED_SOLICITUDES: ISolicitudComida[] = [
+  {
+    id: 'sol00000-0000-0000-0000-000000000001',
+    centroId: 'c1a00000-0000-0000-0000-000000000001',
+    cantidadSolicitada: 120,
+    tipoComidaId: 'tc000000-0000-0000-0000-000000000001',
+    horaEntrega: '12:00 PM',
+    responsable: 'Carlos Mendoza',
+    estado: EstadoSolicitud.PENDIENTE,
+    observaciones: 'Llamar al llegar',
+    fechaSolicitada: today(),
+    createdAt: daysAgo(1),
+  },
+  {
+    id: 'sol00000-0000-0000-0000-000000000002',
+    centroId: 'c1a00000-0000-0000-0000-000000000002',
+    cantidadSolicitada: 80,
+    tipoComidaId: 'tc000000-0000-0000-0000-000000000001',
+    horaEntrega: '01:00 PM',
+    responsable: 'María Alejandra Ríos',
+    estado: EstadoSolicitud.EN_PREPARACION,
+    fechaSolicitada: today(),
+    createdAt: daysAgo(1),
+  },
+  {
+    id: 'sol00000-0000-0000-0000-000000000003',
+    centroId: 'c1a00000-0000-0000-0000-000000000001',
+    cantidadSolicitada: 40,
+    tipoComidaId: 'tc000000-0000-0000-0000-000000000002',
+    horaEntrega: '12:30 PM',
+    responsable: 'Carlos Mendoza',
+    estado: EstadoSolicitud.LISTA,
+    fechaSolicitada: today(),
+    createdAt: daysAgo(1),
+  },
+  {
+    id: 'sol00000-0000-0000-0000-000000000004',
+    centroId: 'c1a00000-0000-0000-0000-000000000002',
+    cantidadSolicitada: 50,
+    tipoComidaId: 'tc000000-0000-0000-0000-000000000003',
+    horaEntrega: '09:00 AM',
+    responsable: 'María Alejandra Ríos',
+    estado: EstadoSolicitud.ENTREGADA,
+    fechaSolicitada: today(),
+    createdAt: today(),
+  },
+  {
+    id: 'sol00000-0000-0000-0000-000000000005',
+    centroId: 'c1a00000-0000-0000-0000-000000000001',
+    cantidadSolicitada: 30,
+    tipoComidaId: 'tc000000-0000-0000-0000-000000000004',
+    horaEntrega: '08:00 AM',
+    responsable: 'Carlos Mendoza',
+    estado: EstadoSolicitud.PENDIENTE,
+    fechaSolicitada: today(),
+    createdAt: today(),
+  }
+];
 
 // ─── Movimientos de Comida (seed) ─────────────────────────────────
 export const SEED_MOVIMIENTOS: IMovimientoComida[] = [

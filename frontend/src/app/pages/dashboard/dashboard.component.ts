@@ -17,7 +17,6 @@ import gsap from 'gsap';
 export class DashboardComponent implements OnInit, AfterViewInit {
   resumen: ResumenInventario | null = null;
   datosGrafico: DatosGrafico[] = [];
-  distribucion: DistribucionCentro[] = [];
   loading = true;
   showLoader = true;
   today = new Date();
@@ -65,10 +64,6 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     });
 
     this.cargarGrafico();
-
-    this.api.getDistribucionPorCentro().subscribe({
-      next: (data) => (this.distribucion = data),
-    });
   }
 
   cargarGrafico() {
@@ -170,24 +165,18 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   }
 
   get maxDistribucion(): number {
-    if (!this.distribucion.length) return 1;
-    let max = 0;
-    this.distribucion.forEach((c) =>
-      c.porTipo.forEach((t) => {
-        if (t.cantidad > max) max = t.cantidad;
-      })
-    );
-    return max || 1;
+    return 1;
   }
 
   getDistBarHeight(value: number): number {
-    return (value / this.maxDistribucion) * 100;
+    return 0;
   }
 
   getMovimientoTipoComida(tipoComidaId: string): string {
+    if (!tipoComidaId) return 'General';
     if (!this.resumen) return '';
     const tipo = this.resumen.inventarioPorTipo.find((t) => t.tipoComidaId === tipoComidaId);
-    return tipo ? tipo.tipoComida : '';
+    return tipo ? tipo.tipoComida : 'General';
   }
 
   formatFecha(fecha: string): string {

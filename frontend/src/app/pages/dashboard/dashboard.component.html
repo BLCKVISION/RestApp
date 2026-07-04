@@ -23,24 +23,41 @@
         
         <!-- Top KPI Cards Row -->
         <div class="kpi-row">
-          <!-- Total Booking -> Entradas Hoy -->
+          <!-- Pedidos Pendientes -->
           <div class="kpi-card card">
             <div class="kpi-card__top">
               <div class="kpi-card__icon-box">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
               </div>
-              <span class="kpi-card__label">Entradas Hoy</span>
+              <span class="kpi-card__label">Pedidos Pendientes</span>
             </div>
             <div class="kpi-card__middle">
-              <div class="kpi-card__value">{{ resumen.entradasHoy | number }}</div>
+              <div class="kpi-card__value">{{ resumen.pedidosPendientes | number }}</div>
             </div>
             <div class="kpi-card__bottom">
-              <span class="kpi-card__period">Raciones recibidas</span>
-              <span class="kpi-card__pct">{{ resumen.pctEntradas > 0 ? '+' : '' }}{{ resumen.pctEntradas }}%</span>
+              <span class="kpi-card__period">Por aprobar hoy</span>
+              <span class="kpi-card__pct">{{ resumen.pctPendientes > 0 ? '+' : '' }}{{ resumen.pctPendientes }}%</span>
             </div>
           </div>
 
-          <!-- Active Properties -> Salidas Hoy -->
+          <!-- Pedidos Programados -->
+          <div class="kpi-card card">
+            <div class="kpi-card__top">
+              <div class="kpi-card__icon-box">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              </div>
+              <span class="kpi-card__label">Pedidos Programados</span>
+            </div>
+            <div class="kpi-card__middle">
+              <div class="kpi-card__value">{{ resumen.pedidosProgramadosHoy | number }}</div>
+            </div>
+            <div class="kpi-card__bottom">
+              <span class="kpi-card__period">Para entregar hoy</span>
+              <span class="kpi-card__pct">{{ resumen.pctProgramados > 0 ? '+' : '' }}{{ resumen.pctProgramados }}%</span>
+            </div>
+          </div>
+
+          <!-- Salidas Hoy -->
           <div class="kpi-card card">
             <div class="kpi-card__top">
               <div class="kpi-card__icon-box">
@@ -57,37 +74,20 @@
             </div>
           </div>
 
-          <!-- Total Guests -> Tipos de Almuerzos -->
-          <div class="kpi-card card">
-            <div class="kpi-card__top">
-              <div class="kpi-card__icon-box">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-              </div>
-              <span class="kpi-card__label">Variedades</span>
-            </div>
-            <div class="kpi-card__middle">
-              <div class="kpi-card__value">{{ resumen.inventarioPorTipo.length }}</div>
-            </div>
-            <div class="kpi-card__bottom">
-              <span class="kpi-card__period">Tipos de almuerzo</span>
-              <span class="kpi-card__pct">{{ resumen.pctVariedades > 0 ? '+' : '' }}{{ resumen.pctVariedades }}%</span>
-            </div>
-          </div>
-
-          <!-- Total Revenue -> Inventario Total -->
+          <!-- Inventario Total -->
           <div class="kpi-card card">
             <div class="kpi-card__top">
               <div class="kpi-card__icon-box">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><line x1="12" y1="4" x2="12" y2="20"/></svg>
               </div>
-              <span class="kpi-card__label">Stock General</span>
+              <span class="kpi-card__label">Inventario Actual</span>
             </div>
             <div class="kpi-card__middle">
               <div class="kpi-card__value">{{ resumen.totalInventario | number }}</div>
             </div>
             <div class="kpi-card__bottom">
               <span class="kpi-card__period">Raciones totales</span>
-              <span class="kpi-card__pct">{{ resumen.pctStock > 0 ? '+' : '' }}{{ resumen.pctStock }}%</span>
+              <span class="kpi-card__pct">{{ resumen.pctInventario > 0 ? '+' : '' }}{{ resumen.pctInventario }}%</span>
             </div>
           </div>
         </div>
@@ -161,55 +161,55 @@
           </div>
         </div>
 
-        <!-- Bottom Today's Booking Section -> Centros de Acopio -->
+        <!-- Pedidos Programados -->
         <div class="today-booking">
           <div class="today-booking__header">
             <h3 class="today-booking__title">
-              Centros de Acopio Activos
-              <span class="today-booking__count">{{ distribucion.length }}</span>
+              Pedidos Programados
+              <span class="today-booking__count">{{ resumen.solicitudesProgramadas.length }}</span>
             </h3>
             <div class="today-booking__search">
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-              <input type="text" placeholder="Buscar centros...">
+              <input type="text" placeholder="Buscar pedido...">
             </div>
           </div>
           <div class="today-booking__grid">
-            @for (centro of distribucion; track centro.centroId; let i = $index) {
+            @for (solicitud of resumen.solicitudesProgramadas; track solicitud.id; let i = $index) {
               <div class="booking-card card">
                 <div class="booking-card__top">
                   <div class="booking-card__img" style="background: var(--primary-bg); color: var(--primary); display: flex; align-items: center; justify-content: center; font-weight: 800; border-radius: 10px;">
-                    C{{ i + 1 }}
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
                   </div>
                   <div>
-                    <h4 class="booking-card__name">{{ centro.centro }}</h4>
+                    <h4 class="booking-card__name">Pedido #{{ solicitud.id.substring(solicitud.id.length - 4) | uppercase }}</h4>
                     <p class="booking-card__location">
                       <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                      {{ centro.ubicacion }}
+                      {{ solicitud.responsable }}
                     </p>
                   </div>
                 </div>
                 <div class="booking-card__meta">
                   <span>
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
-                    Hoy
+                    {{ solicitud.horaEntrega || 'Hoy' }}
                   </span>
                   <span>
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-                    {{ centro.porTipo.length }} Variedades
+                    Cant: {{ solicitud.cantidadSolicitada }}
                   </span>
                   <span>
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
-                    Activo
+                    {{ solicitud.estado }}
                   </span>
                 </div>
                 <div class="booking-card__footer">
                   <div class="booking-card__user">
                     <div style="width: 28px; height: 28px; border-radius: 50%; background: #cbd5e1; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700; color: #475569;">
-                      {{ getInitials(centro.operador) }}
+                      {{ getInitials(solicitud.responsable) }}
                     </div>
                     <div>
-                      <div class="booking-card__user-id">ID: acopio-{{ i + 1 }}</div>
-                      <div class="booking-card__user-name">{{ centro.operador }}</div>
+                      <div class="booking-card__user-id">Centro ASIG.</div>
+                      <div class="booking-card__user-name" style="font-size: 0.65rem; color: #94a3b8;">{{ solicitud.centroId.substring(0, 10) }}...</div>
                     </div>
                   </div>
                   <button class="booking-card__btn" routerLink="/salida">
@@ -266,24 +266,24 @@
           </div>
         </div>
 
-        <!-- Latest Transactions -> Últimos Movimientos -->
+        <!-- Solicitudes Entregadas -->
         <div class="transactions-card card">
-          <h3 class="transactions-card__title">Últimos Pedidos / Entregas</h3>
+          <h3 class="transactions-card__title">Últimas Solicitudes Entregadas</h3>
           
           <div class="transactions-card__list">
-            @for (mov of resumen.movimientosRecientes.slice(0, 4); track mov.id) {
+            @for (sol of resumen.solicitudesRecientes.slice(0, 4); track sol.id) {
               <div class="tx-item">
-                <div class="tx-item__logo" [class.tx-item__logo--paypal]="mov.tipo === 'ENTRADA'" [style.background]="mov.tipo === 'SALIDA' ? 'rgba(239,68,68,0.1)' : ''" [style.color]="mov.tipo === 'SALIDA' ? '#ef4444' : ''">
-                  {{ mov.tipo === 'ENTRADA' ? 'E' : 'S' }}
+                <div class="tx-item__logo" style="background: rgba(34, 197, 94, 0.1); color: #22c55e;">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
                 </div>
                 <div class="tx-item__info">
-                  <h4 class="tx-item__name">{{ getMovimientoTipoComida(mov.tipoComidaId) }}</h4>
-                  <p class="tx-item__date">{{ mov.registradoPor }}</p>
+                  <h4 class="tx-item__name">Pedido a {{ sol.responsable }}</h4>
+                  <p class="tx-item__date">{{ getMovimientoTipoComida(sol.tipoComidaId || '') }}</p>
                 </div>
                 <div class="tx-item__right">
-                  <div class="tx-item__amount">{{ mov.cantidad }} Unidades</div>
-                  <div class="tx-item__status" [class.tx-item__status--success]="mov.tipo === 'ENTRADA'" [class.tx-item__status--danger]="mov.tipo === 'SALIDA'">
-                    {{ mov.tipo === 'ENTRADA' ? 'Entrada' : 'Salida' }}
+                  <div class="tx-item__amount">{{ sol.cantidadSolicitada }} Raciones</div>
+                  <div class="tx-item__status tx-item__status--success">
+                    Entregada
                   </div>
                 </div>
               </div>

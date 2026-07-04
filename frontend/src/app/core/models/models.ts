@@ -3,6 +3,15 @@ export enum TipoMovimiento {
   SALIDA = 'SALIDA',
 }
 
+export enum EstadoSolicitud {
+  PENDIENTE = 'PENDIENTE',
+  APROBADA = 'APROBADA',
+  RECHAZADA = 'RECHAZADA',
+  EN_PREPARACION = 'EN_PREPARACION',
+  LISTA = 'LISTA',
+  ENTREGADA = 'ENTREGADA',
+}
+
 export interface CentroAcopio {
   id: string;
   nombre: string;
@@ -31,11 +40,34 @@ export interface MovimientoComida {
   origen?: string;
   nota?: string;
   registradoPor: string;
+  solicitudId?: string;
   fecha: string;
   createdAt: string;
 }
 
+export interface SolicitudComida {
+  id: string;
+  centroId: string;
+  cantidadSolicitada: number;
+  tipoComidaId?: string;
+  horaEntrega?: string;
+  responsable: string;
+  estado: EstadoSolicitud;
+  observaciones?: string;
+  fechaSolicitada: string;
+  createdAt: string;
+}
+
 export interface ResumenInventario {
+  pedidosPendientes: number;
+  pedidosProgramadosHoy: number;
+  salidasHoy: number;
+  totalInventario: number;
+  pctPendientes: number;
+  pctProgramados: number;
+  pctSalidas: number;
+  pctInventario: number;
+
   inventarioPorTipo: {
     tipoComidaId: string;
     tipoComida: string;
@@ -43,13 +75,9 @@ export interface ResumenInventario {
     entradasHoy: number;
     salidasHoy: number;
   }[];
-  totalInventario: number;
-  entradasHoy: number;
-  salidasHoy: number;
-  pctEntradas: number;
-  pctSalidas: number;
-  pctVariedades: number;
-  pctStock: number;
+  
+  solicitudesRecientes: SolicitudComida[];
+  solicitudesProgramadas: SolicitudComida[];
   movimientosRecientes: MovimientoComida[];
 }
 
