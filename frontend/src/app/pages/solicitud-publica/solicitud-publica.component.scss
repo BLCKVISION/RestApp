@@ -135,12 +135,22 @@
 }
 
 
+.submit-wrapper {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
 .btn-submit {
   border-radius: 12px;
   font-weight: 700;
   font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
   letter-spacing: 0.02em;
   padding: 16px;
+  width: 70%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   box-shadow: 0 10px 15px -3px rgba(249, 115, 22, 0.3);
   transition: all 0.3s ease;
 
@@ -199,6 +209,14 @@
   color: #475569;
   margin-bottom: 32px;
   line-height: 1.6;
+}
+
+.success-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 300px;
+  margin: 0 auto;
 }
 
 @media (max-width: 640px) {

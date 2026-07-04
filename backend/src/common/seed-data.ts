@@ -24,38 +24,10 @@ export const SEED_CENTROS: ICentroAcopio[] = [
 
 // ─── Tipos de Comida ──────────────────────────────────────────────
 export const SEED_TIPOS_COMIDA: ITipoComida[] = [
-  {
-    id: 'tc000000-0000-0000-0000-000000000001',
-    nombre: 'Almuerzo Regular',
-    descripcion: 'Almuerzo estándar con proteína animal (carne/pollo)',
-    activo: true,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-  {
-    id: 'tc000000-0000-0000-0000-000000000002',
-    nombre: 'Almuerzo Vegetariano',
-    descripcion: 'Almuerzo sin proteína animal',
-    activo: true,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-  {
-    id: 'tc000000-0000-0000-0000-000000000003',
-    nombre: 'Sopa / Hervido',
-    descripcion: 'Ración de sopa',
-    activo: true,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-  {
-    id: 'tc000000-0000-0000-0000-000000000004',
-    nombre: 'Desayuno / Merienda',
-    descripcion: 'Ración ligera para mañana o tarde',
-    activo: true,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
+  { id: 't1a00000-0000-0000-0000-000000000001', nombre: 'Desayuno', activo: true, createdAt: today(), updatedAt: today() },
+  { id: 't1a00000-0000-0000-0000-000000000002', nombre: 'Almuerzo', activo: true, createdAt: today(), updatedAt: today() },
+  { id: 't1a00000-0000-0000-0000-000000000003', nombre: 'Almuerzo Especial', activo: true, createdAt: today(), updatedAt: today() },
+  { id: 't1a00000-0000-0000-0000-000000000004', nombre: 'Cena', activo: true, createdAt: today(), updatedAt: today() },
 ];
 
 // ─── Helper: generar fechas relativas a hoy ───────────────────────

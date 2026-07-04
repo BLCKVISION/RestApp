@@ -4,11 +4,12 @@ import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { ApiService } from '../../core/services/api.service';
 import { SolicitudComida, EstadoSolicitud, CentroAcopio, TipoComida } from '../../core/models/models';
+import { CdkDragDrop, moveItemInArray, transferArrayItem, CdkDrag, CdkDropList, CdkDropListGroup } from '@angular/cdk/drag-drop';
 
 @Component({
   selector: 'app-solicitudes',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule],
+  imports: [CommonModule, RouterLink, FormsModule, CdkDropListGroup, CdkDropList, CdkDrag],
   templateUrl: './solicitudes.component.html',
   styleUrl: './solicitudes.component.scss'
 })
@@ -24,6 +25,9 @@ export class SolicitudesComponent implements OnInit {
   enCocina: SolicitudComida[] = [];
   listas: SolicitudComida[] = [];
 
+  // Expanded Column
+  expandedColumn: string | null = null;
+
   // Modal State
   isEditModalOpen = false;
   savingEdit = false;
@@ -34,7 +38,8 @@ export class SolicitudesComponent implements OnInit {
     observaciones: '',
     centroId: '',
     tipoComidaId: '',
-    responsable: ''
+    responsable: '',
+    prioridad: 'MEDIA'
   };
 
   constructor(private api: ApiService) {}
@@ -58,26 +63,51 @@ export class SolicitudesComponent implements OnInit {
   }
 
   updateKanbanBoard() {
-    this.pendientes = this.solicitudes.filter(s => s.estado === EstadoSolicitud.PENDIENTE);
-    this.aprobadas = this.solicitudes.filter(s => s.estado === EstadoSolicitud.APROBADA);
-    this.enCocina = this.solicitudes.filter(s => s.estado === EstadoSolicitud.EN_PREPARACION);
-    this.listas = this.solicitudes.filter(s => s.estado === EstadoSolicitud.LISTA);
+    this.pendientes = this.solicitudes.filter(s => s.estado === EstadoSolicitud.PENDIENTE).sort(this.sortPrioridad);
+    this.aprobadas = this.solicitudes.filter(s => s.estado === EstadoSolicitud.APROBADA).sort(this.sortPrioridad);
+    this.enCocina = this.solicitudes.filter(s => s.estado === EstadoSolicitud.EN_PREPARACION).sort(this.sortPrioridad);
+    this.listas = this.solicitudes.filter(s => s.estado === EstadoSolicitud.LISTA).sort(this.sortPrioridad);
   }
 
-  avanzar(solicitud: SolicitudComida) {
-    let nextState: EstadoSolicitud;
-    if (solicitud.estado === EstadoSolicitud.PENDIENTE) nextState = EstadoSolicitud.APROBADA;
-    else if (solicitud.estado === EstadoSolicitud.APROBADA) nextState = EstadoSolicitud.EN_PREPARACION;
-    else if (solicitud.estado === EstadoSolicitud.EN_PREPARACION) nextState = EstadoSolicitud.LISTA;
-    else return;
+  sortPrioridad(a: SolicitudComida, b: SolicitudComida): number {
+    const val: Record<string, number> = { 'ALTA': 3, 'MEDIA': 2, 'BAJA': 1 };
+    return (val[b.prioridad || 'MEDIA'] || 0) - (val[a.prioridad || 'MEDIA'] || 0);
+  }
 
-    this.api.updateSolicitudEstado(solicitud.id, nextState).subscribe({
-      next: (updated) => {
-        const index = this.solicitudes.findIndex(s => s.id === updated.id);
-        if (index !== -1) this.solicitudes[index] = updated;
-        this.updateKanbanBoard();
-      }
-    });
+  toggleExpand(columnName: string) {
+    if (this.expandedColumn === columnName) {
+      this.expandedColumn = null;
+    } else {
+      this.expandedColumn = columnName;
+    }
+  }
+
+  drop(event: CdkDragDrop<SolicitudComida[]>, newEstado: string) {
+    if (event.previousContainer === event.container) {
+      moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
+    } else {
+      const movedItem = event.previousContainer.data[event.previousIndex];
+      transferArrayItem(
+        event.previousContainer.data,
+        event.container.data,
+        event.previousIndex,
+        event.currentIndex,
+      );
+      
+      let nextState: EstadoSolicitud = newEstado as EstadoSolicitud;
+      this.api.updateSolicitudEstado(movedItem.id, nextState).subscribe({
+        next: (updated) => {
+          const index = this.solicitudes.findIndex(s => s.id === updated.id);
+          if (index !== -1) this.solicitudes[index] = updated;
+          // No need to re-call updateKanbanBoard immediately unless we want to sort, 
+          // to avoid flickering after drag drop. The transferArrayItem already handled the UI.
+        },
+        error: () => {
+          // Revert on error
+          this.loadSolicitudes();
+        }
+      });
+    }
   }
 
   // --- Modal Logic ---
@@ -89,7 +119,8 @@ export class SolicitudesComponent implements OnInit {
       observaciones: solicitud.observaciones || '',
       centroId: solicitud.centroId,
       tipoComidaId: solicitud.tipoComidaId || '',
-      responsable: solicitud.responsable
+      responsable: solicitud.responsable,
+      prioridad: solicitud.prioridad || 'MEDIA'
     };
     this.isEditModalOpen = true;
   }
@@ -102,10 +133,6 @@ export class SolicitudesComponent implements OnInit {
   guardarEdicion() {
     if (!this.solicitudEnEdicion) return;
     
-    if (!confirm('¿Seguro que quieres editar este pedido?')) {
-      return;
-    }
-
     this.savingEdit = true;
     this.api.updateSolicitud(this.solicitudEnEdicion.id, this.editForm).subscribe({
       next: (updated) => {

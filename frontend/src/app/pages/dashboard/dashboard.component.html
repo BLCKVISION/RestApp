@@ -212,7 +212,7 @@
                       <div class="booking-card__user-name" style="font-size: 0.65rem; color: #94a3b8;">{{ solicitud.centroId.substring(0, 10) }}...</div>
                     </div>
                   </div>
-                  <button class="booking-card__btn" routerLink="/salida">
+                  <button class="booking-card__btn" routerLink="/solicitudes" [queryParams]="{ solicitudId: solicitud.id }">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
                   </button>
                 </div>

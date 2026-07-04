@@ -53,6 +53,7 @@ export interface SolicitudComida {
   horaEntrega?: string;
   responsable: string;
   estado: EstadoSolicitud;
+  prioridad?: 'ALTA' | 'MEDIA' | 'BAJA';
   observaciones?: string;
   fechaSolicitada: string;
   createdAt: string;

@@ -49,17 +49,25 @@
 
         <div class="form-group form-group--full">
           <label class="form-label">Observaciones (Opcional)</label>
-          <textarea class="form-control" [(ngModel)]="form.nota" rows="3" placeholder="Información adicional..."></textarea>
+          <textarea class="form-control" [(ngModel)]="form.nota" rows="3" placeholder="Si tienes observaciones de una comida especial, etc..."></textarea>
         </div>
       </div>
 
-      <button class="btn btn--primary btn--lg btn--block btn-submit" [disabled]="!isValid || submitting" (click)="submit()">
-        @if (submitting) {
-          <span class="spinner"></span> Procesando...
-        } @else {
-          Confirmar Solicitud
-        }
-      </button>
+      <div class="submit-wrapper">
+        <button class="btn btn--primary btn--lg btn-submit" [disabled]="!isValid || submitting" (click)="submit()">
+          @if (submitting) {
+            <span class="spinner"></span> Procesando...
+          } @else {
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 8px;">
+              <path d="M5 18H3c-.6 0-1-.4-1-1V7c0-.6.4-1 1-1h10c.6 0 1 .4 1 1v11"/>
+              <path d="M14 9h4l4 4v4c0 .6-.4 1-1 1h-2"/>
+              <circle cx="7" cy="18" r="2"/>
+              <circle cx="17" cy="18" r="2"/>
+            </svg>
+            Confirmar Solicitud
+          }
+        </button>
+      </div>
     } @else {
       <div class="success-view animate-in">
         <div class="success-icon-wrapper">
@@ -70,7 +78,10 @@
         </div>
         <h2 class="success-title">¡Solicitud Exitosa!</h2>
         <p class="success-desc">Su pedido ha sido registrado en nuestro sistema. Nos pondremos en contacto con el responsable asignado.</p>
-        <button class="btn btn--outline btn--block" (click)="reset()">Nueva Solicitud</button>
+        <div class="success-actions">
+          <button class="btn btn--primary btn--block" (click)="reset()">Nueva Solicitud</button>
+          <button class="btn btn--outline btn--block" onclick="window.location.href='/'">Salir del sistema</button>
+        </div>
       </div>
     }
   </div>

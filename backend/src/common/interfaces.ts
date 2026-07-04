@@ -44,6 +44,7 @@ export interface ISolicitudComida {
   horaEntrega?: string;
   responsable: string;
   estado: EstadoSolicitud;
+  prioridad?: 'ALTA' | 'MEDIA' | 'BAJA';
   observaciones?: string;
   fechaSolicitada: Date;
   createdAt: Date;

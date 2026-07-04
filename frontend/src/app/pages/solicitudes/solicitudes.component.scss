@@ -1,18 +1,28 @@
-.page {
-  padding: 24px 32px;
+.kanban-page {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  padding: 0;
+  overflow: hidden;
+  background: #f8fafc;
 }
 
-.page__header {
+.kanban-header {
+  padding: 24px 32px;
+  background: #ffffff;
+  border-bottom: 1px solid var(--border-color);
+  margin-bottom: 0;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 24px;
 }
 
 .page__title {
   font-size: 1.5rem;
-  font-weight: 700;
+  font-weight: 800;
   color: var(--text-primary);
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  letter-spacing: -0.02em;
 }
 
 .page__subtitle {
@@ -23,33 +33,55 @@
 /* Kanban Board Layout */
 .kanban-board {
   display: flex;
-  gap: 20px;
+  gap: 16px;
   overflow-x: auto;
-  padding-bottom: 20px;
-  min-height: calc(100vh - 150px);
+  overflow-y: hidden;
+  padding: 20px 32px;
+  flex-grow: 1;
+  align-items: flex-start;
 }
 
 .kanban-column {
-  flex: 0 0 300px;
+  flex: 1;
+  min-width: 280px;
+  max-width: 380px;
   background: var(--bg-card);
   border-radius: 16px;
   display: flex;
   flex-direction: column;
   max-height: 100%;
-  border: 1px solid var(--border-color);
+  border: 1px solid #e2e8f0;
+  transition: all 0.3s ease;
+
+  &.expanded {
+    max-width: 100%;
+    min-width: 100%;
+  }
 }
 
 .kanban-column-header {
   padding: 16px;
   border-bottom: 1px solid var(--border-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #f1f5f9;
+  border-radius: 16px 16px 0 0;
 }
 
 .kanban-column-title {
   display: flex;
   align-items: center;
-  font-weight: 600;
+  font-weight: 700;
   font-size: 0.95rem;
   color: var(--text-primary);
+}
+
+.expand-btn {
+  color: #64748b;
+  &:hover {
+    color: var(--primary);
+  }
 }
 
 .status-dot {
@@ -61,16 +93,17 @@
 .bg-warning { background: #f59e0b; }
 .bg-info { background: #3b82f6; }
 .bg-indigo { background: #6366f1; }
-.bg-primary { background: var(--primary); }
+.bg-success { background: #10b981; }
 
 .kanban-count {
-  margin-left: auto;
-  background: var(--bg-main);
+  margin-left: 12px;
+  background: #ffffff;
   color: var(--text-secondary);
   padding: 2px 8px;
   border-radius: 12px;
   font-size: 0.8rem;
-  font-weight: 600;
+  font-weight: 700;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
 }
 
 .kanban-cards {
@@ -79,16 +112,22 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
+  min-height: 200px; /* Crucial for CDK drop area to work when empty */
 }
 
-/* Kanban Card */
+/* Kanban Card & CDK Drop */
 .kanban-card {
   background: #ffffff;
-  border: 1px solid var(--border-color);
+  border: 1px solid #e2e8f0;
   border-radius: 12px;
   padding: 16px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
   transition: transform 0.2s, box-shadow 0.2s;
+  cursor: grab; /* Shows it's draggable */
+
+  &:active {
+    cursor: grabbing;
+  }
 
   &:hover {
     transform: translateY(-2px);
@@ -96,17 +135,46 @@
   }
 }
 
+.cdk-drag-preview {
+  box-shadow: 0 15px 30px rgba(0,0,0,0.15) !important;
+  opacity: 0.9;
+  border-radius: 12px;
+  background: white;
+  padding: 16px;
+}
+
+.cdk-drag-placeholder {
+  opacity: 0.3;
+}
+
+.cdk-drag-animating {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.kanban-cards.cdk-drop-list-dragging .kanban-card:not(.cdk-drag-placeholder) {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
 .kanban-card-top {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 8px;
+  margin-bottom: 12px;
 }
 
 .kanban-id {
   font-size: 0.8rem;
-  font-weight: 600;
-  color: var(--text-secondary);
+  font-weight: 700;
+  color: #94a3b8;
+}
+
+.badge-prioridad {
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
+  &.alta { background: #fee2e2; color: #ef4444; }
+  &.baja { background: #f1f5f9; color: #64748b; }
 }
 
 .icon-btn {
@@ -121,17 +189,17 @@
   justify-content: center;
 
   &:hover {
-    background: var(--bg-main);
-    color: var(--text-primary);
+    background: #f1f5f9;
+    color: var(--primary);
   }
 }
 
 .kanban-card-body {
-  margin-bottom: 16px;
+  margin-bottom: 12px;
 }
 
 .kanban-resp {
-  font-weight: 600;
+  font-weight: 700;
   color: var(--text-primary);
   font-size: 0.95rem;
   margin-bottom: 4px;
@@ -143,24 +211,33 @@
 }
 
 .kanban-time {
-  margin-top: 8px;
+  margin-top: 12px;
   font-size: 0.8rem;
   color: var(--primary);
-  font-weight: 500;
+  font-weight: 600;
   background: rgba(249, 115, 22, 0.1);
   display: inline-block;
-  padding: 2px 6px;
+  padding: 4px 8px;
   border-radius: 6px;
 }
 
-/* Lightbox Modal (Glassmorphism + Blur) */
+.btn--success {
+  background: #10b981;
+  color: white;
+  &:hover {
+    background: #059669;
+  }
+}
+
+
+/* Premium Modal Styles */
 .modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(15, 23, 42, 0.4);
+  background: rgba(15, 23, 42, 0.6);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   z-index: 9999;
@@ -170,48 +247,56 @@
   animation: fadeIn 0.3s ease;
 }
 
-.modal-content {
+.premium-modal {
   background: #ffffff;
-  border-radius: 20px;
+  border-radius: 24px;
   width: 100%;
-  max-width: 500px;
+  max-width: 600px;
   box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
-  animation: slideUp 0.3s ease;
+  overflow: hidden;
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
 }
 
 .modal-header {
-  padding: 20px 24px;
-  border-bottom: 1px solid var(--border-color);
+  padding: 24px 32px;
+  border-bottom: 1px solid #f1f5f9;
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
 .modal-title {
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: var(--text-primary);
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #1e293b;
+  letter-spacing: -0.02em;
+}
+
+.close-btn {
+  color: #94a3b8;
+  &:hover {
+    color: #ef4444;
+    background: #fee2e2;
+  }
 }
 
 .modal-body {
-  padding: 24px;
+  padding: 32px;
 }
 
 .modal-footer {
-  padding: 20px 24px;
-  background: var(--bg-main);
-  border-top: 1px solid var(--border-color);
-  border-radius: 0 0 20px 20px;
+  padding: 24px 32px;
+  background: #f8fafc;
+  border-top: 1px solid #f1f5f9;
   display: flex;
   justify-content: flex-end;
-  gap: 12px;
+  gap: 16px;
 }
 
-/* Form Styles inside Modal */
 .form-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 16px;
+  gap: 20px;
 }
 
 .form-group--full {
@@ -221,30 +306,82 @@
 .form-label {
   display: block;
   font-size: 0.8rem;
-  font-weight: 600;
-  color: var(--text-secondary);
-  margin-bottom: 6px;
+  font-weight: 700;
+  color: #475569;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 8px;
 }
 
-.form-control {
+.premium-input {
   width: 100%;
-  padding: 10px 12px;
-  border-radius: 8px;
-  border: 1px solid var(--border-color);
+  padding: 12px 16px;
+  border-radius: 12px;
+  border: 1px solid #cbd5e1;
+  background: #f8fafc;
+  color: #1e293b;
   font-size: 0.95rem;
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  transition: all 0.2s ease;
 
   &:focus {
     outline: none;
     border-color: var(--primary);
+    box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.1);
+    background: #ffffff;
+  }
+}
+
+.select-wrapper {
+  position: relative;
+  &::after {
+    content: "";
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 10px;
+    height: 6px;
+    background-color: #64748b;
+    clip-path: polygon(100% 0%, 0 0%, 50% 100%);
+    pointer-events: none;
+  }
+  select {
+    appearance: none;
+    padding-right: 40px;
+  }
+}
+
+.time-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+
+  .time-input::-webkit-calendar-picker-indicator {
+    background: transparent;
+    color: transparent;
+    cursor: pointer;
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 20px;
+    height: 20px;
+    z-index: 10;
+  }
+
+  &::after {
+    content: url('data:image/svg+xml;utf8,<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="%2364748b" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>');
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    z-index: 5;
   }
 }
 
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
-}
-
-@keyframes slideUp {
-  from { opacity: 0; transform: translateY(20px) scale(0.95); }
-  to { opacity: 1; transform: translateY(0) scale(1); }
 }

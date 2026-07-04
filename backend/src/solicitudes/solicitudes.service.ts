@@ -36,6 +36,7 @@ export class SolicitudesService {
     if (data.responsable) solicitud.responsable = data.responsable;
     if (data.horaEntrega) solicitud.horaEntrega = data.horaEntrega;
     if (data.observaciones !== undefined) solicitud.observaciones = data.observaciones;
+    if (data.prioridad) solicitud.prioridad = data.prioridad;
     return solicitud;
   }
 
