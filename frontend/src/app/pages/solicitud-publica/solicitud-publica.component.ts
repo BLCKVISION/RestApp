@@ -23,7 +23,9 @@ export class SolicitudPublicaComponent implements OnInit {
     tipoComidaId: '',
     cantidad: null as number | null,
     nota: '',
-    solicitante: ''
+    solicitante: '',
+    organizacion: '',
+    horaEntrega: ''
   };
 
   constructor(private api: ApiService) {}
@@ -46,10 +48,9 @@ export class SolicitudPublicaComponent implements OnInit {
       centroId: this.form.centroId,
       tipoComidaId: this.form.tipoComidaId,
       cantidad: this.form.cantidad,
-      solicitante: this.form.solicitante,
+      solicitante: this.form.solicitante + (this.form.organizacion ? ` (${this.form.organizacion})` : ''),
       nota: this.form.nota,
-      // Default to "A convenir" if they don't provide time (we can add time field later)
-      horaEntrega: 'A convenir'
+      horaEntrega: this.form.horaEntrega || 'A convenir'
     }).subscribe({
       next: () => {
         this.submitting = false;
@@ -70,7 +71,9 @@ export class SolicitudPublicaComponent implements OnInit {
       tipoComidaId: '',
       cantidad: null,
       nota: '',
-      solicitante: ''
+      solicitante: '',
+      organizacion: '',
+      horaEntrega: ''
     };
   }
 }

@@ -3,68 +3,74 @@
     @if (!success) {
       <div class="public-header">
         <div class="public-logo">
-          <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
-            <rect width="24" height="24" rx="6" fill="var(--primary)"/>
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none">
+            <rect width="24" height="24" rx="8" fill="var(--primary)"/>
             <path d="M7 12l3 3 7-7" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
         </div>
         <h1 class="public-title">Solicitar Comidas</h1>
-        <p class="public-subtitle">Formulario para centros de acopio</p>
+        <p class="public-subtitle">Formulario de requerimiento para organizaciones</p>
       </div>
 
-      <div class="form-group">
-        <label class="form-label">Centro de Acopio *</label>
-        <select class="form-control form-select" [(ngModel)]="form.centroId">
-          <option value="">Seleccionar centro...</option>
-          @for (centro of centros; track centro.id) {
-            <option [value]="centro.id">{{ centro.nombre }}</option>
-          }
-        </select>
+      <div class="form-grid">
+        <div class="form-group form-group--full">
+          <label class="form-label">Organización / Empresa *</label>
+          <input type="text" class="form-control" [(ngModel)]="form.centroId" placeholder="Ej: Comedor de la Paz">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Nombre del Responsable *</label>
+          <input type="text" class="form-control" [(ngModel)]="form.solicitante" placeholder="¿Quién retira?">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Tipo de Comida *</label>
+          <div class="select-wrapper">
+            <select class="form-control form-select" [(ngModel)]="form.tipoComidaId">
+              <option value="">Seleccionar menú...</option>
+              @for (tipo of tiposComida; track tipo.id) {
+                <option [value]="tipo.id">{{ tipo.nombre }}</option>
+              }
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Cantidad (Raciones) *</label>
+          <input type="number" class="form-control" [(ngModel)]="form.cantidad" placeholder="Ej: 150" min="1">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Hora de Entrega Requerida</label>
+          <div class="time-input-wrapper">
+            <input type="time" class="form-control time-input" [(ngModel)]="form.horaEntrega">
+          </div>
+        </div>
+
+        <div class="form-group form-group--full">
+          <label class="form-label">Observaciones (Opcional)</label>
+          <textarea class="form-control" [(ngModel)]="form.nota" rows="3" placeholder="Información adicional..."></textarea>
+        </div>
       </div>
 
-      <div class="form-group">
-        <label class="form-label">Tipo de Comida *</label>
-        <select class="form-control form-select" [(ngModel)]="form.tipoComidaId">
-          <option value="">Seleccionar comida...</option>
-          @for (tipo of tiposComida; track tipo.id) {
-            <option [value]="tipo.id">{{ tipo.nombre }}</option>
-          }
-        </select>
-      </div>
-
-      <div class="form-group">
-        <label class="form-label">Cantidad Requerida *</label>
-        <input type="number" class="form-control" [(ngModel)]="form.cantidad" placeholder="Ej: 100" min="1">
-      </div>
-
-      <div class="form-group">
-        <label class="form-label">Tu Nombre *</label>
-        <input type="text" class="form-control" [(ngModel)]="form.solicitante" placeholder="Nombre de quien solicita">
-      </div>
-
-      <div class="form-group">
-        <label class="form-label">Nota (Opcional)</label>
-        <textarea class="form-control" [(ngModel)]="form.nota" rows="2" placeholder="Información adicional..."></textarea>
-      </div>
-
-      <button class="btn btn--primary btn--lg btn--block" [disabled]="!isValid || submitting" (click)="submit()">
+      <button class="btn btn--primary btn--lg btn--block btn-submit" [disabled]="!isValid || submitting" (click)="submit()">
         @if (submitting) {
-          Enviando solicitud...
+          <span class="spinner"></span> Procesando...
         } @else {
-          Enviar Solicitud
+          Confirmar Solicitud
         }
       </button>
     } @else {
-      <div class="success-view">
-        <div class="success-icon">
-          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="2">
-            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M22 4L12 14.01l-3-3" stroke-linecap="round" stroke-linejoin="round"/>
+      <div class="success-view animate-in">
+        <div class="success-icon-wrapper">
+          <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2">
+            <circle cx="12" cy="12" r="10" stroke-opacity="0.2" fill="#d1fae5"/>
+            <path d="M16 10l-5 5-3-3" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
         </div>
-        <h2 class="success-title">Solicitud Enviada</h2>
-        <p class="success-desc">Tu pedido ha sido registrado en el sistema. Nos pondremos en contacto contigo pronto.</p>
-        <button class="btn btn--ghost btn--block" (click)="reset()">Nueva Solicitud</button>
+        <h2 class="success-title">¡Solicitud Exitosa!</h2>
+        <p class="success-desc">Su pedido ha sido registrado en nuestro sistema. Nos pondremos en contacto con el responsable asignado.</p>
+        <button class="btn btn--outline btn--block" (click)="reset()">Nueva Solicitud</button>
       </div>
     }
   </div>

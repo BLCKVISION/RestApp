@@ -16,6 +16,11 @@ export class SolicitudesController {
     return this.solicitudesService.create(body);
   }
 
+  @Patch(':id')
+  update(@Param('id') id: string, @Body() body: any) {
+    return this.solicitudesService.update(id, body);
+  }
+
   @Patch(':id/estado')
   updateEstado(@Param('id') id: string, @Body('estado') estado: EstadoSolicitud) {
     return this.solicitudesService.updateEstado(id, estado);

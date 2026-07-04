@@ -87,6 +87,10 @@ export class ApiService {
     return this.http.post<SolicitudComida>(`${API}/solicitudes`, data);
   }
 
+  updateSolicitud(id: string, data: any): Observable<SolicitudComida> {
+    return this.http.patch<SolicitudComida>(`${API}/solicitudes/${id}`, data);
+  }
+
   updateSolicitudEstado(id: string, estado: EstadoSolicitud): Observable<SolicitudComida> {
     return this.http.patch<SolicitudComida>(`${API}/solicitudes/${id}/estado`, { estado });
   }

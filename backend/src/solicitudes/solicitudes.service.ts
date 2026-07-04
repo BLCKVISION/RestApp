@@ -28,6 +28,17 @@ export class SolicitudesService {
     return this.solicitudes.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
   }
 
+  update(id: string, data: Partial<ISolicitudComida>): ISolicitudComida {
+    const solicitud = this.findOne(id);
+    if (data.centroId) solicitud.centroId = data.centroId;
+    if (data.tipoComidaId) solicitud.tipoComidaId = data.tipoComidaId;
+    if (data.cantidadSolicitada) solicitud.cantidadSolicitada = data.cantidadSolicitada;
+    if (data.responsable) solicitud.responsable = data.responsable;
+    if (data.horaEntrega) solicitud.horaEntrega = data.horaEntrega;
+    if (data.observaciones !== undefined) solicitud.observaciones = data.observaciones;
+    return solicitud;
+  }
+
   findOne(id: string): ISolicitudComida {
     const solicitud = this.solicitudes.find(s => s.id === id);
     if (!solicitud) throw new NotFoundException(`Solicitud ${id} no encontrada`);

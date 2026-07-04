@@ -2,7 +2,7 @@
   <div class="page__header">
     <div>
       <h1 class="page__title">Gestión de Pedidos</h1>
-      <p class="page__subtitle">Administra, aprueba y haz seguimiento a las solicitudes de raciones.</p>
+      <p class="page__subtitle">Administra los pedidos mediante el tablero Kanban.</p>
     </div>
     <button class="btn btn--primary" routerLink="/solicitar">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
@@ -10,85 +10,172 @@
     </button>
   </div>
 
-  <div class="card">
-    @if (loading) {
-      <div style="padding: 24px; text-align: center; color: #64748b;">
-        Cargando pedidos...
+  @if (loading) {
+    <div style="padding: 40px; text-align: center; color: #64748b;">
+      <span class="spinner" style="border-color: rgba(0,0,0,0.1); border-top-color: var(--primary);"></span> Cargando tablero...
+    </div>
+  } @else {
+    <div class="kanban-board">
+      
+      <!-- Columna Pendientes -->
+      <div class="kanban-column">
+        <div class="kanban-column-header">
+          <div class="kanban-column-title">
+            <span class="status-dot bg-warning"></span>
+            Pendientes
+            <span class="kanban-count">{{ pendientes.length }}</span>
+          </div>
+        </div>
+        <div class="kanban-cards">
+          @for (sol of pendientes; track sol.id) {
+            <ng-container *ngTemplateOutlet="kanbanCard; context: { $implicit: sol, nextText: 'Aprobar' }"></ng-container>
+          }
+        </div>
       </div>
-    } @else {
-      <div class="table-container">
-        <table class="table">
-          <thead>
-            <tr>
-              <th>ID Pedido</th>
-              <th>Responsable</th>
-              <th>Fecha y Hora</th>
-              <th>Cantidad</th>
-              <th>Estado</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            @for (sol of solicitudes; track sol.id) {
-              <tr>
-                <td style="font-weight: 500;">#{{ sol.id.substring(sol.id.length - 6) | uppercase }}</td>
-                <td>
-                  <div style="display: flex; align-items: center; gap: 8px;">
-                    <div class="avatar">{{ sol.responsable.substring(0, 2) | uppercase }}</div>
-                    <div>
-                      <div style="font-weight: 500;">{{ sol.responsable }}</div>
-                      <div style="font-size: 0.75rem; color: var(--text-secondary);">Destino Asignado</div>
-                    </div>
-                  </div>
-                </td>
-                <td>
-                  <div>{{ sol.fechaSolicitada | date:'dd/MM/yyyy' }}</div>
-                  <div style="font-size: 0.75rem; color: var(--text-secondary);">Entrega: {{ sol.horaEntrega || 'ASAP' }}</div>
-                </td>
-                <td>
-                  <div style="font-weight: 600;">{{ sol.cantidadSolicitada }}</div>
-                  <div style="font-size: 0.75rem; color: var(--text-secondary);">Raciones</div>
-                </td>
-                <td>
-                  <span class="badge" 
-                    [class.badge--warning]="sol.estado === 'PENDIENTE'"
-                    [class.badge--info]="sol.estado === 'APROBADA' || sol.estado === 'EN_PREPARACION'"
-                    [class.badge--success]="sol.estado === 'ENTREGADA'"
-                    [class.badge--primary]="sol.estado === 'LISTA'">
-                    {{ sol.estado }}
-                  </span>
-                </td>
-                <td>
-                  <div class="actions">
-                    @if (sol.estado === 'PENDIENTE') {
-                      <button class="btn btn--sm btn--primary" (click)="aprobar(sol)">Aprobar</button>
-                    }
-                    @if (sol.estado === 'APROBADA') {
-                      <button class="btn btn--sm" style="background: var(--blue-100); color: var(--blue-700);" (click)="preparar(sol)">A Cocina</button>
-                    }
-                    @if (sol.estado === 'EN_PREPARACION') {
-                      <button class="btn btn--sm" style="background: var(--indigo-100); color: var(--indigo-700);" (click)="listar(sol)">Marcar Lista</button>
-                    }
-                    @if (sol.estado === 'LISTA') {
-                      <button class="btn btn--sm btn--outline" routerLink="/salida" [queryParams]="{ solicitudId: sol.id }">Despachar</button>
-                    }
-                    <button class="btn btn--sm" style="background: transparent; color: var(--text-secondary); padding: 4px;" title="Editar Solicitud">
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            }
-            @if (solicitudes.length === 0) {
-              <tr>
-                <td colspan="6" style="text-align: center; padding: 24px; color: #64748b;">
-                  No hay pedidos registrados en el sistema.
-                </td>
-              </tr>
-            }
-          </tbody>
-        </table>
+
+      <!-- Columna Aprobadas -->
+      <div class="kanban-column">
+        <div class="kanban-column-header">
+          <div class="kanban-column-title">
+            <span class="status-dot bg-info"></span>
+            Aprobadas
+            <span class="kanban-count">{{ aprobadas.length }}</span>
+          </div>
+        </div>
+        <div class="kanban-cards">
+          @for (sol of aprobadas; track sol.id) {
+            <ng-container *ngTemplateOutlet="kanbanCard; context: { $implicit: sol, nextText: 'A Cocina' }"></ng-container>
+          }
+        </div>
       </div>
-    }
-  </div>
+
+      <!-- Columna En Cocina -->
+      <div class="kanban-column">
+        <div class="kanban-column-header">
+          <div class="kanban-column-title">
+            <span class="status-dot bg-indigo"></span>
+            En Cocina
+            <span class="kanban-count">{{ enCocina.length }}</span>
+          </div>
+        </div>
+        <div class="kanban-cards">
+          @for (sol of enCocina; track sol.id) {
+            <ng-container *ngTemplateOutlet="kanbanCard; context: { $implicit: sol, nextText: 'Marcar Lista' }"></ng-container>
+          }
+        </div>
+      </div>
+
+      <!-- Columna Listas -->
+      <div class="kanban-column">
+        <div class="kanban-column-header">
+          <div class="kanban-column-title">
+            <span class="status-dot bg-primary"></span>
+            Listas (Despacho)
+            <span class="kanban-count">{{ listas.length }}</span>
+          </div>
+        </div>
+        <div class="kanban-cards">
+          @for (sol of listas; track sol.id) {
+            <ng-container *ngTemplateOutlet="kanbanCard; context: { $implicit: sol, nextText: 'Despachar', isFinal: true }"></ng-container>
+          }
+        </div>
+      </div>
+
+    </div>
+  }
+
+  <!-- Template para la Tarjeta Kanban -->
+  <ng-template #kanbanCard let-sol let-nextText="nextText" let-isFinal="isFinal">
+    <div class="kanban-card">
+      <div class="kanban-card-top">
+        <span class="kanban-id">#{{ sol.id.substring(sol.id.length - 6) | uppercase }}</span>
+        <button class="icon-btn" (click)="abrirEditar(sol)" title="Editar">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
+        </button>
+      </div>
+      <div class="kanban-card-body">
+        <div class="kanban-resp">{{ sol.responsable }}</div>
+        <div class="kanban-detail"><strong>{{ getComidaNombre(sol.tipoComidaId) }}</strong></div>
+        <div class="kanban-detail">{{ sol.cantidadSolicitada }} Raciones</div>
+        <div class="kanban-time">Hora est.: {{ sol.horaEntrega || 'ASAP' }}</div>
+      </div>
+      <div class="kanban-card-footer">
+        @if (isFinal) {
+          <button class="btn btn--primary btn--sm btn--block" routerLink="/salida" [queryParams]="{ solicitudId: sol.id }">
+            {{ nextText }}
+          </button>
+        } @else {
+          <button class="btn btn--outline btn--sm btn--block" (click)="avanzar(sol)">
+            {{ nextText }} &rarr;
+          </button>
+        }
+      </div>
+    </div>
+  </ng-template>
+
 </div>
+
+<!-- Modal de Edición -->
+@if (isEditModalOpen) {
+  <div class="modal-overlay" (click)="cerrarEditar()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2 class="modal-title">Editar Pedido #{{ solicitudEnEdicion?.id?.substring(solicitudEnEdicion?.id?.length - 6) | uppercase }}</h2>
+        <button class="icon-btn" (click)="cerrarEditar()">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+
+      <div class="modal-body form-grid">
+        <div class="form-group form-group--full">
+          <label class="form-label">Centro de Acopio</label>
+          <select class="form-control" [(ngModel)]="editForm.centroId">
+            @for (centro of centros; track centro.id) {
+              <option [value]="centro.id">{{ centro.nombre }}</option>
+            }
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Tipo de Comida</label>
+          <select class="form-control" [(ngModel)]="editForm.tipoComidaId">
+            @for (tipo of tiposComida; track tipo.id) {
+              <option [value]="tipo.id">{{ tipo.nombre }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Cantidad</label>
+          <input type="number" class="form-control" [(ngModel)]="editForm.cantidadSolicitada" min="1">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Responsable</label>
+          <input type="text" class="form-control" [(ngModel)]="editForm.responsable">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Hora Entrega</label>
+          <input type="time" class="form-control" [(ngModel)]="editForm.horaEntrega">
+        </div>
+
+        <div class="form-group form-group--full">
+          <label class="form-label">Observaciones</label>
+          <textarea class="form-control" [(ngModel)]="editForm.observaciones" rows="2"></textarea>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn--ghost" (click)="cerrarEditar()">Cancelar</button>
+        <button class="btn btn--primary" [disabled]="savingEdit" (click)="guardarEdicion()">
+          @if (savingEdit) {
+            Guardando...
+          } @else {
+            Guardar Cambios
+          }
+        </button>
+      </div>
+    </div>
+  </div>
+}
