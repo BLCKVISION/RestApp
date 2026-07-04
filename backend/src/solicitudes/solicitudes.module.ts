@@ -4,6 +4,7 @@ import { SolicitudesService } from './solicitudes.service';
 
 @Module({
   controllers: [SolicitudesController],
-  providers: [SolicitudesService]
+  providers: [SolicitudesService],
+  exports: [SolicitudesService]
 })
 export class SolicitudesModule {}

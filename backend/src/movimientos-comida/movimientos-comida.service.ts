@@ -9,12 +9,14 @@ import {
 } from '../common/interfaces';
 import { SEED_MOVIMIENTOS, SEED_TIPOS_COMIDA, SEED_CENTROS, SEED_SOLICITUDES } from '../common/seed-data';
 import { CreateMovimientoDto, FilterMovimientoDto } from './dto/movimientos-comida.dto';
+import { SolicitudesService } from '../solicitudes/solicitudes.service';
 import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class MovimientosComidaService {
   private movimientos: IMovimientoComida[] = [...SEED_MOVIMIENTOS];
-  private solicitudes: ISolicitudComida[] = [...SEED_SOLICITUDES];
+
+  constructor(private solicitudesService: SolicitudesService) {}
 
   /** Registrar un nuevo movimiento (entrada o salida) */
   create(dto: CreateMovimientoDto): IMovimientoComida {
@@ -50,10 +52,15 @@ export class MovimientosComidaService {
       cantidad: dto.cantidad,
       origen: dto.origen,
       nota: dto.nota,
+      solicitudId: dto.solicitudId,
       registradoPor: dto.registradoPor,
       fecha: dto.fecha ? new Date(dto.fecha) : new Date(),
       createdAt: new Date(),
     };
+
+    if (dto.solicitudId && dto.tipo === TipoMovimiento.SALIDA) {
+      this.solicitudesService.updateEstado(dto.solicitudId, EstadoSolicitud.ENTREGADA);
+    }
 
     this.movimientos.push(nuevo);
     return nuevo;
@@ -144,8 +151,9 @@ export class MovimientosComidaService {
     const salidasHoy = inventarioPorTipo.reduce((sum, t) => sum + t.salidasHoy, 0);
 
     // Nuevas métricas operativas
-    const pedidosPendientes = this.solicitudes.filter((s) => s.estado === EstadoSolicitud.PENDIENTE).length;
-    const pedidosProgramadosHoy = this.solicitudes.filter(
+    const allSolicitudes = this.solicitudesService.findAll();
+    const pedidosPendientes = allSolicitudes.filter((s) => s.estado === EstadoSolicitud.PENDIENTE).length;
+    const pedidosProgramadosHoy = allSolicitudes.filter(
       (s) => s.estado === EstadoSolicitud.APROBADA || s.estado === EstadoSolicitud.EN_PREPARACION || s.estado === EstadoSolicitud.LISTA
     ).length;
 
@@ -156,13 +164,13 @@ export class MovimientosComidaService {
     const pctInventario = 8.5; 
 
     // Últimas solicitudes completadas
-    const solicitudesRecientes = [...this.solicitudes]
+    const solicitudesRecientes = [...allSolicitudes]
       .filter((s) => s.estado === EstadoSolicitud.ENTREGADA)
       .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
       .slice(0, 10);
 
     // Solicitudes programadas para el dashboard central
-    const solicitudesProgramadas = [...this.solicitudes]
+    const solicitudesProgramadas = [...allSolicitudes]
       .filter((s) => [EstadoSolicitud.PENDIENTE, EstadoSolicitud.APROBADA, EstadoSolicitud.EN_PREPARACION, EstadoSolicitud.LISTA].includes(s.estado))
       .sort((a, b) => new Date(a.fechaSolicitada).getTime() - new Date(b.fechaSolicitada).getTime());
 

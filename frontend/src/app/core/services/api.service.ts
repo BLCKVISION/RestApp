@@ -39,6 +39,7 @@ export class ApiService {
     origen?: string;
     nota?: string;
     registradoPor: string;
+    solicitudId?: string;
     fecha?: string;
   }): Observable<MovimientoComida> {
     return this.http.post<MovimientoComida>(`${API}/movimientos`, data);
@@ -80,6 +81,10 @@ export class ApiService {
   // ─── Solicitudes ────────────────────────────────────────────────
   getSolicitudes(): Observable<SolicitudComida[]> {
     return this.http.get<SolicitudComida[]>(`${API}/solicitudes`);
+  }
+
+  crearSolicitud(data: any): Observable<SolicitudComida> {
+    return this.http.post<SolicitudComida>(`${API}/solicitudes`, data);
   }
 
   updateSolicitudEstado(id: string, estado: EstadoSolicitud): Observable<SolicitudComida> {

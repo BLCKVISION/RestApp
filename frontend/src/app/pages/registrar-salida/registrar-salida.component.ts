@@ -8,7 +8,9 @@ import {
   TipoComida,
   TipoMovimiento,
   ResumenInventario,
+  SolicitudComida
 } from '../../core/models/models';
+import { ActivatedRoute } from '@angular/router';
 import gsap from 'gsap';
 
 @Component({
@@ -32,18 +34,37 @@ export class RegistrarSalidaComponent implements OnInit, AfterViewInit {
     destino: '',
     nota: '',
     registradoPor: '',
+    solicitudId: '',
     fecha: new Date().toISOString().split('T')[0],
   };
 
   isOpenTipoComida = false;
   isOpenCentro = false;
 
-  constructor(private api: ApiService) {}
+  constructor(private api: ApiService, private route: ActivatedRoute) {}
 
   ngOnInit() {
     this.api.getCentros().subscribe({ next: (data) => (this.centros = data) });
     this.api.getTiposComida().subscribe({ next: (data) => (this.tiposComida = data) });
     this.api.getResumen().subscribe({ next: (data) => (this.resumen = data) });
+
+    this.route.queryParams.subscribe(params => {
+      const solId = params['solicitudId'];
+      if (solId) {
+        this.api.getSolicitudes().subscribe(solicitudes => {
+          const sol = solicitudes.find(s => s.id === solId);
+          if (sol) {
+            this.form.solicitudId = sol.id;
+            this.form.centroId = sol.centroId;
+            this.form.cantidad = sol.cantidadSolicitada;
+            this.form.registradoPor = sol.responsable;
+            if (sol.tipoComidaId) {
+              this.form.tipoComidaId = sol.tipoComidaId;
+            }
+          }
+        });
+      }
+    });
   }
 
   ngAfterViewInit() {
@@ -135,6 +156,7 @@ export class RegistrarSalidaComponent implements OnInit, AfterViewInit {
         tipoComidaId: this.form.tipoComidaId,
         cantidad: this.form.cantidad!,
         nota: this.form.nota || undefined,
+        solicitudId: this.form.solicitudId || undefined,
         registradoPor: this.form.registradoPor,
         fecha: this.form.fecha || undefined,
       })
@@ -160,6 +182,7 @@ export class RegistrarSalidaComponent implements OnInit, AfterViewInit {
       cantidad: null,
       destino: '',
       nota: '',
+      solicitudId: '',
       registradoPor: this.form.registradoPor,
       fecha: new Date().toISOString().split('T')[0],
     };

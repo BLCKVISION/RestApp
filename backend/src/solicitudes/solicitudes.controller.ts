@@ -1,14 +1,19 @@
-import { Controller, Get, Param, Patch, Body } from '@nestjs/common';
+import { Controller, Get, Patch, Post, Body, Param } from '@nestjs/common';
 import { SolicitudesService } from './solicitudes.service';
 import { EstadoSolicitud } from '../common/interfaces';
 
-@Controller('api/solicitudes')
+@Controller('solicitudes')
 export class SolicitudesController {
   constructor(private readonly solicitudesService: SolicitudesService) {}
 
   @Get()
   findAll() {
     return this.solicitudesService.findAll();
+  }
+
+  @Post()
+  create(@Body() body: any) {
+    return this.solicitudesService.create(body);
   }
 
   @Patch(':id/estado')

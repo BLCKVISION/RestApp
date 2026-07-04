@@ -43,6 +43,10 @@ export class CreateMovimientoDto {
   @MaxLength(500)
   nota?: string;
 
+  @IsUUID('4')
+  @IsOptional()
+  solicitudId?: string;
+
   @IsString()
   @IsNotEmpty()
   @MaxLength(150)

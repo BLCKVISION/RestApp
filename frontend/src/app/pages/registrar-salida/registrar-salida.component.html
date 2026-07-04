@@ -4,6 +4,13 @@
     <p class="page__subtitle">Registra el despacho de comidas a beneficiarios o centros.</p>
   </div>
 
+  @if (form.solicitudId) {
+    <div style="background-color: #ecfdf5; color: #059669; padding: 12px; border-radius: 8px; margin-bottom: 20px; font-size: 0.85rem; display: flex; align-items: center; gap: 8px;">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+      <strong>Despacho vinculado al pedido #{{form.solicitudId.split('-')[0]}}</strong>
+    </div>
+  }
+
   <div class="layout-grid">
     <!-- Left Column: Form -->
     <div class="form-card card animate-fade-in-up">

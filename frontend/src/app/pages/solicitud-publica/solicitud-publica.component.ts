@@ -42,29 +42,25 @@ export class SolicitudPublicaComponent implements OnInit {
     this.submitting = true;
     this.error = false;
     
-    // Find names for the message
-    const centro = this.centros.find(c => c.id === this.form.centroId)?.nombre || 'Centro';
-    const comida = this.tiposComida.find(t => t.id === this.form.tipoComidaId)?.nombre || 'Comida';
-    
-    // Format the message
-    const text = `*SOLICITUD DE COMIDA - ACOPIORED*%0A%0A` +
-                 `*Centro:* ${centro}%0A` +
-                 `*Solicitante:* ${this.form.solicitante}%0A` +
-                 `*Tipo de Comida:* ${comida}%0A` +
-                 `*Cantidad:* ${this.form.cantidad}%0A` +
-                 (this.form.nota ? `*Nota:* ${this.form.nota}%0A` : '') +
-                 `%0A_Generado vía AcopioRed Web_`;
-                 
-    // Replace with the actual WhatsApp number of the central hub
-    const phoneNumber = '584140000000'; 
-    const whatsappUrl = `https://wa.me/${phoneNumber}?text=${text}`;
-
-    // Simulate short delay then redirect
-    setTimeout(() => {
-      this.submitting = false;
-      this.success = true;
-      window.open(whatsappUrl, '_blank');
-    }, 800);
+    this.api.crearSolicitud({
+      centroId: this.form.centroId,
+      tipoComidaId: this.form.tipoComidaId,
+      cantidad: this.form.cantidad,
+      solicitante: this.form.solicitante,
+      nota: this.form.nota,
+      // Default to "A convenir" if they don't provide time (we can add time field later)
+      horaEntrega: 'A convenir'
+    }).subscribe({
+      next: () => {
+        this.submitting = false;
+        this.success = true;
+      },
+      error: () => {
+        this.submitting = false;
+        this.error = true;
+        alert('Ocurrió un error al enviar tu solicitud. Intenta de nuevo.');
+      }
+    });
   }
 
   reset() {
