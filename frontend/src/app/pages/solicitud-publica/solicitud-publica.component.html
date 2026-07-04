@@ -1,6 +1,6 @@
 <div class="public-wrapper">
   <div class="public-card card">
-    @if (!success) {
+    @if (!success && !showSummary) {
       <div class="public-header">
         <div class="public-logo">
           <svg width="40" height="40" viewBox="0 0 24 24" fill="none">
@@ -8,7 +8,7 @@
             <path d="M7 12l3 3 7-7" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
         </div>
-        <h1 class="public-title">Solicitar Comidas</h1>
+        <h1 class="public-title">Registrar Entrada</h1>
         <p class="public-subtitle">Formulario de requerimiento para organizaciones</p>
       </div>
 
@@ -54,17 +54,58 @@
       </div>
 
       <div class="submit-wrapper">
-        <button class="btn btn--primary btn--lg btn-submit" [disabled]="!isValid || submitting" (click)="submit()">
+        <button class="btn btn--primary btn--lg btn-submit" [disabled]="!isValid" (click)="verResumen()">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 8px;">
+            <path d="M5 18H3c-.6 0-1-.4-1-1V7c0-.6.4-1 1-1h10c.6 0 1 .4 1 1v11"/>
+            <path d="M14 9h4l4 4v4c0 .6-.4 1-1 1h-2"/>
+            <circle cx="7" cy="18" r="2"/>
+            <circle cx="17" cy="18" r="2"/>
+          </svg>
+          Registrar
+        </button>
+      </div>
+    } @else if (showSummary) {
+      <div class="public-header">
+        <div class="public-logo">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none">
+            <rect width="24" height="24" rx="8" fill="var(--primary)"/>
+            <path d="M7 12l3 3 7-7" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <h1 class="public-title">Resumen de la Solicitud</h1>
+        <p class="public-subtitle">Verifica los datos antes de enviar</p>
+      </div>
+
+      <div class="summary-card">
+        <div class="summary-card__item">
+          <span>Organización:</span>
+          <strong>{{ form.centroId || '---' }}</strong>
+        </div>
+        <div class="summary-card__item">
+          <span>Responsable:</span>
+          <strong>{{ form.solicitante || '---' }}</strong>
+        </div>
+        <div class="summary-card__item">
+          <span>Comida:</span>
+          <strong>{{ selectedTipoComidaNombre }}</strong>
+        </div>
+        <div class="summary-card__item">
+          <span>Cantidad:</span>
+          <strong>{{ form.cantidad || 0 }} raciones</strong>
+        </div>
+        <div class="summary-card__item">
+          <span>Hora de entrega:</span>
+          <strong>{{ form.horaEntrega || 'A convenir' }}</strong>
+        </div>
+      </div>
+
+      <div class="submit-wrapper summary-actions">
+        <button class="btn btn--outline btn--lg btn--block" (click)="cancelarResumen()">Volver a editar</button>
+        <button class="btn btn--primary btn--lg btn-submit" [disabled]="submitting" (click)="confirmarRegistro()">
           @if (submitting) {
             <span class="spinner"></span> Procesando...
           } @else {
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 8px;">
-              <path d="M5 18H3c-.6 0-1-.4-1-1V7c0-.6.4-1 1-1h10c.6 0 1 .4 1 1v11"/>
-              <path d="M14 9h4l4 4v4c0 .6-.4 1-1 1h-2"/>
-              <circle cx="7" cy="18" r="2"/>
-              <circle cx="17" cy="18" r="2"/>
-            </svg>
-            Confirmar Solicitud
+            Continuar
           }
         </button>
       </div>
@@ -80,7 +121,7 @@
         <p class="success-desc">Su pedido ha sido registrado en nuestro sistema. Nos pondremos en contacto con el responsable asignado.</p>
         <div class="success-actions">
           <button class="btn btn--primary btn--block" (click)="reset()">Nueva Solicitud</button>
-          <button class="btn btn--outline btn--block" onclick="window.location.href='/'">Salir del sistema</button>
+          <button class="btn btn--outline btn--block" routerLink="/solicitudes">Volver</button>
         </div>
       </div>
     }

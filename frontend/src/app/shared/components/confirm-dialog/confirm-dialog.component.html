@@ -1,0 +1,17 @@
+@if (dialog.state(); as state) {
+  <div class="confirm-overlay" (click)="dialog.respond(false)">
+    <div class="confirm-modal" (click)="$event.stopPropagation()">
+      <h3 class="confirm-modal__title">{{ state.title }}</h3>
+      <p class="confirm-modal__message">{{ state.message }}</p>
+      <div class="confirm-modal__actions">
+        <button class="btn btn--outline" (click)="dialog.respond(false)">{{ state.cancelText || 'No' }}</button>
+        <button
+          class="btn"
+          [class.btn--confirm]="state.variant !== 'danger'"
+          [class.btn--danger]="state.variant === 'danger'"
+          (click)="dialog.respond(true)"
+        >{{ state.confirmText || 'Sí' }}</button>
+      </div>
+    </div>
+  </div>
+}

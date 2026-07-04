@@ -1,7 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { ICentroAcopio } from '../common/interfaces';
+import { ICentroAcopio, PaginatedResponse } from '../common/interfaces';
 import { SEED_CENTROS } from '../common/seed-data';
 import { CreateCentroAcopioDto, UpdateCentroAcopioDto } from './dto/centros-acopio.dto';
+import { PaginationDto } from '../common/dto/pagination.dto';
+import { paginate } from '../common/paginate';
 import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
@@ -9,8 +11,9 @@ export class CentrosAcopioService {
   // In-memory store — será reemplazado por TypeORM repo
   private centros: ICentroAcopio[] = [...SEED_CENTROS];
 
-  findAll(): ICentroAcopio[] {
-    return this.centros.filter((c) => c.activo);
+  findAll(pagination: PaginationDto = {}): ICentroAcopio[] | PaginatedResponse<ICentroAcopio> {
+    const activos = this.centros.filter((c) => c.activo);
+    return paginate(activos, pagination);
   }
 
   findOne(id: string): ICentroAcopio {

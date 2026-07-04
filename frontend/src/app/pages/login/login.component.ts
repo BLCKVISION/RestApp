@@ -93,17 +93,25 @@ export class LoginComponent implements AfterViewInit, OnDestroy {
     this.startCarousel();
   }
 
+  submitting = false;
+
   onSubmit() {
     this.error = false;
-    const success = this.auth.login(this.username, this.password);
-    if (!success) {
-      this.error = true;
-      
-      // Shake animation on error
-      gsap.fromTo('.login-card', 
-        { x: -10 },
-        { x: 0, duration: 0.5, ease: 'rough({template: none, strength: 1, points: 20, taper: none, randomize: true, clamp: false})', clearProps: 'x' }
-      );
-    }
+    this.submitting = true;
+    this.auth.login(this.username, this.password).subscribe({
+      next: () => {
+        this.submitting = false;
+      },
+      error: () => {
+        this.submitting = false;
+        this.error = true;
+
+        // Shake animation on error
+        gsap.fromTo('.login-card',
+          { x: -10 },
+          { x: 0, duration: 0.5, ease: 'rough({template: none, strength: 1, points: 20, taper: none, randomize: true, clamp: false})', clearProps: 'x' }
+        );
+      }
+    });
   }
 }

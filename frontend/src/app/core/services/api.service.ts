@@ -13,8 +13,9 @@ import {
   SolicitudComida,
   EstadoSolicitud,
 } from '../models/models';
+import { API_BASE_URL } from '../api.config';
 
-const API = 'https://restappbackend.up.railway.app/api';
+const API = API_BASE_URL;
 
 @Injectable({ providedIn: 'root' })
 export class ApiService {

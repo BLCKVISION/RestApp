@@ -1,6 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { ISolicitudComida, EstadoSolicitud } from '../common/interfaces';
+import { ISolicitudComida, EstadoSolicitud, PaginatedResponse } from '../common/interfaces';
 import { SEED_SOLICITUDES } from '../common/seed-data';
+import { PaginationDto } from '../common/dto/pagination.dto';
+import { paginate } from '../common/paginate';
 import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
@@ -24,8 +26,15 @@ export class SolicitudesService {
     return nueva;
   }
 
-  findAll(): ISolicitudComida[] {
-    return this.solicitudes.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  findAll(pagination: PaginationDto = {}): ISolicitudComida[] | PaginatedResponse<ISolicitudComida> {
+    return paginate(this.findAllSorted(), pagination);
+  }
+
+  /** Lista completa ordenada, para uso interno (ej. cálculos del dashboard) */
+  findAllSorted(): ISolicitudComida[] {
+    return [...this.solicitudes].sort(
+      (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+    );
   }
 
   update(id: string, data: Partial<ISolicitudComida>): ISolicitudComida {

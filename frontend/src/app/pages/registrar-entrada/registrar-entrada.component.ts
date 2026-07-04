@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ApiService } from '../../core/services/api.service';
+import { ToastService } from '../../core/services/toast.service';
+import { ConfirmDialogService } from '../../core/services/confirm-dialog.service';
 import { TipoComida, TipoMovimiento } from '../../core/models/models';
 import { CustomDatepickerComponent } from '../../shared/components/custom-datepicker/custom-datepicker.component';
 import gsap from 'gsap';
@@ -17,7 +19,7 @@ import gsap from 'gsap';
 export class RegistrarEntradaComponent implements OnInit, AfterViewInit {
   tiposComida: TipoComida[] = [];
   submitting = false;
-  toast: { message: string; type: 'success' | 'error' } | null = null;
+  showSummary = false;
 
   form = {
     tipoComidaId: '',
@@ -32,7 +34,12 @@ export class RegistrarEntradaComponent implements OnInit, AfterViewInit {
   isOpenTipoComida = false;
   isOpenOrigen = false;
 
-  constructor(private api: ApiService, private router: Router) {}
+  constructor(
+    private api: ApiService,
+    private router: Router,
+    private toast: ToastService,
+    private confirmDialog: ConfirmDialogService
+  ) {}
 
   ngOnInit() {
     this.api.getTiposComida().subscribe({
@@ -95,8 +102,26 @@ export class RegistrarEntradaComponent implements OnInit, AfterViewInit {
     this.isOpenOrigen = false;
   }
 
-  submit() {
+  verResumen() {
+    if (!this.isValid) return;
+    this.showSummary = true;
+  }
+
+  cancelarResumen() {
+    this.showSummary = false;
+  }
+
+  async confirmarRegistro() {
     if (!this.isValid || this.submitting) return;
+
+    const confirmado = await this.confirmDialog.confirm({
+      title: 'Confirmar registro',
+      message: '¿Deseas registrar esta entrada en el sistema?',
+      confirmText: 'Sí, registrar',
+      cancelText: 'No',
+    });
+    if (!confirmado) return;
+
     this.submitting = true;
 
     this.api
@@ -111,12 +136,13 @@ export class RegistrarEntradaComponent implements OnInit, AfterViewInit {
       })
       .subscribe({
         next: () => {
-          this.showToast('✓ Entrada registrada exitosamente', 'success');
+          this.toast.success('✓ Entrada registrada exitosamente');
           this.resetForm();
+          this.showSummary = false;
           this.submitting = false;
         },
         error: (err) => {
-          this.showToast(err.error?.message || 'Error al registrar', 'error');
+          this.toast.error(err.error?.message || 'Error al registrar');
           this.submitting = false;
         },
       });
@@ -131,10 +157,5 @@ export class RegistrarEntradaComponent implements OnInit, AfterViewInit {
       registradoPor: this.form.registradoPor,
       fecha: new Date().toISOString().split('T')[0],
     };
-  }
-
-  private showToast(message: string, type: 'success' | 'error') {
-    this.toast = { message, type };
-    setTimeout(() => (this.toast = null), 3500);
   }
 }

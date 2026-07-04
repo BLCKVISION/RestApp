@@ -22,6 +22,7 @@ async function bootstrap() {
   app.enableCors({
     origin: ['https://restapp.up.railway.app', 'http://localhost:4200'],
     methods: ['GET', 'POST', 'PATCH', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true,
   });
 

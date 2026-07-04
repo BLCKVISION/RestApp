@@ -151,7 +151,7 @@ export class MovimientosComidaService {
     const salidasHoy = inventarioPorTipo.reduce((sum, t) => sum + t.salidasHoy, 0);
 
     // Nuevas métricas operativas
-    const allSolicitudes = this.solicitudesService.findAll();
+    const allSolicitudes = this.solicitudesService.findAllSorted();
     const pedidosPendientes = allSolicitudes.filter((s) => s.estado === EstadoSolicitud.PENDIENTE).length;
     const pedidosProgramadosHoy = allSolicitudes.filter(
       (s) => s.estado === EstadoSolicitud.APROBADA || s.estado === EstadoSolicitud.EN_PREPARACION || s.estado === EstadoSolicitud.LISTA

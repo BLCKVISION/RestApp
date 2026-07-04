@@ -1,12 +1,14 @@
 import { Component, OnInit, AfterViewInit, ChangeDetectorRef } from '@angular/core';
 import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from './core/services/auth.service';
+import { ToastContainerComponent } from './shared/components/toast-container/toast-container.component';
+import { ConfirmDialogComponent } from './shared/components/confirm-dialog/confirm-dialog.component';
 import gsap from 'gsap';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, RouterLink, RouterLinkActive],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, ToastContainerComponent, ConfirmDialogComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
 })

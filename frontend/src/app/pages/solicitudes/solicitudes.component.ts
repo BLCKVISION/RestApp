@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { ApiService } from '../../core/services/api.service';
+import { ToastService } from '../../core/services/toast.service';
+import { ConfirmDialogService } from '../../core/services/confirm-dialog.service';
 import { SolicitudComida, EstadoSolicitud, CentroAcopio, TipoComida } from '../../core/models/models';
 import { CdkDragDrop, moveItemInArray, transferArrayItem, CdkDrag, CdkDropList, CdkDropListGroup } from '@angular/cdk/drag-drop';
 
@@ -42,7 +44,11 @@ export class SolicitudesComponent implements OnInit {
     prioridad: 'MEDIA'
   };
 
-  constructor(private api: ApiService) {}
+  constructor(
+    private api: ApiService,
+    private toast: ToastService,
+    private confirmDialog: ConfirmDialogService
+  ) {}
 
   ngOnInit() {
     this.api.getCentros().subscribe({ next: data => this.centros = data });
@@ -130,9 +136,17 @@ export class SolicitudesComponent implements OnInit {
     this.solicitudEnEdicion = null;
   }
 
-  guardarEdicion() {
+  async guardarEdicion() {
     if (!this.solicitudEnEdicion) return;
-    
+
+    const confirmado = await this.confirmDialog.confirm({
+      title: 'Confirmar cambios',
+      message: '¿Deseas guardar los cambios de este pedido?',
+      confirmText: 'Sí, guardar',
+      cancelText: 'No',
+    });
+    if (!confirmado) return;
+
     this.savingEdit = true;
     this.api.updateSolicitud(this.solicitudEnEdicion.id, this.editForm).subscribe({
       next: (updated) => {
@@ -143,10 +157,11 @@ export class SolicitudesComponent implements OnInit {
         }
         this.savingEdit = false;
         this.cerrarEditar();
+        this.toast.success('✓ Solicitud actualizada exitosamente');
       },
       error: () => {
         this.savingEdit = false;
-        alert('Ocurrió un error al editar la solicitud.');
+        this.toast.error('Ocurrió un error al editar la solicitud.');
       }
     });
   }

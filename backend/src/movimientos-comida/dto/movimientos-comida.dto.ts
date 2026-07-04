@@ -2,7 +2,6 @@ import {
   IsString,
   IsNotEmpty,
   IsEnum,
-  IsUUID,
   IsInt,
   Min,
   IsOptional,
@@ -21,11 +20,11 @@ export class CreateMovimientoDto {
 
   /** Obligatorio para SALIDA, opcional para ENTRADA */
   @ValidateIf((o) => o.tipo === TipoMovimiento.SALIDA)
-  @IsUUID('4', { message: 'centroId debe ser un UUID válido' })
+  @IsString()
   @IsNotEmpty({ message: 'Centro es obligatorio para salidas' })
   centroId?: string;
 
-  @IsUUID('4')
+  @IsString()
   @IsNotEmpty()
   tipoComidaId: string;
 
@@ -43,7 +42,7 @@ export class CreateMovimientoDto {
   @MaxLength(500)
   nota?: string;
 
-  @IsUUID('4')
+  @IsString()
   @IsOptional()
   solicitudId?: string;
 
@@ -63,11 +62,11 @@ export class FilterMovimientoDto {
   @IsOptional()
   tipo?: TipoMovimiento;
 
-  @IsUUID('4')
+  @IsString()
   @IsOptional()
   centroId?: string;
 
-  @IsUUID('4')
+  @IsString()
   @IsOptional()
   tipoComidaId?: string;
 

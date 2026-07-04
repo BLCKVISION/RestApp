@@ -1,14 +1,18 @@
-import { Controller, Get, Post, Patch, Param, Body } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Param, Body, Query } from '@nestjs/common';
 import { CentrosAcopioService } from './centros-acopio.service';
 import { CreateCentroAcopioDto, UpdateCentroAcopioDto } from './dto/centros-acopio.dto';
+import { PaginationDto } from '../common/dto/pagination.dto';
+import { Public } from '../auth/public.decorator';
 
 @Controller('centros-acopio')
 export class CentrosAcopioController {
   constructor(private readonly service: CentrosAcopioService) {}
 
+  /** Público: necesario para el formulario público de solicitudes */
+  @Public()
   @Get()
-  findAll() {
-    return this.service.findAll();
+  findAll(@Query() pagination: PaginationDto) {
+    return this.service.findAll(pagination);
   }
 
   @Get(':id')

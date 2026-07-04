@@ -1,14 +1,18 @@
-import { Controller, Get, Post, Patch, Param, Body } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Param, Body, Query } from '@nestjs/common';
 import { TiposComidaService } from './tipos-comida.service';
 import { CreateTipoComidaDto, UpdateTipoComidaDto } from './dto/tipos-comida.dto';
+import { PaginationDto } from '../common/dto/pagination.dto';
+import { Public } from '../auth/public.decorator';
 
 @Controller('tipos-comida')
 export class TiposComidaController {
   constructor(private readonly service: TiposComidaService) {}
 
+  /** Público: necesario para el formulario público de solicitudes */
+  @Public()
   @Get()
-  findAll() {
-    return this.service.findAll();
+  findAll(@Query() pagination: PaginationDto) {
+    return this.service.findAll(pagination);
   }
 
   @Get(':id')

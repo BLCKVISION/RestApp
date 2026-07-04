@@ -1,15 +1,18 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { ITipoComida } from '../common/interfaces';
+import { ITipoComida, PaginatedResponse } from '../common/interfaces';
 import { SEED_TIPOS_COMIDA } from '../common/seed-data';
 import { CreateTipoComidaDto, UpdateTipoComidaDto } from './dto/tipos-comida.dto';
+import { PaginationDto } from '../common/dto/pagination.dto';
+import { paginate } from '../common/paginate';
 import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class TiposComidaService {
   private tipos: ITipoComida[] = [...SEED_TIPOS_COMIDA];
 
-  findAll(): ITipoComida[] {
-    return this.tipos.filter((t) => t.activo);
+  findAll(pagination: PaginationDto = {}): ITipoComida[] | PaginatedResponse<ITipoComida> {
+    const activos = this.tipos.filter((t) => t.activo);
+    return paginate(activos, pagination);
   }
 
   findOne(id: string): ITipoComida {

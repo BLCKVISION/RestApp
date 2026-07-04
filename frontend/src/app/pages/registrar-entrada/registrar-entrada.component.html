@@ -4,8 +4,9 @@
     <p class="page__subtitle">Registra la recepción de comidas (donaciones, producción, etc.)</p>
   </div>
 
-  <div class="layout-grid">
+  <div class="layout-grid" [class.layout-grid--single]="!showSummary">
     <!-- Left Column: Form -->
+    @if (!showSummary) {
     <div class="form-card card animate-fade-in-up">
       <div class="form-card__icon">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -101,25 +102,22 @@
     <div class="form-actions">
       <button
         class="btn btn--primary btn--lg btn--block"
-        [disabled]="!isValid || submitting"
-        (click)="submit()"
+        [disabled]="!isValid"
+        (click)="verResumen()"
         id="submitEntrada"
       >
-        @if (submitting) {
-          <span class="btn-spinner"></span>
-          Registrando...
-        } @else {
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-            <path d="M12 5v14m-7-7l7 7 7-7"/>
-          </svg>
-          Registrar Entrada
-        }
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path d="M12 5v14m-7-7l7 7 7-7"/>
+        </svg>
+        Registrar Entrada
       </button>
     </div>
   </div>
+  }
 
-    <!-- Right Column: Summary Placeholder -->
-    <div class="summary-card animate-fade-in-up" style="animation-delay: 0.1s;">
+    <!-- Summary Step -->
+    @if (showSummary) {
+    <div class="summary-card animate-fade-in-up">
       <h3 class="summary-card__title">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
@@ -130,7 +128,7 @@
         </svg>
         Resumen del Pedido
       </h3>
-      
+
       <div class="summary-card__item">
         <span>Comida:</span>
         <strong>{{ selectedTipoComidaNombre || '---' }}</strong>
@@ -156,10 +154,19 @@
         </svg>
         <p>Asegúrate de verificar la calidad de los productos antes de registrar el pedido definitivo en el sistema.</p>
       </div>
-    </div>
-  </div>
 
-  @if (toast) {
-    <div class="toast" [class]="'toast--' + toast.type">{{ toast.message }}</div>
-  }
+      <div class="summary-card__actions">
+        <button class="btn btn--outline btn--block" (click)="cancelarResumen()">Volver a editar</button>
+        <button class="btn btn--primary btn--block" [disabled]="submitting" (click)="confirmarRegistro()">
+          @if (submitting) {
+            <span class="btn-spinner"></span>
+            Registrando...
+          } @else {
+            Continuar
+          }
+        </button>
+      </div>
+    </div>
+    }
+
 </div>

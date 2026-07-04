@@ -141,6 +141,41 @@
   width: 100%;
 }
 
+.summary-actions {
+  flex-direction: column;
+  gap: 12px;
+
+  .btn-submit,
+  .btn--outline {
+    width: 100%;
+  }
+}
+
+.summary-card {
+  margin-bottom: 32px;
+  padding: 20px;
+  border-radius: 16px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+
+  &__item {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px dashed #e2e8f0;
+    font-size: 0.9rem;
+    color: #64748b;
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    strong {
+      color: #1e293b;
+    }
+  }
+}
+
 .btn-submit {
   border-radius: 12px;
   font-weight: 700;
