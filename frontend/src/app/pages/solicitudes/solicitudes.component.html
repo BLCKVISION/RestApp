@@ -88,7 +88,7 @@
         <div class="kanban-column-header">
           <div class="kanban-column-title">
             <span class="status-dot bg-success"></span>
-            Listas
+            Empaquetado
             <span class="kanban-count">{{ listas.length }}</span>
           </div>
         </div>
@@ -97,7 +97,7 @@
             <ng-container *ngTemplateOutlet="kanbanCard; context: { $implicit: sol, isFinal: true }"></ng-container>
           }
           @if (listas.length === 0) {
-            <div class="kanban-empty">Sin pedidos listos</div>
+            <div class="kanban-empty">Sin pedidos empaquetados</div>
           }
         </div>
       </div>
@@ -172,7 +172,7 @@
         @if (isFinal) {
           <button class="btn-dispatch" routerLink="/salida" [queryParams]="{ solicitudId: sol.id }">
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 19V5m-7 7l7-7 7 7"/></svg>
-            Despachar
+            Registrar Salida
           </button>
         }
       </div>
@@ -187,13 +187,13 @@
     <div class="premium-modal detail-modal" (click)="$event.stopPropagation()">
       <div class="modal-header">
         <div style="display: flex; align-items: center; gap: 12px;">
-          <div class="detail-status-badge"
-               [class.status-pendiente]="selectedSolicitud.estado === 'PENDIENTE'"
-               [class.status-aprobada]="selectedSolicitud.estado === 'APROBADA'"
-               [class.status-cocina]="selectedSolicitud.estado === 'EN_PREPARACION'"
-               [class.status-lista]="selectedSolicitud.estado === 'LISTA'">
-            {{ selectedSolicitud.estado.replace('_', ' ') }}
-          </div>
+          <span class="status-badge" 
+             [class.status-pendiente]="selectedSolicitud.estado === 'PENDIENTE'"
+             [class.status-aprobada]="selectedSolicitud.estado === 'APROBADA'"
+             [class.status-preparacion]="selectedSolicitud.estado === 'EN_PREPARACION'"
+             [class.status-lista]="selectedSolicitud.estado === 'LISTA'">
+            {{ selectedSolicitud.estado === 'LISTA' ? 'EMPAQUETADO' : selectedSolicitud.estado.replace('_', ' ') }}
+          </span>
           <div>
             <h2 class="modal-title">Pedido #{{ selectedSolicitud.id | slice:-6 | uppercase }}</h2>
             <p style="margin: 0; font-size: 0.78rem; color: var(--text-muted); margin-top: 2px;">
@@ -262,7 +262,7 @@
               <button class="status-picker-btn" [class.active]="selectedSolicitud.estado === 'PENDIENTE'" (click)="cambiarEstadoDirecto(selectedSolicitud, 'PENDIENTE')">Pendiente</button>
               <button class="status-picker-btn" [class.active]="selectedSolicitud.estado === 'APROBADA'" (click)="cambiarEstadoDirecto(selectedSolicitud, 'APROBADA')">Aprobada</button>
               <button class="status-picker-btn" [class.active]="selectedSolicitud.estado === 'EN_PREPARACION'" (click)="cambiarEstadoDirecto(selectedSolicitud, 'EN_PREPARACION')">En Cocina</button>
-              <button class="status-picker-btn" [class.active]="selectedSolicitud.estado === 'LISTA'" (click)="cambiarEstadoDirecto(selectedSolicitud, 'LISTA')">Lista</button>
+              <button class="status-picker-btn" [class.active]="selectedSolicitud.estado === 'LISTA'" (click)="cambiarEstadoDirecto(selectedSolicitud, 'LISTA')">Empaquetado</button>
             </div>
           </div>
         </div>

@@ -205,8 +205,8 @@ export class SolicitudesComponent implements OnInit, AfterViewInit {
   getNextLabel(estado: string): string {
     const labels: Record<string, string> = {
       'PENDIENTE': 'Aprobar',
-      'APROBADA': 'En Cocina',
-      'EN_PREPARACION': 'Lista',
+      'APROBADA': 'A Cocina',
+      'EN_PREPARACION': 'Empaquetar',
     };
     return labels[estado] || '';
   }
