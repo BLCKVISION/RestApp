@@ -8,7 +8,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 28px;
+    margin-bottom: 16px;
   }
 
   &__title {
@@ -22,20 +22,20 @@
   &__grid {
     display: grid;
     grid-template-columns: 1fr 340px;
-    gap: 24px;
+    gap: 16px;
     align-items: start;
   }
 
   &__left {
     display: flex;
     flex-direction: column;
-    gap: 24px;
+    gap: 16px;
   }
 
   &__right {
     display: flex;
     flex-direction: column;
-    gap: 24px;
+    gap: 16px;
   }
 
   &__loading {
@@ -68,11 +68,11 @@
 }
 
 .kpi-card {
-  padding: 20px;
+  padding: 16px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  min-height: 140px;
+  min-height: 120px;
 
   &__top {
     display: flex;
@@ -226,7 +226,7 @@
 .bar-chart {
   display: flex;
   gap: 16px;
-  height: 220px;
+  height: 180px;
   margin-top: 12px;
 
   &__y-axis {
@@ -261,6 +261,12 @@
     gap: 8px;
     position: relative;
     height: 100%;
+
+    &:hover .bar-chart__tooltip {
+      opacity: 1;
+      visibility: visible;
+      transform: translateX(-50%) translateY(0);
+    }
   }
 
   &__bar-container {
@@ -275,30 +281,28 @@
 
   &__expense-pill {
     width: 100%;
-    background: rgba(100, 116, 139, 0.12); /* Light grey/blue */
+    background: #e2e8f0; /* Light gray */
     border-radius: 8px;
     transition: height 0.6s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
   &__income-pill {
     width: 100%;
-    background: linear-gradient(to top, rgba(252, 165, 165, 0.4) 0%, #fca5a5 15%);
+    /* Solid at top, fading to transparent at bottom */
+    background: linear-gradient(to bottom, rgba(248, 113, 113, 0.8) 0%, rgba(248, 113, 113, 0) 100%);
     border-radius: 8px;
     transition: height 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-    position: relative; /* Base for tooltip positioning */
-
-    &--active {
-      background: linear-gradient(to top, rgba(255, 90, 54, 0.6) 0%, var(--primary) 15%) !important;
-      box-shadow: 0 4px 14px rgba(255, 90, 54, 0.3);
-    }
   }
 
   &__tooltip {
     position: absolute;
-    top: -60px;
-    left: 80%; /* Shifted right */
-    transform: translateX(0); /* Removed centering */
-    background: rgba(30, 30, 45, 0.65); /* Glassmorphism background */
+    top: -50px;
+    left: 50%;
+    transform: translateX(-50%) translateY(10px);
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.2s ease;
+    background: rgba(30, 30, 45, 0.85); /* Glassmorphism background */
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     border: 1px solid rgba(255, 255, 255, 0.1);
@@ -315,15 +319,18 @@
     color: #fff;
     white-space: nowrap;
 
-    /* Tail shifted to left to match the right-shifted tooltip */
+    /* Tail centered */
     &::after {
       content: '';
       position: absolute;
-      bottom: -5px;
-      left: 12px;
-      border-left: 6px solid transparent;
-      border-right: 6px solid transparent;
-      border-top: 6px solid rgba(30, 30, 45, 0.65);
+      bottom: -4px;
+      left: 50%;
+      transform: translateX(-50%) rotate(45deg);
+      width: 8px;
+      height: 8px;
+      background: rgba(30, 30, 45, 0.85);
+      border-right: 1px solid rgba(255, 255, 255, 0.1);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     }
   }
 

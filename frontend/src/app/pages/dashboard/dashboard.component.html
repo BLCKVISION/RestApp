@@ -3,7 +3,7 @@
   <!-- ═══ HEADER / GREETING ═══ -->
   <div class="dash__greeting animate-fade-in-up">
     <h1 class="dash__title">Hola, {{ auth.currentUser()?.username }}. ¿Listo para gestionar?</h1>
-    <button class="btn btn--outline" routerLink="/entrada">
+    <button class="btn btn--action" routerLink="/entrada">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
       Registrar Entrada
     </button>
@@ -143,18 +143,15 @@
                     }
                     @if (dia.entradas > 0) {
                       <div class="bar-chart__income-pill" 
-                           [class.bar-chart__income-pill--active]="i === 5"
                            [style.height.%]="getEntradasHeight(dia)">
-                        @if (i === 5) {
-                          <div class="bar-chart__tooltip">
-                            <span>Entradas • {{ dia.entradas }}</span>
-                            <span style="color: #cbd5e1">Salidas • {{ dia.salidas }}</span>
-                          </div>
-                        }
                       </div>
                     }
                   </div>
                   <span class="bar-chart__label">{{ dia.label }}</span>
+                  <div class="bar-chart__tooltip">
+                    <span>Entradas • {{ dia.entradas }}</span>
+                    <span style="color: #cbd5e1">Salidas • {{ dia.salidas }}</span>
+                  </div>
                 </div>
               }
             </div>

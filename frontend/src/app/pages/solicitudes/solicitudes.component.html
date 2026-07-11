@@ -398,19 +398,8 @@
 
       <div class="modal-body">
         <div class="form-grid">
-          <div class="form-group">
-            <label class="form-label">Prioridad *</label>
-            <div class="select-wrapper">
-              <select class="form-control premium-input" [(ngModel)]="createForm.prioridad">
-                <option value="BAJA">Baja</option>
-                <option value="MEDIA">Media</option>
-                <option value="ALTA">Alta</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label class="form-label">Organización *</label>
+          <div class="form-group form-group--full">
+            <label class="form-label">Organización / Empresa *</label>
             <div class="select-wrapper">
               <select class="form-control premium-input" [(ngModel)]="createForm.centroId" (change)="onCentroChange()">
                 <option value="">Seleccionar...</option>
@@ -421,14 +410,14 @@
             </div>
           </div>
 
-          <div class="form-group">
-            <label class="form-label">Ubicación / Dirección</label>
-            <input type="text" class="form-control premium-input" [(ngModel)]="createForm.ubicacion" placeholder="Ej: Calle 5, Valencia">
+          <div class="form-group form-group--full">
+            <label class="form-label">Ubicación (Destino) *</label>
+            <input type="text" class="form-control premium-input" [(ngModel)]="createForm.ubicacion" placeholder="Ej: Calle Principal, Sector 4">
           </div>
 
           <div class="form-group">
-            <label class="form-label">Responsable *</label>
-            <input type="text" class="form-control premium-input" [(ngModel)]="createForm.responsable" placeholder="Quien solicita">
+            <label class="form-label">Nombre del Responsable *</label>
+            <input type="text" class="form-control premium-input" [(ngModel)]="createForm.responsable" placeholder="¿Quién retira?">
           </div>
 
           <div class="form-group">
@@ -445,22 +434,17 @@
 
           <div class="form-group">
             <label class="form-label">Cantidad (Raciones) *</label>
-            <input type="number" class="form-control premium-input" [(ngModel)]="createForm.cantidadSolicitada" min="1" placeholder="Ej: 80">
+            <input type="number" class="form-control premium-input" [(ngModel)]="createForm.cantidadSolicitada" min="1" placeholder="Ej: 150">
           </div>
 
           <div class="form-group">
-            <label class="form-label">Hora Entrega</label>
+            <label class="form-label">Hora de Entrega Requerida</label>
             <input type="time" class="form-control premium-input" [(ngModel)]="createForm.horaEntrega">
           </div>
 
           <div class="form-group form-group--full">
-            <label class="form-label">Observaciones</label>
-            <textarea class="form-control premium-input" [(ngModel)]="createForm.observaciones" rows="2" placeholder="Indicaciones del comedor..."></textarea>
-          </div>
-
-          <div class="form-group form-group--full">
-            <label class="form-label">Notas Internas (Cocina / Admin)</label>
-            <textarea class="form-control premium-input" [(ngModel)]="createForm.notasInternas" rows="2" placeholder="Notas internas de preparación..."></textarea>
+            <label class="form-label">Notas / Observaciones</label>
+            <textarea class="form-control premium-input" [(ngModel)]="createForm.observaciones" rows="2" placeholder="Indicaciones adicionales..."></textarea>
           </div>
         </div>
       </div>

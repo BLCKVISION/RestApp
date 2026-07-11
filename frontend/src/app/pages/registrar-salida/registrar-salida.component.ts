@@ -75,6 +75,9 @@ export class RegistrarSalidaComponent implements OnInit, AfterViewInit {
             }
             const centro = this.centros.find(c => c.id === sol.centroId);
             this.form.destino = centro ? centro.nombre : '';
+            setTimeout(() => {
+              this.toast.success(`Despacho vinculado al pedido de ${this.form.destino || 'la organización'}`);
+            }, 300);
           }
         });
       }
