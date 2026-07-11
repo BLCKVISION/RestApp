@@ -11,22 +11,24 @@ import { SEED_MOVIMIENTOS, SEED_TIPOS_COMIDA, SEED_CENTROS, SEED_SOLICITUDES } f
 import { META_MENSUAL_INVENTARIO } from '../common/config';
 import { CreateMovimientoDto, FilterMovimientoDto } from './dto/movimientos-comida.dto';
 import { SolicitudesService } from '../solicitudes/solicitudes.service';
+import { CentrosAcopioService } from '../centros-acopio/centros-acopio.service';
 import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class MovimientosComidaService {
   private movimientos: IMovimientoComida[] = [...SEED_MOVIMIENTOS];
 
-  constructor(private solicitudesService: SolicitudesService) {}
+  constructor(
+    private solicitudesService: SolicitudesService,
+    private centrosService: CentrosAcopioService,
+  ) {}
 
   /** Registrar un nuevo movimiento (entrada o salida) */
   create(dto: CreateMovimientoDto): IMovimientoComida {
-    // Validar que el centro existe si es SALIDA
-    if (dto.tipo === TipoMovimiento.SALIDA) {
-      const centro = SEED_CENTROS.find((c) => c.id === dto.centroId);
-      if (!centro) {
-        throw new BadRequestException(`Centro ${dto.centroId} no encontrado`);
-      }
+    // Validar que el centro existe o registrar dinámicamente si es SALIDA
+    if (dto.tipo === TipoMovimiento.SALIDA && dto.centroId) {
+      const centro = this.centrosService.findOrCreateByName(dto.centroId);
+      dto.centroId = centro.id;
     }
 
     // Validar que el tipo de comida existe
@@ -35,12 +37,12 @@ export class MovimientosComidaService {
       throw new BadRequestException(`Tipo de comida ${dto.tipoComidaId} no encontrado`);
     }
 
-    // Para salidas, validar que hay suficiente stock
+    // Para salidas, registrar advertencia si stock es insuficiente (pero permitir continuar)
     if (dto.tipo === TipoMovimiento.SALIDA) {
       const stock = this.calcularStockPorTipo(dto.tipoComidaId);
       if (stock < dto.cantidad) {
-        throw new BadRequestException(
-          `Stock insuficiente de "${tipoComida.nombre}". Disponible: ${stock}, solicitado: ${dto.cantidad}`,
+        console.warn(
+          `Advertencia: Stock insuficiente de "${tipoComida.nombre}". Disponible: ${stock}, solicitado: ${dto.cantidad}`,
         );
       }
     }
@@ -282,7 +284,7 @@ export class MovimientosComidaService {
     operador: string;
     porTipo: { tipoComida: string; cantidad: number }[];
   }[] {
-    return SEED_CENTROS.filter((c) => c.activo).map((centro) => {
+    return this.centrosService.getAllRaw().filter((c) => c.activo).map((centro) => {
       const porTipo = SEED_TIPOS_COMIDA.filter((t) => t.activo).map((tipo) => {
         const cantidad = this.movimientos
           .filter(

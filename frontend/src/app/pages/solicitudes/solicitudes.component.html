@@ -1,149 +1,178 @@
-<div class="page kanban-page">
-  <div class="page__header kanban-header">
+<div class="kanban-page">
+  <!-- Header -->
+  <div class="kanban-header">
     <div>
       <h1 class="page__title">Gestión de Pedidos</h1>
-      <p class="page__subtitle">Administra los pedidos mediante el tablero Kanban interactivo.</p>
+      <p class="page__subtitle">Gestiona y avanza los pedidos usando los botones de estado.</p>
     </div>
-    <button class="btn btn--primary" routerLink="/solicitar">
+    <button class="btn btn--action" (click)="abrirCrear()" id="btnNuevoPedido">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-      Nuevo Pedido Interno
+      Nuevo Pedido
     </button>
   </div>
 
+  <!-- Filter Tabs -->
+  <div class="filter-tabs">
+    <button class="filter-tab" [class.filter-tab--active]="filtroFecha === 'todas'" (click)="cambiarFiltroFecha('todas')">Todas</button>
+    <button class="filter-tab" [class.filter-tab--active]="filtroFecha === 'hoy'" (click)="cambiarFiltroFecha('hoy')">Para hoy</button>
+    <button class="filter-tab" [class.filter-tab--active]="filtroFecha === 'manana'" (click)="cambiarFiltroFecha('manana')">Para mañana</button>
+  </div>
+
   @if (loading) {
-    <div style="padding: 40px; text-align: center; color: #64748b;">
-      <span class="spinner" style="border-color: rgba(0,0,0,0.1); border-top-color: var(--primary);"></span> Cargando tablero...
+    <div style="padding: 60px; text-align: center; color: var(--text-muted); display: flex; flex-direction: column; align-items: center; gap: 12px;">
+      <span class="spinner" style="width: 28px; height: 28px; border-width: 3px;"></span>
+      <span style="font-size: 0.88rem;">Cargando tablero...</span>
     </div>
   } @else {
-    <div class="kanban-board" cdkDropListGroup>
-      
-      <!-- Columna Pendientes -->
-      @if (!expandedColumn || expandedColumn === 'PENDIENTES') {
-        <div class="kanban-column" [class.expanded]="expandedColumn === 'PENDIENTES'">
-          <div class="kanban-column-header">
-            <div class="kanban-column-title">
-              <span class="status-dot bg-warning"></span>
-              Pendientes
-              <span class="kanban-count">{{ pendientes.length }}</span>
-            </div>
-            <button class="icon-btn expand-btn" (click)="toggleExpand('PENDIENTES')" title="Expandir/Contraer">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
-            </button>
-          </div>
-          <div class="kanban-cards" 
-               cdkDropList 
-               [cdkDropListData]="pendientes" 
-               (cdkDropListDropped)="drop($event, 'PENDIENTE')">
-            @for (sol of pendientes; track sol.id) {
-              <ng-container *ngTemplateOutlet="kanbanCard; context: { $implicit: sol, nextText: 'Aprobar' }"></ng-container>
-            }
-          </div>
-        </div>
-      }
+    <div class="kanban-board">
 
-      <!-- Columna Aprobadas -->
-      @if (!expandedColumn || expandedColumn === 'APROBADAS') {
-        <div class="kanban-column" [class.expanded]="expandedColumn === 'APROBADAS'">
-          <div class="kanban-column-header">
-            <div class="kanban-column-title">
-              <span class="status-dot bg-info"></span>
-              Aprobadas
-              <span class="kanban-count">{{ aprobadas.length }}</span>
-            </div>
-            <button class="icon-btn expand-btn" (click)="toggleExpand('APROBADAS')" title="Expandir/Contraer">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
-            </button>
-          </div>
-          <div class="kanban-cards" 
-               cdkDropList 
-               [cdkDropListData]="aprobadas" 
-               (cdkDropListDropped)="drop($event, 'APROBADA')">
-            @for (sol of aprobadas; track sol.id) {
-              <ng-container *ngTemplateOutlet="kanbanCard; context: { $implicit: sol, nextText: 'A Cocina' }"></ng-container>
-            }
+      <!-- Pendientes -->
+      <div class="kanban-column">
+        <div class="kanban-column-header">
+          <div class="kanban-column-title">
+            <span class="status-dot bg-warning"></span>
+            Pendientes
+            <span class="kanban-count">{{ pendientes.length }}</span>
           </div>
         </div>
-      }
+        <div class="kanban-cards">
+          @for (sol of pendientes; track sol.id) {
+            <ng-container *ngTemplateOutlet="kanbanCard; context: { $implicit: sol }"></ng-container>
+          }
+          @if (pendientes.length === 0) {
+            <div class="kanban-empty">Sin pedidos pendientes</div>
+          }
+        </div>
+      </div>
 
-      <!-- Columna En Cocina -->
-      @if (!expandedColumn || expandedColumn === 'EN_COCINA') {
-        <div class="kanban-column" [class.expanded]="expandedColumn === 'EN_COCINA'">
-          <div class="kanban-column-header">
-            <div class="kanban-column-title">
-              <span class="status-dot bg-indigo"></span>
-              En Cocina
-              <span class="kanban-count">{{ enCocina.length }}</span>
-            </div>
-            <button class="icon-btn expand-btn" (click)="toggleExpand('EN_COCINA')" title="Expandir/Contraer">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
-            </button>
-          </div>
-          <div class="kanban-cards" 
-               cdkDropList 
-               [cdkDropListData]="enCocina" 
-               (cdkDropListDropped)="drop($event, 'EN_PREPARACION')">
-            @for (sol of enCocina; track sol.id) {
-              <ng-container *ngTemplateOutlet="kanbanCard; context: { $implicit: sol, nextText: 'Marcar Lista' }"></ng-container>
-            }
+      <!-- Aprobadas -->
+      <div class="kanban-column">
+        <div class="kanban-column-header">
+          <div class="kanban-column-title">
+            <span class="status-dot bg-info"></span>
+            Aprobadas
+            <span class="kanban-count">{{ aprobadas.length }}</span>
           </div>
         </div>
-      }
+        <div class="kanban-cards">
+          @for (sol of aprobadas; track sol.id) {
+            <ng-container *ngTemplateOutlet="kanbanCard; context: { $implicit: sol }"></ng-container>
+          }
+          @if (aprobadas.length === 0) {
+            <div class="kanban-empty">Sin pedidos aprobados</div>
+          }
+        </div>
+      </div>
 
-      <!-- Columna Listas -->
-      @if (!expandedColumn || expandedColumn === 'LISTAS') {
-        <div class="kanban-column" [class.expanded]="expandedColumn === 'LISTAS'">
-          <div class="kanban-column-header">
-            <div class="kanban-column-title">
-              <span class="status-dot bg-success"></span>
-              Listas (Despacho)
-              <span class="kanban-count">{{ listas.length }}</span>
-            </div>
-            <button class="icon-btn expand-btn" (click)="toggleExpand('LISTAS')" title="Expandir/Contraer">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
-            </button>
-          </div>
-          <div class="kanban-cards" 
-               cdkDropList 
-               [cdkDropListData]="listas" 
-               (cdkDropListDropped)="drop($event, 'LISTA')">
-            @for (sol of listas; track sol.id) {
-              <ng-container *ngTemplateOutlet="kanbanCard; context: { $implicit: sol, nextText: 'Despachar', isFinal: true }"></ng-container>
-            }
+      <!-- En Cocina -->
+      <div class="kanban-column">
+        <div class="kanban-column-header">
+          <div class="kanban-column-title">
+            <span class="status-dot bg-indigo"></span>
+            En Cocina
+            <span class="kanban-count">{{ enCocina.length }}</span>
           </div>
         </div>
-      }
+        <div class="kanban-cards">
+          @for (sol of enCocina; track sol.id) {
+            <ng-container *ngTemplateOutlet="kanbanCard; context: { $implicit: sol }"></ng-container>
+          }
+          @if (enCocina.length === 0) {
+            <div class="kanban-empty">Sin pedidos en cocina</div>
+          }
+        </div>
+      </div>
+
+      <!-- Listas -->
+      <div class="kanban-column">
+        <div class="kanban-column-header">
+          <div class="kanban-column-title">
+            <span class="status-dot bg-success"></span>
+            Listas
+            <span class="kanban-count">{{ listas.length }}</span>
+          </div>
+        </div>
+        <div class="kanban-cards">
+          @for (sol of listas; track sol.id) {
+            <ng-container *ngTemplateOutlet="kanbanCard; context: { $implicit: sol, isFinal: true }"></ng-container>
+          }
+          @if (listas.length === 0) {
+            <div class="kanban-empty">Sin pedidos listos</div>
+          }
+        </div>
+      </div>
 
     </div>
   }
 
-  <!-- Template para la Tarjeta Kanban -->
-  <ng-template #kanbanCard let-sol let-nextText="nextText" let-isFinal="isFinal">
-    <div class="kanban-card" cdkDrag>
-      <div class="kanban-card-top">
-        <div style="display: flex; gap: 8px; align-items: center;">
-          <span class="kanban-id">#{{ sol.id?.substring(sol.id?.length - 6) | uppercase }}</span>
-          @if (sol.prioridad === 'ALTA') {
-            <span class="badge-prioridad alta">ALTA</span>
+  <!-- ═══ Card Template ═══ -->
+  <ng-template #kanbanCard let-sol let-isFinal="isFinal">
+    <div class="kanban-card"
+         [class.priority-alta]="sol.prioridad === 'ALTA'"
+         [class.priority-media]="sol.prioridad === 'MEDIA'"
+         [class.priority-baja]="sol.prioridad === 'BAJA'">
+
+      <div class="kanban-card-inner" (click)="verDetalle(sol)" style="cursor: pointer;">
+        <!-- Top row -->
+        <div class="kanban-card-top">
+          <div style="display: flex; gap: 6px; align-items: center;">
+            <span class="kanban-id">#{{ sol.id?.substring(sol.id?.length - 6) | uppercase }}</span>
+            @if (sol.prioridad === 'ALTA') {
+              <span class="badge-prioridad alta">ALTA</span>
+            }
+          </div>
+          <button class="icon-btn" (click)="abrirEditar(sol); $event.stopPropagation()" title="Editar pedido">
+            <!-- Pencil icon -->
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Body -->
+        <div class="kanban-card-body">
+          <div class="kanban-org" [title]="getCentroNombre(sol.centroId)">{{ getCentroNombre(sol.centroId) }}</div>
+          @if (sol.ubicacion) {
+            <div class="kanban-location" style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 4px; display: flex; align-items: center; gap: 4px;">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              {{ sol.ubicacion }}
+            </div>
           }
-          @if (sol.prioridad === 'BAJA') {
-            <span class="badge-prioridad baja">BAJA</span>
+          <div class="kanban-resp">{{ sol.responsable }}</div>
+          <div class="kanban-detail">{{ getComidaNombre(sol.tipoComidaId) }}</div>
+          <div class="kanban-detail" style="font-weight: 700; color: var(--text-primary); margin-top: 2px;">{{ sol.cantidadSolicitada }} Raciones</div>
+          @if (sol.horaEntrega) {
+            <div class="kanban-time">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              {{ sol.horaEntrega }}
+            </div>
+          }
+          @if (sol.notasInternas) {
+            <div class="kanban-notes-indicator">📌 Notas internas</div>
           }
         </div>
-        <button class="icon-btn" (click)="abrirEditar(sol)" title="Editar">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
-        </button>
       </div>
-      <div class="kanban-card-body">
-        <div class="kanban-resp">{{ sol.responsable }}</div>
-        <div class="kanban-detail"><strong>{{ getComidaNombre(sol.tipoComidaId) }}</strong></div>
-        <div class="kanban-detail">{{ sol.cantidadSolicitada }} Raciones</div>
-        <div class="kanban-time">Hora est.: {{ sol.horaEntrega || 'ASAP' }}</div>
-      </div>
-      <!-- Drag handle (invisible cover to drag) -->
+
+      <!-- Footer — action buttons -->
       <div class="kanban-card-footer">
+        @if (!isFinal && getNextState(sol.estado)) {
+          <button
+            class="btn-advance"
+            [class.btn-advance--loading]="advancingId === sol.id"
+            [disabled]="advancingId === sol.id"
+            (click)="avanzarEstado(sol)">
+            @if (advancingId === sol.id) {
+              <span class="mini-spinner"></span>
+            } @else {
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+            }
+            {{ getNextLabel(sol.estado) }}
+          </button>
+        }
         @if (isFinal) {
-          <button class="btn btn--success btn--sm btn--block" routerLink="/salida" [queryParams]="{ solicitudId: sol.id }">
-            {{ nextText }}
+          <button class="btn-dispatch" routerLink="/salida" [queryParams]="{ solicitudId: sol.id }">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 19V5m-7 7l7-7 7 7"/></svg>
+            Despachar
           </button>
         }
       </div>
@@ -152,23 +181,130 @@
 
 </div>
 
-<!-- Modal de Edición Rediseñado -->
+<!-- ═══ Modal de Detalle ═══ -->
+@if (selectedSolicitud) {
+  <div class="modal-overlay" (click)="cerrarDetalle()">
+    <div class="premium-modal detail-modal" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <div class="detail-status-badge"
+               [class.status-pendiente]="selectedSolicitud.estado === 'PENDIENTE'"
+               [class.status-aprobada]="selectedSolicitud.estado === 'APROBADA'"
+               [class.status-cocina]="selectedSolicitud.estado === 'EN_PREPARACION'"
+               [class.status-lista]="selectedSolicitud.estado === 'LISTA'">
+            {{ selectedSolicitud.estado.replace('_', ' ') }}
+          </div>
+          <div>
+            <h2 class="modal-title">Pedido #{{ selectedSolicitud.id | slice:-6 | uppercase }}</h2>
+            <p style="margin: 0; font-size: 0.78rem; color: var(--text-muted); margin-top: 2px;">
+              Creado el {{ selectedSolicitud.fechaSolicitada | date:'dd MMM yyyy, HH:mm' }}
+            </p>
+          </div>
+        </div>
+        <button class="icon-btn close-btn" (click)="cerrarDetalle()" id="btnCerrarDetalle">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <!-- Priority + main info -->
+        <div class="detail-grid">
+          <div class="detail-item animate-fade-in-up">
+            <span class="detail-label">Centro / Organización</span>
+            <span class="detail-value">{{ getCentroNombre(selectedSolicitud.centroId) }}</span>
+          </div>
+          @if (selectedSolicitud.ubicacion) {
+            <div class="detail-item animate-fade-in-up">
+              <span class="detail-label">Ubicación / Dirección</span>
+              <span class="detail-value">{{ selectedSolicitud.ubicacion }}</span>
+            </div>
+          }
+          <div class="detail-item">
+            <span class="detail-label">Responsable</span>
+            <span class="detail-value">{{ selectedSolicitud.responsable }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Tipo de Comida</span>
+            <span class="detail-value">{{ getComidaNombre(selectedSolicitud.tipoComidaId) }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Cantidad Solicitada</span>
+            <span class="detail-value detail-value--big">{{ selectedSolicitud.cantidadSolicitada }} Raciones</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Prioridad</span>
+            <span class="detail-value"
+                  [style.color]="selectedSolicitud.prioridad === 'ALTA' ? 'var(--danger)' : selectedSolicitud.prioridad === 'MEDIA' ? 'var(--primary)' : 'var(--success)'">
+              {{ selectedSolicitud.prioridad || 'MEDIA' }}
+            </span>
+          </div>
+          @if (selectedSolicitud.horaEntrega) {
+            <div class="detail-item">
+              <span class="detail-label">Hora Entrega</span>
+              <span class="detail-value">{{ selectedSolicitud.horaEntrega }}</span>
+            </div>
+          }
+          @if (selectedSolicitud.observaciones) {
+            <div class="detail-item detail-item--full">
+              <span class="detail-label">Observaciones</span>
+              <span class="detail-value" style="font-weight: 400; white-space: pre-wrap;">{{ selectedSolicitud.observaciones }}</span>
+            </div>
+          }
+          @if (selectedSolicitud.notasInternas) {
+            <div class="detail-item detail-item--full">
+              <span class="detail-label">📌 Notas Internas</span>
+              <span class="detail-value" style="font-weight: 400; white-space: pre-wrap;">{{ selectedSolicitud.notasInternas }}</span>
+            </div>
+          }
+          <div class="detail-item detail-item--full" style="background: #fafbfd; border-top: 1px dashed rgba(0,0,0,0.06);">
+            <span class="detail-label" style="color: var(--primary); font-weight: 700;">Cambiar Estado (Corregir error)</span>
+            <div class="detail-status-picker" style="display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap;">
+              <button class="status-picker-btn" [class.active]="selectedSolicitud.estado === 'PENDIENTE'" (click)="cambiarEstadoDirecto(selectedSolicitud, 'PENDIENTE')">Pendiente</button>
+              <button class="status-picker-btn" [class.active]="selectedSolicitud.estado === 'APROBADA'" (click)="cambiarEstadoDirecto(selectedSolicitud, 'APROBADA')">Aprobada</button>
+              <button class="status-picker-btn" [class.active]="selectedSolicitud.estado === 'EN_PREPARACION'" (click)="cambiarEstadoDirecto(selectedSolicitud, 'EN_PREPARACION')">En Cocina</button>
+              <button class="status-picker-btn" [class.active]="selectedSolicitud.estado === 'LISTA'" (click)="cambiarEstadoDirecto(selectedSolicitud, 'LISTA')">Lista</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn--outline" (click)="cerrarDetalle()">Cerrar</button>
+        @if (getNextState(selectedSolicitud.estado)) {
+          <button class="btn btn--action"
+                  [disabled]="advancingId === selectedSolicitud.id"
+                  (click)="avanzarEstado(selectedSolicitud); cerrarDetalle()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+            {{ getNextLabel(selectedSolicitud.estado) }}
+          </button>
+        }
+        <button class="btn btn--outline" style="border-color: rgba(0,0,0,0.1);" (click)="abrirEditar(selectedSolicitud); cerrarDetalle()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/>
+          </svg>
+          Editar
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- ═══ Modal de Edición ═══ -->
 @if (isEditModalOpen) {
   <div class="modal-overlay" (click)="cerrarEditar()">
-    <div class="modal-content premium-modal" (click)="$event.stopPropagation()">
+    <div class="premium-modal" (click)="$event.stopPropagation()">
       <div class="modal-header">
         <div>
           <h2 class="modal-title">Editar Pedido</h2>
-          <p style="margin: 0; font-size: 0.8rem; color: #64748b;">ID: #{{ solicitudEnEdicion?.id ? (solicitudEnEdicion?.id | slice:-6 | uppercase) : '' }}</p>
+          <p style="margin: 0; font-size: 0.8rem; color: var(--text-secondary); margin-top: 2px;">#{{ solicitudEnEdicion?.id ? (solicitudEnEdicion?.id | slice:-6 | uppercase) : '' }}</p>
         </div>
-        <button class="icon-btn close-btn" (click)="cerrarEditar()">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        <button class="icon-btn close-btn" (click)="cerrarEditar()" id="btnCerrarEditar">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
         </button>
       </div>
 
       <div class="modal-body">
         <div class="form-grid">
-          
           <div class="form-group">
             <label class="form-label">Prioridad</label>
             <div class="select-wrapper">
@@ -179,17 +315,29 @@
               </select>
             </div>
           </div>
-          
+
           <div class="form-group">
-            <label class="form-label">Organización / Empresa</label>
-            <input type="text" class="form-control premium-input" [(ngModel)]="editForm.centroId">
+            <label class="form-label">Organización *</label>
+            <div class="select-wrapper">
+              <select class="form-control premium-input" [(ngModel)]="editForm.centroId" (change)="onCentroEditChange()">
+                <option value="">Seleccionar...</option>
+                @for (c of centros; track c.id) {
+                  <option [value]="c.id">{{ c.nombre }}</option>
+                }
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Ubicación / Dirección</label>
+            <input type="text" class="form-control premium-input" [(ngModel)]="editForm.ubicacion" placeholder="Ej: Calle 5, Valencia">
           </div>
 
           <div class="form-group">
             <label class="form-label">Responsable</label>
             <input type="text" class="form-control premium-input" [(ngModel)]="editForm.responsable">
           </div>
-          
+
           <div class="form-group">
             <label class="form-label">Tipo de Comida</label>
             <div class="select-wrapper">
@@ -208,27 +356,120 @@
 
           <div class="form-group">
             <label class="form-label">Hora Entrega</label>
-            <div class="time-input-wrapper">
-              <input type="time" class="form-control premium-input time-input" [(ngModel)]="editForm.horaEntrega">
-            </div>
+            <input type="time" class="form-control premium-input" [(ngModel)]="editForm.horaEntrega">
           </div>
 
           <div class="form-group form-group--full">
             <label class="form-label">Observaciones</label>
-            <textarea class="form-control premium-input" [(ngModel)]="editForm.observaciones" rows="3"></textarea>
+            <textarea class="form-control premium-input" [(ngModel)]="editForm.observaciones" rows="2"></textarea>
           </div>
 
+          <div class="form-group form-group--full">
+            <label class="form-label">Notas Internas</label>
+            <textarea class="form-control premium-input" [(ngModel)]="editForm.notasInternas" rows="2"></textarea>
+          </div>
         </div>
       </div>
 
       <div class="modal-footer">
-        <button class="btn btn--outline" (click)="cerrarEditar()">Cancelar</button>
-        <button class="btn btn--primary" [disabled]="savingEdit" (click)="guardarEdicion()">
-          @if (savingEdit) {
-            <span class="spinner"></span> Guardando...
-          } @else {
-            Guardar Cambios
-          }
+        <button class="btn btn--outline" (click)="cerrarEditar()" id="btnCancelarEditar">Cancelar</button>
+        <button class="btn btn--action" [disabled]="savingEdit" (click)="guardarEdicion()">
+          @if (savingEdit) { <span class="spinner"></span> Guardando... }
+          @else { Guardar Cambios }
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- ═══ Modal de Creación ═══ -->
+@if (isCreateModalOpen) {
+  <div class="modal-overlay" (click)="cerrarCrear()">
+    <div class="premium-modal" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <div>
+          <h2 class="modal-title">Nuevo Pedido Interno</h2>
+          <p style="margin: 0; font-size: 0.8rem; color: var(--text-secondary); margin-top: 2px;">Registra una solicitud para preparación en cocina</p>
+        </div>
+        <button class="icon-btn close-btn" (click)="cerrarCrear()" id="btnCerrarCrear">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">Prioridad *</label>
+            <div class="select-wrapper">
+              <select class="form-control premium-input" [(ngModel)]="createForm.prioridad">
+                <option value="BAJA">Baja</option>
+                <option value="MEDIA">Media</option>
+                <option value="ALTA">Alta</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Organización *</label>
+            <div class="select-wrapper">
+              <select class="form-control premium-input" [(ngModel)]="createForm.centroId" (change)="onCentroChange()">
+                <option value="">Seleccionar...</option>
+                @for (c of centros; track c.id) {
+                  <option [value]="c.id">{{ c.nombre }}</option>
+                }
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Ubicación / Dirección</label>
+            <input type="text" class="form-control premium-input" [(ngModel)]="createForm.ubicacion" placeholder="Ej: Calle 5, Valencia">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Responsable *</label>
+            <input type="text" class="form-control premium-input" [(ngModel)]="createForm.responsable" placeholder="Quien solicita">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Tipo de Comida *</label>
+            <div class="select-wrapper">
+              <select class="form-control premium-input" [(ngModel)]="createForm.tipoComidaId">
+                <option value="">Seleccionar menú...</option>
+                @for (tipo of tiposComida; track tipo.id) {
+                  <option [value]="tipo.id">{{ tipo.nombre }}</option>
+                }
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Cantidad (Raciones) *</label>
+            <input type="number" class="form-control premium-input" [(ngModel)]="createForm.cantidadSolicitada" min="1" placeholder="Ej: 80">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Hora Entrega</label>
+            <input type="time" class="form-control premium-input" [(ngModel)]="createForm.horaEntrega">
+          </div>
+
+          <div class="form-group form-group--full">
+            <label class="form-label">Observaciones</label>
+            <textarea class="form-control premium-input" [(ngModel)]="createForm.observaciones" rows="2" placeholder="Indicaciones del comedor..."></textarea>
+          </div>
+
+          <div class="form-group form-group--full">
+            <label class="form-label">Notas Internas (Cocina / Admin)</label>
+            <textarea class="form-control premium-input" [(ngModel)]="createForm.notasInternas" rows="2" placeholder="Notas internas de preparación..."></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn--outline" (click)="cerrarCrear()" id="btnCancelarCrear">Cancelar</button>
+        <button class="btn btn--action" [disabled]="savingCreate" (click)="guardarCrear()">
+          @if (savingCreate) { <span class="spinner"></span> Registrando... }
+          @else { Registrar Pedido }
         </button>
       </div>
     </div>

@@ -1,0 +1,196 @@
+<div class="page">
+  <div class="page__header">
+    <div>
+      <h1 class="page__title">Configuración</h1>
+      <p class="page__subtitle">Gestiona las preferencias del sistema y tu cuenta</p>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="config-tabs">
+    <button class="config-tab" [class.config-tab--active]="activeTab === 'perfil'" (click)="activeTab = 'perfil'">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      Mi Perfil
+    </button>
+    <button class="config-tab" [class.config-tab--active]="activeTab === 'sistema'" (click)="activeTab = 'sistema'">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1-2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      Sistema
+    </button>
+    <button class="config-tab" [class.config-tab--active]="activeTab === 'notificaciones'" (click)="activeTab = 'notificaciones'">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+      Notificaciones
+    </button>
+    <button class="config-tab" [class.config-tab--active]="activeTab === 'portal'" (click)="activeTab = 'portal'">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+      Portal Público
+    </button>
+  </div>
+
+  <!-- Tab: Perfil -->
+  @if (activeTab === 'perfil') {
+    <div class="config-card card">
+      <h2 class="config-card__title">Datos del Perfil</h2>
+      <div class="config-form">
+        <div class="form-group">
+          <label class="form-label">Nombre completo</label>
+          <input type="text" class="form-control" [(ngModel)]="perfilForm.nombre">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Correo electrónico</label>
+          <input type="email" class="form-control" [(ngModel)]="perfilForm.email">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Teléfono</label>
+          <input type="tel" class="form-control" [(ngModel)]="perfilForm.telefono" placeholder="+58 412 000 0000">
+        </div>
+      </div>
+      <div class="config-card__actions">
+        <button class="btn btn--action" [disabled]="saving" (click)="save()">
+          @if (saving) { <span class="btn-spinner"></span> Guardando... }
+          @else { Guardar cambios }
+        </button>
+      </div>
+    </div>
+  }
+
+  <!-- Tab: Sistema -->
+  @if (activeTab === 'sistema') {
+    <div class="config-card card">
+      <h2 class="config-card__title">Preferencias del Sistema</h2>
+      <div class="config-form">
+        <div class="form-group">
+          <label class="form-label">Idioma</label>
+          <select class="form-control" [(ngModel)]="sistemaForm.idioma">
+            <option value="es">Español</option>
+            <option value="en">English</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Zona horaria</label>
+          <select class="form-control" [(ngModel)]="sistemaForm.zona">
+            <option value="America/Caracas">America/Caracas (UTC-4)</option>
+            <option value="America/Bogota">America/Bogota (UTC-5)</option>
+            <option value="America/New_York">America/New_York (UTC-5)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Formato de fecha</label>
+          <select class="form-control" [(ngModel)]="sistemaForm.formatoFecha">
+            <option value="DD/MM/YYYY">DD/MM/YYYY</option>
+            <option value="MM/DD/YYYY">MM/DD/YYYY</option>
+            <option value="YYYY-MM-DD">YYYY-MM-DD</option>
+          </select>
+        </div>
+      </div>
+      <div class="config-card__actions">
+        <button class="btn btn--action" [disabled]="saving" (click)="save()">
+          @if (saving) { <span class="btn-spinner"></span> Guardando... }
+          @else { Guardar cambios }
+        </button>
+      </div>
+    </div>
+  }
+
+  <!-- Tab: Notificaciones -->
+  @if (activeTab === 'notificaciones') {
+    <div class="config-card card">
+      <h2 class="config-card__title">Preferencias de Notificaciones</h2>
+      <div class="config-toggles">
+        <div class="toggle-item">
+          <div class="toggle-item__info">
+            <div class="toggle-item__label">Notificaciones por email</div>
+            <div class="toggle-item__desc">Recibe alertas en tu correo electrónico</div>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" [(ngModel)]="notifForm.email">
+            <span class="toggle__slider"></span>
+          </label>
+        </div>
+        <div class="toggle-item">
+          <div class="toggle-item__info">
+            <div class="toggle-item__label">Notificaciones push</div>
+            <div class="toggle-item__desc">Notificaciones en tiempo real en el navegador</div>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" [(ngModel)]="notifForm.push">
+            <span class="toggle__slider"></span>
+          </label>
+        </div>
+        <div class="toggle-item">
+          <div class="toggle-item__info">
+            <div class="toggle-item__label">Nuevos pedidos</div>
+            <div class="toggle-item__desc">Alerta cuando llega un pedido nuevo</div>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" [(ngModel)]="notifForm.pedidosNuevos">
+            <span class="toggle__slider"></span>
+          </label>
+        </div>
+        <div class="toggle-item">
+          <div class="toggle-item__info">
+            <div class="toggle-item__label">Stock bajo</div>
+            <div class="toggle-item__desc">Alerta cuando el inventario está por debajo del mínimo</div>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" [(ngModel)]="notifForm.stockBajo">
+            <span class="toggle__slider"></span>
+          </label>
+        </div>
+        <div class="toggle-item">
+          <div class="toggle-item__info">
+            <div class="toggle-item__label">Reportes semanales</div>
+            <div class="toggle-item__desc">Recibe un resumen semanal de operaciones</div>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" [(ngModel)]="notifForm.reportesSemanales">
+            <span class="toggle__slider"></span>
+          </label>
+        </div>
+      </div>
+      <div class="config-card__actions">
+        <button class="btn btn--action" [disabled]="saving" (click)="save()">
+          @if (saving) { <span class="btn-spinner"></span> Guardando... }
+          @else { Guardar preferencias }
+        </button>
+      </div>
+    </div>
+  }
+
+  <!-- Tab: Portal Público -->
+  @if (activeTab === 'portal') {
+    <div class="config-card card">
+      <h2 class="config-card__title">Configuración del Portal Público (Solicitar)</h2>
+      
+      <div class="config-toggles" style="margin-bottom: 24px;">
+        <div class="toggle-item">
+          <div class="toggle-item__info">
+            <div class="toggle-item__label">Habilitar Formulario Público</div>
+            <div class="toggle-item__desc">Permitir que externos envíen solicitudes</div>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" [(ngModel)]="portalForm.activo">
+            <span class="toggle__slider"></span>
+          </label>
+        </div>
+      </div>
+
+      <div class="config-form">
+        <div class="form-group form-group--full">
+          <label class="form-label">Mensaje de Bienvenida</label>
+          <input type="text" class="form-control" [(ngModel)]="portalForm.mensajeBienvenida" placeholder="Ej: Formulario de requerimiento para organizaciones">
+        </div>
+      </div>
+
+      <div class="config-card__actions" style="justify-content: space-between;">
+        <a href="/solicitar" target="_blank" class="btn btn--outline" style="text-decoration: none;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 8px;"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+          Ver Portal
+        </a>
+        <button class="btn btn--action" [disabled]="saving" (click)="save()">
+          @if (saving) { <span class="btn-spinner"></span> Guardando... }
+          @else { Guardar cambios }
+        </button>
+      </div>
+    </div>
+  }
+</div>

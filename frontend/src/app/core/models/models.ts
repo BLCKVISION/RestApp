@@ -55,6 +55,8 @@ export interface SolicitudComida {
   estado: EstadoSolicitud;
   prioridad?: 'ALTA' | 'MEDIA' | 'BAJA';
   observaciones?: string;
+  notasInternas?: string;
+  ubicacion?: string;
   fechaSolicitada: string;
   createdAt: string;
 }

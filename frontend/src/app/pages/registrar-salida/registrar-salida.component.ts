@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, HostListener } from '@angular/core';
+import { Component, OnInit, AfterViewInit, HostListener, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ApiService } from '../../core/services/api.service';
@@ -10,9 +10,11 @@ import {
   TipoComida,
   TipoMovimiento,
   ResumenInventario,
-  SolicitudComida
+  SolicitudComida,
+  EstadoSolicitud
 } from '../../core/models/models';
 import { ActivatedRoute } from '@angular/router';
+import { NotificationService } from '../../core/services/notification.service';
 import gsap from 'gsap';
 
 @Component({
@@ -47,7 +49,9 @@ export class RegistrarSalidaComponent implements OnInit, AfterViewInit {
     private api: ApiService,
     private route: ActivatedRoute,
     private toast: ToastService,
-    private confirmDialog: ConfirmDialogService
+    private confirmDialog: ConfirmDialogService,
+    private notificationService: NotificationService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
@@ -65,9 +69,12 @@ export class RegistrarSalidaComponent implements OnInit, AfterViewInit {
             this.form.centroId = sol.centroId;
             this.form.cantidad = sol.cantidadSolicitada;
             this.form.registradoPor = sol.responsable;
+            this.form.nota = sol.observaciones || '';
             if (sol.tipoComidaId) {
-              this.form.tipoComidaId = sol.tipoComidaId;
+               this.form.tipoComidaId = sol.tipoComidaId;
             }
+            const centro = this.centros.find(c => c.id === sol.centroId);
+            this.form.destino = centro ? centro.nombre : '';
           }
         });
       }
@@ -75,16 +82,36 @@ export class RegistrarSalidaComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    // Staggered entry animation using GSAP
-    gsap.fromTo('.page__title, .page__subtitle', 
-      { opacity: 0, y: 15 },
-      { opacity: 1, y: 0, duration: 0.5, stagger: 0.1, ease: 'power2.out' }
-    );
+    this.applySplitText('.page__title');
 
-    gsap.fromTo('.form-card', 
-      { opacity: 0, scale: 0.96, y: 20 },
-      { opacity: 1, scale: 1, y: 0, duration: 0.6, ease: 'power3.out' }
-    );
+    setTimeout(() => {
+      gsap.fromTo('.page__title .split-char', 
+        { yPercent: 100, opacity: 0 },
+        { yPercent: 0, opacity: 1, duration: 1.0, stagger: 0.08, ease: 'power4.out' }
+      );
+
+      gsap.fromTo('.page__subtitle', 
+        { opacity: 0, y: 15 },
+        { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out' }
+      );
+
+      gsap.fromTo('.form-card, .summary-card', 
+        { opacity: 0, y: 30 },
+        { opacity: 1, y: 0, duration: 1.0, stagger: 0.18, ease: 'power3.out', clearProps: 'transform' }
+      );
+    }, 100);
+  }
+
+  private applySplitText(selector: string) {
+    const elements = document.querySelectorAll(selector);
+    elements.forEach((el: any) => {
+      if (el.querySelector('.split-word')) return;
+      const text = el.textContent || '';
+      el.innerHTML = text
+        .split(' ')
+        .map((word: string) => `<span class="split-word" style="display: inline-block; overflow: hidden; vertical-align: bottom;"><span class="split-char" style="display: inline-block;">${word}</span></span>`)
+        .join(' ');
+    });
   }
 
   get stockDisponible(): number {
@@ -120,6 +147,41 @@ export class RegistrarSalidaComponent implements OnInit, AfterViewInit {
   selectCentro(id: string) {
     this.form.centroId = id;
     this.isOpenCentro = false;
+
+    // Buscar si este centro tiene alguna solicitud activa (no entregada)
+    this.api.getSolicitudes().subscribe(solicitudes => {
+      const activeStates = [
+        EstadoSolicitud.PENDIENTE,
+        EstadoSolicitud.APROBADA,
+        EstadoSolicitud.EN_PREPARACION,
+        EstadoSolicitud.LISTA
+      ];
+      const sol = solicitudes
+        .filter(s => s.centroId === id && activeStates.includes(s.estado))
+        .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())[0];
+
+      if (sol) {
+        this.form.solicitudId = sol.id;
+        this.form.cantidad = sol.cantidadSolicitada;
+        this.form.registradoPor = sol.responsable;
+        this.form.nota = sol.observaciones || '';
+        if (sol.tipoComidaId) {
+          this.form.tipoComidaId = sol.tipoComidaId;
+        }
+        const centro = this.centros.find(c => c.id === id);
+        this.form.destino = centro ? centro.nombre : '';
+
+        this.toast.success(`✓ Pedido #${sol.id.substring(sol.id.length - 6).toUpperCase()} vinculado automáticamente`);
+      } else {
+        // Limpiar para entrada limpia
+        this.form.solicitudId = '';
+        this.form.cantidad = null;
+        this.form.nota = '';
+        this.form.tipoComidaId = '';
+        const centro = this.centros.find(c => c.id === id);
+        this.form.destino = centro ? centro.nombre : '';
+      }
+    });
   }
 
   toggleTipoComida(event: Event) {
@@ -127,6 +189,8 @@ export class RegistrarSalidaComponent implements OnInit, AfterViewInit {
     this.isOpenTipoComida = !this.isOpenTipoComida;
     this.isOpenCentro = false;
   }
+
+  forzarSalidaEnabled = false;
 
   selectTipoComida(id: string) {
     this.form.tipoComidaId = id;
@@ -142,23 +206,43 @@ export class RegistrarSalidaComponent implements OnInit, AfterViewInit {
   }
 
   get isValid(): boolean {
-    return (
+    const basic = (
       !!this.form.centroId &&
       !!this.form.tipoComidaId &&
       !!this.form.cantidad &&
       this.form.cantidad > 0 &&
-      !this.excedido &&
       !!this.form.registradoPor
     );
+    if (!basic) return false;
+
+    // Forzar salida check if stock is exceeded
+    if (this.excedido) {
+      return this.forzarSalidaEnabled;
+    }
+    return true;
   }
 
   verResumen() {
     if (!this.isValid) return;
     this.showSummary = true;
+    this.cdr.detectChanges();
+    
+    // Animate the new summary card
+    gsap.fromTo('.summary-card', 
+      { opacity: 0, scale: 0.98, y: 15 },
+      { opacity: 1, scale: 1, y: 0, duration: 0.8, ease: 'power3.out', clearProps: 'transform' }
+    );
   }
 
   cancelarResumen() {
     this.showSummary = false;
+    this.cdr.detectChanges();
+    
+    // Animate the form cards back in
+    gsap.fromTo('.form-card, .summary-card', 
+      { opacity: 0, scale: 0.98, y: -15 },
+      { opacity: 1, scale: 1, y: 0, duration: 0.8, stagger: 0.1, ease: 'power3.out', clearProps: 'transform' }
+    );
   }
 
   async confirmarRegistro() {
@@ -188,6 +272,23 @@ export class RegistrarSalidaComponent implements OnInit, AfterViewInit {
       .subscribe({
         next: () => {
           this.toast.success('✓ Salida registrada exitosamente');
+
+          // Generate notification based on if it was forced or not
+          const foodName = this.selectedTipoComidaNombre;
+          if (this.excedido) {
+            this.notificationService.addNotification(
+              `Alerta: Despacho forzado sin stock suficiente de ${foodName} (${this.form.cantidad} raciones) por ${this.form.registradoPor}.`,
+              'warning',
+              '/movimientos'
+            );
+          } else {
+            this.notificationService.addNotification(
+              `Salida registrada: ${this.form.cantidad} raciones de ${foodName} despachadas a ${this.form.destino || 'Destino'} por ${this.form.registradoPor}.`,
+              'success',
+              '/movimientos'
+            );
+          }
+
           this.resetForm();
           this.showSummary = false;
           this.submitting = false;
@@ -202,6 +303,7 @@ export class RegistrarSalidaComponent implements OnInit, AfterViewInit {
   }
 
   private resetForm() {
+    this.forzarSalidaEnabled = false;
     this.form = {
       centroId: this.form.centroId,
       tipoComidaId: '',

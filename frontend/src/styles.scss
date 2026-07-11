@@ -1,55 +1,71 @@
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Urbanist:wght@300;400;500;600;700;800;900&display=swap');
 
-/* ═══ CSS Variables (Ref Ultimate Perfect Match) ════════════════════ */
+/* ═══ CSS Variables — Design System ════════════════════════════════ */
 :root {
   /* ─── Brand Colors ─── */
-  --primary: #ff5a36; /* Orange/Coral highlight color from Ref Ultimate */
+  --primary: #ff5a36;
   --primary-hover: #e04422;
   --primary-bg: rgba(255, 90, 54, 0.08);
-  
-  --accent: #fbbf24; /* Yellow from Ref Ultimate */
-  --accent-bg: rgba(251, 191, 36, 0.08);
-  
-  --success: #22c55e; /* Green from Ref Ultimate */
-  --success-bg: #ecfdf5;
-  
-  --danger: #ef4444; /* Red from Ref Ultimate */
-  --danger-bg: #fef2f2;
+  --primary-rgb: 255, 90, 54;
 
-  /* ─── Sidebar (Light/Pastel Blue-Gray - Ref Ultimate) ─── */
-  --sidebar-bg: rgba(232, 237, 243, 0.6);
+  --accent: #FDCF00;
+  --accent-alt: #FF7A47;
+  --accent-bg: rgba(253, 207, 0, 0.1);
+
+  --success: #22c55e;
+  --success-bg: rgba(34, 197, 94, 0.08);
+
+  --danger: #ef4444;
+  --danger-bg: rgba(239, 68, 68, 0.08);
+
+  --info: #3b82f6;
+  --info-bg: rgba(59, 130, 246, 0.08);
+
+  /* ─── Sidebar ─── */
+  --sidebar-bg: rgba(255, 255, 255, 0.45);
   --sidebar-width: 72px;
   --sidebar-icon: #7e8f9f;
   --sidebar-icon-active: #ff5a36;
-  
-  /* ─── Page Background (Pastel Blue-Gray Gradient) ─── */
-  --bg-main: linear-gradient(135deg, #d8e2eb 0%, #eef2f6 50%, #f4f7f9 100%);
-  --bg-card: rgba(255, 255, 255, 0.45); /* Frosted Glass */
-  --bg-card-solid: #ffffff;
-  
-  /* ─── Text ─── */
-  --text-primary: #1e293b;
-  --text-secondary: #64748b;
-  --text-muted: #94a3b8;
-  --text-white: #ffffff;
-  
-  /* ─── Borders ─── */
-  --border: rgba(255, 255, 255, 0.6);
-  --border-light: rgba(0, 0, 0, 0.04);
-  --border-glass: rgba(255, 255, 255, 0.5);
 
-  /* ─── Effects ─── */
+  /* ─── Page Background ─── */
+  --bg-main: linear-gradient(135deg, #e9ecef 0%, #f3f4f6 50%, #f9fafb 100%);
+  --bg-card: rgba(255, 255, 255, 0.72);
+  --bg-card-hover: rgba(255, 255, 255, 0.88);
+  --bg-card-solid: #ffffff;
+
+  /* ─── Text ─── */
+  --text-primary: #0f172a;
+  --text-secondary: #5a6b82;
+  --text-muted: #8fa0b5;
+  --text-white: #ffffff;
+
+  /* ─── Borders ─── */
+  --border: rgba(255, 255, 255, 0.8);
+  --border-light: rgba(0, 0, 0, 0.03);
+  --border-glass: rgba(255, 255, 255, 0.75);
+
+  /* ─── Border Radius ─── */
   --radius-sm: 10px;
   --radius-md: 14px;
   --radius-lg: 20px;
-  --radius-xl: 26px;
-  
-  --shadow-glass: 0 8px 32px 0 rgba(31, 38, 135, 0.04);
-  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.03);
-  --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.04);
-  
-  --glass-blur: blur(20px);
-  --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  --radius-xl: 28px;
+
+  /* ─── Shadows ─── */
+  --shadow-glass: 0 10px 40px rgba(31, 38, 135, 0.02), 0 1px 3px rgba(0, 0, 0, 0.01);
+  --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.025), 0 0 0 1px rgba(255, 255, 255, 0.75);
+  --shadow-md: 0 8px 30px rgba(0, 0, 0, 0.03);
+  --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.04);
+  --shadow-xl: 0 24px 48px rgba(0, 0, 0, 0.1);
+
+  /* ─── Effects ─── */
+  --glass-blur: blur(24px);
+  --transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-spring: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* ─── Layout ─── */
+  --content-width: 1400px;
+  --content-padding: 20px 32px;
+  --section-gap: 28px;
 }
 
 /* ═══ Reset & Base ══════════════════════════════════════════════════ */
@@ -68,12 +84,13 @@ html {
 }
 
 body {
-  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-family: 'Urbanist', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   background: var(--bg-main);
   background-attachment: fixed;
   color: var(--text-primary);
   line-height: 1.5;
   min-height: 100vh;
+  letter-spacing: -0.01em;
 }
 
 a {
@@ -114,6 +131,41 @@ textarea {
   background: rgba(100, 116, 139, 0.4);
 }
 
+/* ═══ Layout Utility ════════════════════════════════════════════════ */
+.page-wrapper {
+  width: 100%;
+  max-width: var(--content-width);
+  margin: 0 auto;
+  padding: var(--content-padding);
+  display: flex;
+  flex-direction: column;
+  gap: var(--section-gap);
+  min-height: calc(100vh - 100px);
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+
+  &__left {}
+
+  &__title {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    letter-spacing: -0.03em;
+    line-height: 1.15;
+  }
+
+  &__subtitle {
+    font-size: 0.88rem;
+    color: var(--text-secondary);
+    margin-top: 4px;
+    font-weight: 400;
+  }
+}
+
 /* ═══ Glass Card ════════════════════════════════════════════════════ */
 .card {
   background: var(--bg-card);
@@ -121,14 +173,15 @@ textarea {
   -webkit-backdrop-filter: var(--glass-blur);
   border-radius: var(--radius-lg);
   border: 1px solid var(--border-glass);
-  box-shadow: var(--shadow-glass);
+  box-shadow: var(--shadow-card);
   padding: 24px;
-  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.6s cubic-bezier(0.16, 1, 0.3, 1), backdrop-filter 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: var(--transition-spring);
 }
 
 .card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.04);
+  transform: translateY(-3px);
+  background: var(--bg-card-hover);
+  box-shadow: var(--shadow-lg);
 }
 
 /* ═══ Badges ════════════════════════════════════════════════════════ */
@@ -179,29 +232,48 @@ textarea {
 
 .btn--primary {
   background: var(--bg-card-solid);
-  border: 1px solid rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(0, 0, 0, 0.06);
   color: var(--text-primary);
   font-weight: 600;
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow-card);
+  backdrop-filter: blur(8px);
 }
 
 .btn--primary:hover {
   border-color: var(--primary);
   color: var(--primary);
   transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+/* CTA — filled orange button */
+.btn--action {
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  box-shadow: 0 4px 16px rgba(255, 90, 54, 0.28);
+  font-weight: 700;
+}
+
+.btn--action:hover {
+  background: var(--primary-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(255, 90, 54, 0.35);
 }
 
 .btn--outline {
-  background: var(--bg-card-solid);
+  background: rgba(255,255,255,0.6);
   color: var(--text-primary);
-  border: 1px solid rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(0, 0, 0, 0.06);
   font-weight: 600;
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow-card);
+  backdrop-filter: blur(8px);
 }
 
 .btn--outline:hover {
   border-color: var(--primary);
   color: var(--primary);
+  transform: translateY(-1px);
 }
 
 .btn--ghost {
@@ -210,18 +282,33 @@ textarea {
 }
 
 .btn--ghost:hover {
-  background: rgba(0, 0, 0, 0.03);
+  background: rgba(0, 0, 0, 0.04);
   color: var(--text-primary);
 }
 
+.btn--success {
+  background: var(--success);
+  color: #fff;
+  border: none;
+  box-shadow: 0 4px 16px rgba(34, 197, 94, 0.25);
+  font-weight: 700;
+}
+
+.btn--success:hover {
+  background: #16a34a;
+  transform: translateY(-1px);
+}
+
 .btn--lg {
-  padding: 12px 28px;
+  padding: 13px 28px;
   font-size: 0.95rem;
+  font-weight: 700;
 }
 
 .btn--sm {
-  padding: 6px 12px;
-  font-size: 0.78rem;
+  padding: 7px 14px;
+  font-size: 0.8rem;
+  border-radius: var(--radius-sm);
 }
 
 .btn--block {

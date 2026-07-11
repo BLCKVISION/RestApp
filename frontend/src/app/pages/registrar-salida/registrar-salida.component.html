@@ -1,6 +1,6 @@
 <div class="page">
   <div class="page__header">
-    <h1 class="page__title">Salida de Pedido</h1>
+    <h1 class="page__title">Gestión de Salida</h1>
     <p class="page__subtitle">Registra el despacho de comidas a beneficiarios o centros.</p>
   </div>
 
@@ -11,10 +11,10 @@
     </div>
   }
 
-  <div class="layout-grid" [class.layout-grid--single]="!showSummary">
+  <div class="layout-grid">
     <!-- Left Column: Form -->
     @if (!showSummary) {
-    <div class="form-card card animate-fade-in-up">
+    <div class="form-card card">
       <div class="form-card__icon form-card__icon--danger">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M12 19V5m-7 7l7-7 7 7"/>
@@ -75,17 +75,21 @@
           <input
             type="number"
             class="form-control"
-            [class.form-control--error]="excedido"
             [(ngModel)]="form.cantidad"
             placeholder="Ej: 50"
             min="1"
-            [max]="stockDisponible"
             id="cantidadSalida"
           />
           @if (excedido) {
-            <span class="form-error">
-              ⚠ Excede el stock disponible ({{ stockDisponible }})
-            </span>
+            <div class="force-salida-box" style="margin-top: 10px; padding: 12px; background: rgba(239, 68, 68, 0.04); border: 1px solid rgba(239, 68, 68, 0.15); border-radius: 10px; display: flex; flex-direction: column; gap: 8px;">
+              <span class="form-warning" style="color: var(--danger); font-size: 0.78rem; font-weight: 700; display: block;">
+                ⚠ Stock insuficiente (Disponible: {{ stockDisponible }} raciones)
+              </span>
+              <label style="display: flex; align-items: center; gap: 8px; font-size: 0.78rem; color: var(--text-primary); cursor: pointer; font-weight: 600;">
+                <input type="checkbox" [(ngModel)]="forzarSalidaEnabled" style="accent-color: var(--danger); cursor: pointer;">
+                Autorizar despacho sin stock suficiente (Forzar)
+              </label>
+            </div>
           }
         </div>
 
@@ -126,7 +130,7 @@
             class="form-control"
             [(ngModel)]="form.nota"
             placeholder="Detalles adicionales..."
-            rows="3"
+            rows="2"
             id="notaSalida"
           ></textarea>
         </div>
@@ -135,7 +139,7 @@
       <!-- Submit -->
       <div class="form-actions">
         <button
-          class="btn btn--primary btn--lg btn--block"
+          class="btn btn--action btn--lg btn--block"
           [disabled]="!isValid"
           (click)="verResumen()"
           id="submitSalida"
@@ -147,11 +151,34 @@
         </button>
       </div>
     </div>
+    
+    <!-- Right Column: Info Card -->
+    <div class="summary-card" style="opacity: 0.9;">
+      <h3 class="summary-card__title">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line>
+        </svg>
+        Instrucciones
+      </h3>
+      <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5; margin-bottom: 16px;">
+        Registra el despacho de las raciones preparadas. 
+        Asegúrate de verificar físicamente la cantidad antes de confirmar.
+      </p>
+      
+      @if (form.tipoComidaId) {
+        <div class="summary-card__item" style="border-bottom: none; background: rgba(0,0,0,0.02); padding: 12px; border-radius: 8px;">
+          <span>Stock Actual:</span>
+          <strong [style.color]="stockDisponible < 20 ? 'var(--danger)' : 'var(--success)'">
+            {{ stockDisponible }} uds
+          </strong>
+        </div>
+      }
+    </div>
     }
 
     <!-- Summary Step -->
     @if (showSummary) {
-    <div class="summary-card animate-fade-in-up">
+    <div class="summary-card">
       <h3 class="summary-card__title">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>

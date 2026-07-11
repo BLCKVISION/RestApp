@@ -15,6 +15,11 @@ import gsap from 'gsap';
   styleUrl: './dashboard.component.scss'
 })
 export class DashboardComponent implements OnInit, AfterViewInit {
+  // Static cache variables to prevent flicker when navigating back to the Dashboard
+  private static cachedResumen: ResumenInventario | null = null;
+  private static cachedDatosGrafico: DatosGrafico[] = [];
+  private static hasLoaded = false;
+
   resumen: ResumenInventario | null = null;
   datosGrafico: DatosGrafico[] = [];
   loading = true;
@@ -44,21 +49,38 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    // Other post-view initializations can go here
+    if (DashboardComponent.hasLoaded) {
+      // If already loaded and DOM is present, run stagger animation immediately on entry
+      setTimeout(() => {
+        this.animateDashboard();
+      }, 50);
+    }
   }
 
   loadData() {
-    this.loading = true;
+    // If we have cached data, assign it immediately and set loading to false to prevent spinner blink
+    if (DashboardComponent.hasLoaded) {
+      this.resumen = DashboardComponent.cachedResumen;
+      this.datosGrafico = DashboardComponent.cachedDatosGrafico;
+      this.loading = false;
+    } else {
+      this.loading = true;
+    }
 
     this.api.getResumen().subscribe({
       next: (data) => {
+        const isFirstLoad = !DashboardComponent.hasLoaded;
         this.resumen = data;
+        DashboardComponent.cachedResumen = data;
+        DashboardComponent.hasLoaded = true;
         this.loading = false;
         
-        // Trigger stagger animations once DOM renders the data
-        setTimeout(() => {
-          this.animateDashboard();
-        }, 50);
+        // Trigger stagger animations only on the very first render (ngAfterViewInit handles subsequent re-entries)
+        if (isFirstLoad) {
+          setTimeout(() => {
+            this.animateDashboard();
+          }, 50);
+        }
       },
       error: () => (this.loading = false),
     });
@@ -70,11 +92,12 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     this.api.getDatosGrafico(this.selectedRango).subscribe({
       next: (data) => {
         this.datosGrafico = data;
+        DashboardComponent.cachedDatosGrafico = data;
         // Re-trigger animation when data changes
         setTimeout(() => {
           gsap.fromTo('.bar-chart__expense-pill, .bar-chart__income-pill', 
             { opacity: 0, scaleY: 0, transformOrigin: 'bottom' },
-            { opacity: 1, scaleY: 1, duration: 0.5, stagger: 0.05, clearProps: 'transform,opacity' }
+            { opacity: 1, scaleY: 1, duration: 0.6, stagger: 0.08, clearProps: 'transform,opacity' }
           );
         }, 50);
       },
@@ -102,22 +125,37 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   }
 
   animateDashboard() {
-    // Staggered card reveal animation (0.6s duration)
-    gsap.fromTo('.card', 
-      { y: 30, opacity: 0 }, 
-      { y: 0, opacity: 1, duration: 0.6, stagger: 0.1, ease: 'power3.out', clearProps: 'transform' }
+    // Apply premium SplitText effect to the greeting title
+    this.applySplitText('.dash__title');
+
+    // Animating split characters (slow and smooth stagger)
+    gsap.fromTo('.dash__title .split-char',
+      { yPercent: 100, opacity: 0 },
+      { yPercent: 0, opacity: 1, duration: 1.0, stagger: 0.08, ease: 'power4.out' }
     );
 
-    // Split text line stagger simulation for headers
-    gsap.fromTo('.dash__title', 
-      { opacity: 0, y: 16 },
-      { opacity: 1, y: 0, duration: 0.6, ease: 'power3.out' }
+    // Staggered card reveal animation - slowed down to be highly visible
+    gsap.fromTo('.card', 
+      { y: 30, opacity: 0 }, 
+      { y: 0, opacity: 1, duration: 1.0, stagger: 0.18, ease: 'power3.out', clearProps: 'transform' }
     );
 
     gsap.fromTo('.kpi-card__value, .chart-card__big-value, .availability-card__big-value', 
       { opacity: 0, y: 10 },
-      { opacity: 1, y: 0, duration: 0.5, stagger: 0.05, ease: 'power2.out', delay: 0.2 }
+      { opacity: 1, y: 0, duration: 0.8, stagger: 0.1, ease: 'power2.out', delay: 0.3 }
     );
+  }
+
+  private applySplitText(selector: string) {
+    const elements = document.querySelectorAll(selector);
+    elements.forEach((el: any) => {
+      if (el.querySelector('.split-word')) return;
+      const text = el.textContent || '';
+      el.innerHTML = text
+        .split(' ')
+        .map((word: string) => `<span class="split-word" style="display: inline-block; overflow: hidden; vertical-align: bottom;"><span class="split-char" style="display: inline-block;">${word}</span></span>`)
+        .join(' ');
+    });
   }
 
   // ─── Chart helpers ──────────────────────────────────────────────

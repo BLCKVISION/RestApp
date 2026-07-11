@@ -1,27 +1,99 @@
-/* ─── Page Layout ───────────────────────────────────────────────── */
+/* ═══ Historial de Movimientos ════════════════════════════════ */
 .page {
-  margin-top: 24px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+
   &__header {
-    margin-bottom: 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
   }
 
   &__title {
-    font-size: 1.6rem;
+    font-size: 1.8rem;
     font-weight: 800;
     color: var(--text-primary);
-    letter-spacing: -0.02em;
+    letter-spacing: -0.03em;
+    line-height: 1.15;
   }
 
   &__subtitle {
     font-size: 0.88rem;
     color: var(--text-secondary);
     margin-top: 4px;
+    font-weight: 400;
   }
 }
 
-/* ─── Filters Card ──────────────────────────────────────────────── */
+/* ─── KPI Mini-Row ─── */
+.mov-kpi-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.mov-kpi-card {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 24px 28px;
+  transition: var(--transition);
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+  }
+
+  &__icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    &--entry {
+      background: #e8f7f0;
+      color: #22c55e;
+    }
+    &--exit {
+      background: #fdf2f2;
+      color: #ef4444;
+    }
+    &--balance {
+      background: #fff7ed;
+      color: #f97316;
+    }
+  }
+
+  &__body {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  &__label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  &__value {
+    font-size: 1.85rem;
+    font-weight: 800;
+    color: #1e293b;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+  }
+}
+
+/* ─── Filters Card ─── */
 .filters-card {
-  margin-bottom: 24px;
   padding: 20px 24px;
   position: relative;
   z-index: 10;
@@ -30,24 +102,24 @@
 .filters-grid {
   display: flex;
   flex-wrap: wrap;
-  gap: 20px;
-  justify-content: flex-start;
-  align-items: center;
-  align-items: end;
-  
+  gap: 16px;
+  align-items: flex-end;
+  width: 100%;
+
   .form-group {
-    min-width: 180px;
+    flex: 1;
+    min-width: 160px;
     margin-bottom: 0;
   }
 }
 
 .filters-actions {
   display: flex;
-  align-items: center;
-  height: 40px; /* match input height */
+  align-items: flex-end;
+  padding-bottom: 0;
 }
 
-/* ─── Table Card ────────────────────────────────────────────────── */
+/* ─── Table Card ─── */
 .table-card {
   padding: 0;
   overflow: hidden;
@@ -58,115 +130,129 @@
   align-items: center;
   justify-content: center;
   gap: 12px;
-  padding: 60px;
+  padding: 80px;
   color: var(--text-muted);
+  font-size: 0.88rem;
 
   &__spinner {
     width: 24px;
     height: 24px;
-    border: 2px solid var(--border);
+    border: 2.5px solid rgba(0,0,0,0.07);
     border-top-color: var(--primary);
     border-radius: 50%;
-    animation: spin 0.8s linear infinite;
+    animation: spin 0.7s linear infinite;
   }
 }
 
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
+@keyframes spin { to { transform: rotate(360deg); } }
 
 .table-wrapper {
   overflow-x: auto;
 }
 
+/* ─── Data Table ─── */
 .data-table {
   width: 100%;
   border-collapse: separate;
-  border-spacing: 0 8px; /* Adds gap between rows and header */
+  border-spacing: 0;
+
+  thead tr {
+    background: rgba(241, 245, 249, 0.8);
+  }
 
   th {
-    text-align: center;
-    padding: 16px 20px;
-    font-size: 0.78rem;
+    text-align: left;
+    padding: 14px 20px;
+    font-size: 0.73rem;
     font-weight: 700;
-    color: #475569;
+    color: var(--text-secondary);
     text-transform: uppercase;
-    letter-spacing: 0.05em;
-    background: #f1f5f9; /* Solid light bluish-gray */
-    border: none;
-    
-    &:first-child {
-      border-top-left-radius: 12px;
-      border-bottom-left-radius: 12px;
-    }
-    
-    &:last-child {
-      border-top-right-radius: 12px;
-      border-bottom-right-radius: 12px;
-    }
+    letter-spacing: 0.06em;
+    white-space: nowrap;
+    border-bottom: 1px solid var(--border-light);
+
+    &:first-child { padding-left: 28px; }
+    &:last-child { padding-right: 28px; }
   }
 
   td {
-    text-align: center;
-    padding: 16px 20px;
-    font-size: 0.9rem;
+    text-align: left;
+    padding: 15px 20px;
+    font-size: 0.88rem;
     color: var(--text-primary);
-    border-bottom: 1px solid var(--border-light);
-    background: #ffffff;
-    
-    &:first-child {
-      border-top-left-radius: 8px;
-      border-bottom-left-radius: 8px;
-    }
-    
-    &:last-child {
-      border-top-right-radius: 8px;
-      border-bottom-right-radius: 8px;
-    }
+    font-weight: 500;
+    border-bottom: 1px solid rgba(0,0,0,0.03);
+    vertical-align: middle;
+
+    &:first-child { padding-left: 28px; }
+    &:last-child { padding-right: 28px; }
   }
 
   tbody tr {
     transition: var(--transition);
-    box-shadow: 0 1px 2px rgba(0,0,0,0.02);
 
     &:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-      
-      td {
-        border-color: transparent;
-      }
+      background: rgba(255, 255, 255, 0.6);
+
+      td { border-color: transparent; }
     }
+
+    &:last-child td { border-bottom: none; }
   }
 
   &__cantidad {
-    font-weight: 700;
+    font-weight: 800;
     font-size: 0.95rem;
+    color: var(--text-primary);
   }
 
   &__time {
     color: var(--text-muted);
-    font-size: 0.82rem;
+    font-size: 0.8rem;
+    font-weight: 400;
   }
 
   &__empty {
     text-align: center !important;
-    padding: 40px !important;
+    padding: 60px !important;
     color: var(--text-muted) !important;
+    font-size: 0.9rem;
     font-style: italic;
   }
 }
 
-/* ─── Pagination ────────────────────────────────────────────────── */
+/* ─── Movement Type Badge ─── */
+.mov-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 11px;
+  border-radius: 20px;
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+
+  &--entrada {
+    background: var(--success-bg);
+    color: var(--success);
+  }
+
+  &--salida {
+    background: var(--danger-bg);
+    color: var(--danger);
+  }
+}
+
+/* ─── Pagination ─── */
 .pagination {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16px 20px;
-  border-top: 1px solid var(--border-light);
+  padding: 16px 28px;
+  border-top: 1px solid rgba(0,0,0,0.04);
 
   &__info {
-    font-size: 0.85rem;
+    font-size: 0.84rem;
     color: var(--text-secondary);
     font-weight: 500;
   }

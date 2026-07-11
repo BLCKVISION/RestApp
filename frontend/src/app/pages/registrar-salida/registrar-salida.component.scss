@@ -1,79 +1,78 @@
-/* ─── Page Layout (Lightbox Style - Ref Ultimate Match) ─────────── */
+/* ─── Page Layout ─── */
 .page {
   width: 100%;
-  max-width: 1400px;
-  margin: 20px auto;
   display: flex;
   flex-direction: column;
-  min-height: calc(100vh - 120px);
-  padding: 0 24px;
+  gap: 16px;
+  height: calc(100vh - 100px); /* Fixed height = no scroll */
+  overflow: hidden;
 
   &__header {
-    text-align: left;
-    margin-bottom: 28px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    flex-shrink: 0;
   }
 
   &__title {
     font-size: 1.8rem;
-    font-weight: 700;
+    font-weight: 800;
     color: var(--text-primary);
-    letter-spacing: -0.02em;
+    letter-spacing: -0.03em;
+    line-height: 1.15;
   }
 
   &__subtitle {
     font-size: 0.88rem;
     color: var(--text-secondary);
     margin-top: 4px;
+    font-weight: 400;
   }
 }
 
-/* ─── Layout ─── */
+/* ─── Layout Grid 80/20 ─── */
 .layout-grid {
   display: grid;
-  grid-template-columns: 2fr 1fr;
-  gap: 32px;
+  grid-template-columns: 4fr 1fr;
+  gap: 20px;
   width: 100%;
-
-  &--single {
-    grid-template-columns: 1fr;
-    max-width: 480px;
-    margin: 0 auto;
-  }
+  flex: 1;
+  overflow: hidden;
+  align-items: stretch;
 }
 
 /* ─── Form Card ─── */
 .form-card {
-  padding: 32px;
+  padding: 24px;
   border-radius: var(--radius-lg);
   border: 1px solid var(--border-glass);
-  background: var(--bg-card-solid);
-  backdrop-filter: none;
+  background: var(--bg-card);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  box-shadow: var(--shadow-card);
   width: 100%;
-  box-shadow: none;
+  height: 100%;
+  overflow-y: auto;
 
-  &:hover {
-    transform: none;
-    box-shadow: none;
-  }
+  &:hover { transform: none; box-shadow: var(--shadow-card); }
 
   &__icon {
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    background: rgba(239, 68, 68, 0.1);
+    width: 40px; height: 40px;
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 12px;
+  }
+
+  &__icon--danger {
+    background: var(--danger-bg);
     color: var(--danger);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 16px;
   }
 
   &__title {
-    font-size: 1.15rem;
+    font-size: 1rem;
     font-weight: 700;
     color: var(--text-primary);
-    text-align: left;
-    margin-bottom: 24px;
+    margin-bottom: 16px;
   }
 }
 

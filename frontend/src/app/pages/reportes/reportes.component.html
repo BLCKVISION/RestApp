@@ -1,12 +1,12 @@
-<div class="page print-page">
-  <!-- Header inside main content -->
-  <div class="page__header no-print">
+<div class="rpt">
+  <!-- ═══ Header ═══ -->
+  <div class="rpt__greeting">
     <div>
-      <h1 class="page__title">Informes de Operaciones</h1>
-      <p class="page__subtitle">Genera un reporte consolidado del estado actual del inventario</p>
+      <h1 class="rpt__title">Informe de Operaciones</h1>
+      <p class="rpt__subtitle">Consolidado operativo del sistema · {{ today | date:'EEEE, d MMMM yyyy' }}</p>
     </div>
-    <button class="btn btn--primary" (click)="printReport()">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+    <button class="btn btn--action" (click)="printReport()" id="btnPrint">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
         <polyline points="6 9 6 2 18 2 18 9"/>
         <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
         <rect x="6" y="14" width="12" height="8"/>
@@ -15,69 +15,221 @@
     </button>
   </div>
 
-  <div class="report-document card" id="printableArea">
-    <div class="report-header">
-      <div class="report-logo">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-          <circle cx="12" cy="12" r="9"/>
-          <circle cx="12" cy="12" r="3"/>
-        </svg>
-        <span>Red</span>
-      </div>
-      <div class="report-meta">
-        <h2>Reporte General de Inventario</h2>
-        <p>Fecha de emisión: {{ today | date:'medium' }}</p>
-      </div>
+  @if (loading) {
+    <div class="rpt__loading">
+      <span class="rpt__spinner"></span>
+      <p>Generando informe...</p>
     </div>
+  } @else if (resumen) {
 
-    @if (loading) {
-      <p>Cargando datos operativos...</p>
-    } @else if (resumen) {
-      <div class="report-section">
-        <h3>Resumen Operativo</h3>
-        <div class="report-summary-grid">
-          <div class="summary-box">
-            <span class="summary-label">Raciones Entregadas Hoy</span>
-            <span class="summary-value text-danger">{{ resumen.salidasHoy }}</span>
+    <!-- ═══ KPI Row ═══ -->
+    <div class="kpi-row">
+
+      <!-- Raciones Entregadas Hoy -->
+      <div class="kpi-card card">
+        <div class="kpi-card__top">
+          <div class="kpi-card__icon-box" style="background: var(--danger-bg); color: var(--danger);">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"/></svg>
           </div>
-          <div class="summary-box">
-            <span class="summary-label">Pedidos Pendientes</span>
-            <span class="summary-value text-success">{{ resumen.pedidosPendientes }}</span>
-          </div>
-          <div class="summary-box">
-            <span class="summary-label">Inventario Disponible</span>
-            <span class="summary-value text-primary">{{ resumen.totalInventario }}</span>
-          </div>
+          <span class="kpi-card__label">Raciones Entregadas</span>
+        </div>
+        <div class="kpi-card__middle">
+          <div class="kpi-card__value">{{ resumen.salidasHoy | number }}</div>
+        </div>
+        <div class="kpi-card__bottom">
+          <span class="kpi-card__period">Salidas registradas hoy</span>
+          <span class="kpi-card__pct" [class.kpi-card__pct--down]="resumen.pctSalidas < 0">
+            {{ resumen.pctSalidas > 0 ? '+' : '' }}{{ resumen.pctSalidas }}%
+          </span>
         </div>
       </div>
 
-      <div class="report-section">
-        <h3>Desglose de Raciones por Categoría</h3>
-        <table class="report-table">
-          <thead>
-            <tr>
-              <th>Tipo de Almuerzo / Ración</th>
-              <th class="text-right">Stock Disponible</th>
-              <th class="text-right">Entradas (Hoy)</th>
-              <th class="text-right">Salidas (Hoy)</th>
-            </tr>
-          </thead>
-          <tbody>
-            @for (tipo of resumen.inventarioPorTipo; track tipo.tipoComidaId) {
+      <!-- Pedidos Pendientes -->
+      <div class="kpi-card card">
+        <div class="kpi-card__top">
+          <div class="kpi-card__icon-box" style="background: rgba(245,158,11,0.08); color: #d97706;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          </div>
+          <span class="kpi-card__label">Pedidos Pendientes</span>
+        </div>
+        <div class="kpi-card__middle">
+          <div class="kpi-card__value">{{ resumen.pedidosPendientes | number }}</div>
+        </div>
+        <div class="kpi-card__bottom">
+          <span class="kpi-card__period">Por aprobar o procesar</span>
+          <span class="kpi-card__pct" [class.kpi-card__pct--down]="resumen.pctPendientes < 0">
+            {{ resumen.pctPendientes > 0 ? '+' : '' }}{{ resumen.pctPendientes }}%
+          </span>
+        </div>
+      </div>
+
+      <!-- Pedidos Programados -->
+      <div class="kpi-card card">
+        <div class="kpi-card__top">
+          <div class="kpi-card__icon-box" style="background: var(--info-bg); color: var(--info);">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          </div>
+          <span class="kpi-card__label">Pedidos Programados</span>
+        </div>
+        <div class="kpi-card__middle">
+          <div class="kpi-card__value">{{ resumen.pedidosProgramadosHoy | number }}</div>
+        </div>
+        <div class="kpi-card__bottom">
+          <span class="kpi-card__period">Para entregar hoy</span>
+          <span class="kpi-card__pct" [class.kpi-card__pct--down]="resumen.pctProgramados < 0">
+            {{ resumen.pctProgramados > 0 ? '+' : '' }}{{ resumen.pctProgramados }}%
+          </span>
+        </div>
+      </div>
+
+      <!-- Inventario Total -->
+      <div class="kpi-card card">
+        <div class="kpi-card__top">
+          <div class="kpi-card__icon-box" style="background: var(--success-bg); color: var(--success);">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><line x1="12" y1="4" x2="12" y2="20"/></svg>
+          </div>
+          <span class="kpi-card__label">Inventario Total</span>
+        </div>
+        <div class="kpi-card__middle">
+          <div class="kpi-card__value">{{ resumen.totalInventario | number }}</div>
+        </div>
+        <div class="kpi-card__bottom">
+          <span class="kpi-card__period">Raciones disponibles</span>
+          <span class="kpi-card__pct" [class.kpi-card__pct--down]="resumen.pctInventario < 0">
+            {{ resumen.pctInventario > 0 ? '+' : '' }}{{ resumen.pctInventario }}%
+          </span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ═══ Main Grid ═══ -->
+    <div class="rpt__grid">
+
+      <!-- LEFT: Desglose por Categoría -->
+      <div class="rpt__left">
+
+        <!-- Stock Table Card -->
+        <div class="card rpt-card">
+          <div class="rpt-card__header">
+            <div>
+              <h2 class="rpt-card__title">Desglose por Categoría</h2>
+              <p class="rpt-card__sub">Stock, entradas y salidas del día por tipo de ración</p>
+            </div>
+            <div class="rpt-date-badge">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              {{ today | date:'dd/MM/yyyy' }}
+            </div>
+          </div>
+
+          <table class="rpt-table">
+            <thead>
               <tr>
-                <td>{{ tipo.tipoComida }}</td>
-                <td class="text-right font-bold">{{ tipo.stockActual }}</td>
-                <td class="text-right text-success">+{{ tipo.entradasHoy }}</td>
-                <td class="text-right text-danger">-{{ tipo.salidasHoy }}</td>
+                <th>Tipo de Ración</th>
+                <th class="text-right">Stock</th>
+                <th class="text-right">Entradas</th>
+                <th class="text-right">Salidas</th>
+                <th class="text-right">Cobertura</th>
               </tr>
-            }
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              @for (tipo of resumen.inventarioPorTipo; track tipo.tipoComidaId) {
+                <tr>
+                  <td>
+                    <div class="rpt-tipo">
+                      <span class="rpt-tipo__dot"></span>
+                      {{ tipo.tipoComida }}
+                    </div>
+                  </td>
+                  <td class="text-right">
+                    <span class="rpt-stock" [class.rpt-stock--low]="tipo.stockActual < 20">
+                      {{ tipo.stockActual | number }}
+                    </span>
+                  </td>
+                  <td class="text-right">
+                    <span class="rpt-badge rpt-badge--in">+{{ tipo.entradasHoy }}</span>
+                  </td>
+                  <td class="text-right">
+                    <span class="rpt-badge rpt-badge--out">-{{ tipo.salidasHoy }}</span>
+                  </td>
+                  <td class="text-right">
+                    <div class="rpt-coverage">
+                      <div class="rpt-coverage__bar">
+                        <div class="rpt-coverage__fill"
+                             [style.width.%]="resumen.pctMetaMensual"
+                             [class.rpt-coverage__fill--ok]="resumen.pctMetaMensual >= 70"
+                             [class.rpt-coverage__fill--warn]="resumen.pctMetaMensual < 70 && resumen.pctMetaMensual >= 40"
+                             [class.rpt-coverage__fill--low]="resumen.pctMetaMensual < 40">
+                        </div>
+                      </div>
+                      <span class="rpt-coverage__pct">{{ resumen.pctMetaMensual }}%</span>
+                    </div>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+
       </div>
-      
-      <div class="report-footer">
-        <p>Documento oficial emitido por el Sistema de Gestión Operativa Red.</p>
+
+      <!-- RIGHT: Sidebar cards -->
+      <div class="rpt__right">
+
+        <!-- Forecast Card (matches dashboard style) -->
+        <div class="forecast-card">
+          <div class="forecast-card__rocket">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/>
+            </svg>
+          </div>
+          <h3 class="forecast-card__title">Meta Mensual al {{ resumen.pctMetaMensual }}%</h3>
+          <p class="forecast-card__desc">
+            El inventario actual cubre el {{ resumen.pctMetaMensual }}% de la meta mensual de entregas de almuerzos proyectada.
+          </p>
+          <button class="forecast-card__btn" (click)="printReport()">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+            Exportar PDF
+          </button>
+        </div>
+
+        <!-- Resumen Rápido -->
+        <div class="card rpt-quick">
+          <h3 class="rpt-quick__title">Resumen Rápido</h3>
+          <div class="rpt-quick__row">
+            <div class="rpt-quick__icon" style="background: var(--danger-bg); color: var(--danger);">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg>
+            </div>
+            <div class="rpt-quick__info">
+              <span class="rpt-quick__label">Salidas totales hoy</span>
+              <span class="rpt-quick__value">{{ resumen.salidasHoy }} raciones</span>
+            </div>
+          </div>
+          <div class="rpt-quick__row">
+            <div class="rpt-quick__icon" style="background: var(--success-bg); color: var(--success);">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="12 19 12 5"/><polyline points="5 12 12 5 19 12"/></svg>
+            </div>
+            <div class="rpt-quick__info">
+              <span class="rpt-quick__label">Entradas totales hoy</span>
+              <span class="rpt-quick__value">{{ totalEntradasHoy }} raciones</span>
+            </div>
+          </div>
+          <div class="rpt-quick__row">
+            <div class="rpt-quick__icon" style="background: rgba(245,158,11,0.08); color: #d97706;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            </div>
+            <div class="rpt-quick__info">
+              <span class="rpt-quick__label">Pedidos pendientes</span>
+              <span class="rpt-quick__value">{{ resumen.pedidosPendientes }} pedidos</span>
+            </div>
+          </div>
+          <div class="rpt-quick__footer">
+            <span>Documento generado el {{ today | date:'dd/MM/yyyy HH:mm' }}</span>
+          </div>
+        </div>
+
       </div>
-    }
-  </div>
+    </div>
+
+  }
 </div>

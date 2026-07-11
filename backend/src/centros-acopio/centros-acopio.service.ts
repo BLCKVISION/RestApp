@@ -16,9 +16,38 @@ export class CentrosAcopioService {
     return paginate(activos, pagination);
   }
 
+  getAllRaw(): ICentroAcopio[] {
+    return this.centros;
+  }
+
   findOne(id: string): ICentroAcopio {
     const centro = this.centros.find((c) => c.id === id);
     if (!centro) throw new NotFoundException(`Centro ${id} no encontrado`);
+    return centro;
+  }
+
+  findOrCreateByName(nombre: string, ubicacion?: string): ICentroAcopio {
+    const trimmed = nombre.trim();
+    // Buscar por nombre exacto (insensitivo a mayúsculas/minúsculas)
+    let centro = this.centros.find(
+      (c) => c.nombre.toLowerCase() === trimmed.toLowerCase(),
+    );
+    if (!centro) {
+      // Si el nombre parece un UUID, intentar buscar por ID
+      const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+      if (uuidRegex.test(trimmed)) {
+        centro = this.centros.find((c) => c.id === trimmed);
+      }
+    }
+    if (!centro) {
+      centro = this.create({
+        nombre: trimmed,
+        ubicacion: ubicacion || 'Auto-registrado',
+        operador: 'Auto-registrado',
+      });
+    } else if (ubicacion && (centro.ubicacion === 'Auto-registrado' || !centro.ubicacion)) {
+      centro.ubicacion = ubicacion;
+    }
     return centro;
   }
 
@@ -26,8 +55,8 @@ export class CentrosAcopioService {
     const nuevo: ICentroAcopio = {
       id: uuidv4(),
       nombre: dto.nombre,
-      ubicacion: dto.ubicacion,
-      operador: dto.operador,
+      ubicacion: dto.ubicacion || 'Auto-registrado',
+      operador: dto.operador || 'Auto-registrado',
       activo: true,
       createdAt: new Date(),
       updatedAt: new Date(),

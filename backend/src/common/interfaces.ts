@@ -46,6 +46,8 @@ export interface ISolicitudComida {
   estado: EstadoSolicitud;
   prioridad?: 'ALTA' | 'MEDIA' | 'BAJA';
   observaciones?: string;
+  notasInternas?: string;
+  ubicacion?: string;
   fechaSolicitada: Date;
   createdAt: Date;
 }

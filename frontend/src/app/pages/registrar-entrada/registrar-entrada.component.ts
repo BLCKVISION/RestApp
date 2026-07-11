@@ -1,13 +1,15 @@
-import { Component, OnInit, AfterViewInit, HostListener } from '@angular/core';
+import { Component, OnInit, HostListener, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ApiService } from '../../core/services/api.service';
 import { ToastService } from '../../core/services/toast.service';
 import { ConfirmDialogService } from '../../core/services/confirm-dialog.service';
-import { TipoComida, TipoMovimiento } from '../../core/models/models';
 import { CustomDatepickerComponent } from '../../shared/components/custom-datepicker/custom-datepicker.component';
-import gsap from 'gsap';
+import { NotificationService } from '../../core/services/notification.service';
+import { TipoComida, TipoMovimiento } from '../../core/models/models';
+
+declare const gsap: any;
 
 @Component({
   selector: 'app-registrar-entrada',
@@ -38,7 +40,8 @@ export class RegistrarEntradaComponent implements OnInit, AfterViewInit {
     private api: ApiService,
     private router: Router,
     private toast: ToastService,
-    private confirmDialog: ConfirmDialogService
+    private confirmDialog: ConfirmDialogService,
+    private notificationService: NotificationService
   ) {}
 
   ngOnInit() {
@@ -48,16 +51,40 @@ export class RegistrarEntradaComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    // Fade in intro stagger animation
-    gsap.fromTo('.page__title, .page__subtitle', 
-      { opacity: 0, y: 15 },
-      { opacity: 1, y: 0, duration: 0.5, stagger: 0.1, ease: 'power2.out' }
+    this.applySplitText('.entrada-modal__title');
+    gsap.fromTo('.premium-modal', 
+      { opacity: 0, y: 30 },
+      { opacity: 1, y: 0, duration: 1.0, ease: 'power3.out', clearProps: 'transform' }
     );
 
-    gsap.fromTo('.form-card', 
-      { opacity: 0, scale: 0.96, y: 20 },
-      { opacity: 1, scale: 1, y: 0, duration: 0.6, ease: 'power3.out' }
-    );
+    setTimeout(() => {
+      gsap.fromTo('.entrada-modal__title .split-char', 
+        { yPercent: 100, opacity: 0 },
+        { yPercent: 0, opacity: 1, duration: 1.0, stagger: 0.08, ease: 'power4.out' }
+      );
+    }, 100);
+  }
+
+  private applySplitText(selector: string) {
+    const elements = document.querySelectorAll(selector);
+    elements.forEach((el: any) => {
+      if (el.querySelector('.split-word')) return;
+      const text = el.textContent || '';
+      el.innerHTML = text
+        .split(' ')
+        .map((word: string) => `<span class="split-word" style="display: inline-block; overflow: hidden; vertical-align: bottom;"><span class="split-char" style="display: inline-block;">${word}</span></span>`)
+        .join(' ');
+    });
+  }
+
+  /** Close modal and go back to dashboard */
+  cerrar() {
+    this.router.navigate(['/dashboard']);
+  }
+
+  /** Click on overlay backdrop closes the modal */
+  onOverlayClick(event: MouseEvent) {
+    this.cerrar();
   }
 
   get isValid(): boolean {
@@ -118,7 +145,7 @@ export class RegistrarEntradaComponent implements OnInit, AfterViewInit {
       title: 'Confirmar registro',
       message: '¿Deseas registrar esta entrada en el sistema?',
       confirmText: 'Sí, registrar',
-      cancelText: 'No',
+      cancelText: 'Cancelar',
     });
     if (!confirmado) return;
 
@@ -137,25 +164,22 @@ export class RegistrarEntradaComponent implements OnInit, AfterViewInit {
       .subscribe({
         next: () => {
           this.toast.success('✓ Entrada registrada exitosamente');
-          this.resetForm();
-          this.showSummary = false;
+          
+          // Generate notification
+          const foodName = this.selectedTipoComidaNombre;
+          this.notificationService.addNotification(
+            `Entrada registrada: ${this.form.cantidad} raciones de ${foodName} recibidas vía ${this.form.origen || 'Donación'} por ${this.form.registradoPor}.`,
+            'success',
+            '/movimientos'
+          );
+
           this.submitting = false;
+          this.cerrar();
         },
         error: (err) => {
           this.toast.error(err.error?.message || 'Error al registrar');
           this.submitting = false;
         },
       });
-  }
-
-  private resetForm() {
-    this.form = {
-      tipoComidaId: '',
-      cantidad: null,
-      origen: '',
-      nota: '',
-      registradoPor: this.form.registradoPor,
-      fecha: new Date().toISOString().split('T')[0],
-    };
   }
 }

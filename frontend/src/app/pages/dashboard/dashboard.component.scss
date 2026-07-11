@@ -1,7 +1,9 @@
-/* ═══ Dashboard (Ref Ultimate Styling) ══════════════════════════════ */
+/* ═══ Dashboard ═══════════════════════════════════════════════════════════ */
 
 /* ─── Greeting / Header ─── */
 .dash {
+  width: 100%;
+
   &__greeting {
     display: flex;
     justify-content: space-between;
@@ -11,9 +13,10 @@
 
   &__title {
     font-size: 1.8rem;
-    font-weight: 700;
-    color: #1e293b;
-    letter-spacing: -0.02em;
+    font-weight: 800;
+    color: var(--text-primary);
+    letter-spacing: -0.03em;
+    line-height: 1.15;
   }
 
   &__grid {
@@ -90,8 +93,8 @@
   }
 
   &__label {
-    font-size: 0.82rem;
-    font-weight: 500;
+    font-size: 0.88rem;
+    font-weight: 600;
     color: var(--text-secondary);
     white-space: nowrap;
     overflow: hidden;
@@ -116,8 +119,9 @@
   }
 
   &__period {
-    font-size: 0.72rem;
-    color: var(--text-muted);
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: var(--text-secondary);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -341,9 +345,9 @@
   }
 
   &__title {
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: #1e293b;
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: var(--text-primary);
     display: flex;
     align-items: center;
     gap: 8px;

@@ -1,63 +1,107 @@
 <div class="page">
+  <!-- Header -->
   <div class="page__header">
     <div>
       <h1 class="page__title">Historial de Movimientos</h1>
-      <p class="page__subtitle">{{ total }} movimientos registrados</p>
+      <p class="page__subtitle">{{ total }} registros en total</p>
+    </div>
+  </div>
+
+  <!-- KPI Mini-Cards -->
+  <div class="mov-kpi-row">
+    <div class="mov-kpi-card card">
+      <div class="mov-kpi-card__icon mov-kpi-card__icon--entry">
+        <!-- Down arrow -->
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="12" y1="5" x2="12" y2="19"></line>
+          <polyline points="19 12 12 19 5 12"></polyline>
+        </svg>
+      </div>
+      <div class="mov-kpi-card__body">
+        <div class="mov-kpi-card__label">Entradas</div>
+        <div class="mov-kpi-card__value">{{ totalEntradas }}</div>
+      </div>
+    </div>
+
+    <div class="mov-kpi-card card">
+      <div class="mov-kpi-card__icon mov-kpi-card__icon--exit">
+        <!-- Up arrow -->
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="12" y1="19" x2="12" y2="5"></line>
+          <polyline points="5 12 12 5 19 12"></polyline>
+        </svg>
+      </div>
+      <div class="mov-kpi-card__body">
+        <div class="mov-kpi-card__label">Salidas</div>
+        <div class="mov-kpi-card__value">{{ totalSalidas }}</div>
+      </div>
+    </div>
+
+    <div class="mov-kpi-card card">
+      <div class="mov-kpi-card__icon mov-kpi-card__icon--balance">
+        <!-- Plus in square -->
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+          <line x1="12" y1="8" x2="12" y2="16"></line>
+          <line x1="8" y1="12" x2="16" y2="12"></line>
+        </svg>
+      </div>
+      <div class="mov-kpi-card__body">
+        <div class="mov-kpi-card__label">Saldo Neto</div>
+        <div class="mov-kpi-card__value" [style.color]="saldoNeto >= 0 ? 'var(--success)' : 'var(--danger)'">
+          {{ saldoNeto >= 0 ? '+' : '' }}{{ saldoNeto }}
+        </div>
+      </div>
     </div>
   </div>
 
   <!-- ═══ FILTERS ═══ -->
-  <div class="filters-card card animate-fade-in-up">
+  <div class="filters-card card">
     <div class="filters-grid">
-      <!-- Filtro: Tipo de Movimiento -->
+      <!-- Tipo -->
       <div class="form-group">
-        <label class="form-label">TIPO</label>
+        <label class="form-label">Tipo</label>
         <div class="custom-select" [class.custom-select--open]="isOpenTipo" (click)="toggleTipo($event)">
           <div class="custom-select__value">{{ selectedTipoNombre }}</div>
-          <svg class="custom-select__icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+          <svg class="custom-select__icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
           @if (isOpenTipo) {
             <div class="custom-select__dropdown">
               <div class="custom-select__option" (click)="selectTipo(''); $event.stopPropagation()">Todos</div>
-              <div class="custom-select__option" (click)="selectTipo('ENTRADA'); $event.stopPropagation()">Entrada</div>
-              <div class="custom-select__option" (click)="selectTipo('SALIDA'); $event.stopPropagation()">Salida</div>
-              <div class="custom-select__option" (click)="selectTipo('TRASLADO'); $event.stopPropagation()">Traslado</div>
+              <div class="custom-select__option" (click)="selectTipo('ENTRADA'); $event.stopPropagation()">↓ Entrada</div>
+              <div class="custom-select__option" (click)="selectTipo('SALIDA'); $event.stopPropagation()">↑ Salida</div>
             </div>
           }
         </div>
       </div>
 
-      <!-- Filtro: Centro -->
+      <!-- Centro -->
       <div class="form-group">
-        <label class="form-label">CENTRO</label>
+        <label class="form-label">Centro</label>
         <div class="custom-select" [class.custom-select--open]="isOpenCentro" (click)="toggleCentro($event)">
           <div class="custom-select__value">{{ selectedCentroFiltroNombre }}</div>
-          <svg class="custom-select__icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+          <svg class="custom-select__icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
           @if (isOpenCentro) {
             <div class="custom-select__dropdown">
               <div class="custom-select__option" (click)="selectCentro(''); $event.stopPropagation()">Todos</div>
               @for (c of centros; track c.id) {
-                <div class="custom-select__option" (click)="selectCentro(c.id); $event.stopPropagation()">
-                  {{ c.nombre }}
-                </div>
+                <div class="custom-select__option" (click)="selectCentro(c.id); $event.stopPropagation()">{{ c.nombre }}</div>
               }
             </div>
           }
         </div>
       </div>
 
-      <!-- Filtro: Tipo de Comida -->
+      <!-- Tipo Comida -->
       <div class="form-group">
-        <label class="form-label">TIPO COMIDA</label>
+        <label class="form-label">Tipo Comida</label>
         <div class="custom-select" [class.custom-select--open]="isOpenComida" (click)="toggleComida($event)">
           <div class="custom-select__value">{{ selectedComidaFiltroNombre }}</div>
-          <svg class="custom-select__icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+          <svg class="custom-select__icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
           @if (isOpenComida) {
             <div class="custom-select__dropdown">
               <div class="custom-select__option" (click)="selectComida(''); $event.stopPropagation()">Todos</div>
               @for (tipo of tiposComida; track tipo.id) {
-                <div class="custom-select__option" (click)="selectComida(tipo.id); $event.stopPropagation()">
-                  {{ tipo.nombre }}
-                </div>
+                <div class="custom-select__option" (click)="selectComida(tipo.id); $event.stopPropagation()">{{ tipo.nombre }}</div>
               }
             </div>
           }
@@ -65,27 +109,30 @@
       </div>
 
       <div class="form-group">
-        <label class="form-label">DESDE</label>
+        <label class="form-label">Desde</label>
         <app-custom-datepicker [(value)]="filters.fechaDesde" (valueChange)="applyFilters()"></app-custom-datepicker>
       </div>
 
       <div class="form-group">
-        <label class="form-label">HASTA</label>
+        <label class="form-label">Hasta</label>
         <app-custom-datepicker [(value)]="filters.fechaHasta" (valueChange)="applyFilters()"></app-custom-datepicker>
       </div>
 
       <div class="form-group filters-actions">
-        <button class="btn btn--ghost btn--sm" (click)="clearFilters()">Limpiar filtros</button>
+        <button class="btn btn--ghost btn--sm" (click)="clearFilters()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+          Limpiar
+        </button>
       </div>
     </div>
   </div>
 
   <!-- ═══ TABLE ═══ -->
-  <div class="table-card card animate-fade-in-up" style="animation-delay: 0.1s">
+  <div class="table-card card">
     @if (loading) {
       <div class="table-loading">
         <div class="table-loading__spinner"></div>
-        Cargando...
+        Cargando movimientos...
       </div>
     } @else {
       <div class="table-wrapper">
@@ -105,9 +152,17 @@
             @for (mov of movimientos; track mov.id) {
               <tr>
                 <td>
-                  <span class="badge" [class]="mov.tipo === 'ENTRADA' ? 'badge--success' : 'badge--danger'">
-                    {{ mov.tipo === 'ENTRADA' ? '↓ Entrada' : '↑ Salida' }}
-                  </span>
+                  @if (mov.tipo === 'ENTRADA') {
+                    <span class="mov-badge mov-badge--entrada">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14m-7-7l7 7 7-7"/></svg>
+                      Entrada
+                    </span>
+                  } @else {
+                    <span class="mov-badge mov-badge--salida">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 19V5m-7 7l7-7 7 7"/></svg>
+                      Salida
+                    </span>
+                  }
                 </td>
                 <td>{{ getTipoComidaNombre(mov.tipoComidaId) }}</td>
                 <td class="data-table__cantidad">{{ mov.cantidad }}</td>
@@ -119,7 +174,7 @@
             } @empty {
               <tr>
                 <td colspan="7" class="data-table__empty">
-                  No se encontraron movimientos con estos filtros
+                  No se encontraron movimientos con los filtros aplicados
                 </td>
               </tr>
             }
@@ -127,17 +182,16 @@
         </table>
       </div>
 
-      <!-- Pagination -->
       @if (totalPages > 1) {
         <div class="pagination">
           <button class="btn btn--ghost btn--sm" [disabled]="page <= 1" (click)="goToPage(page - 1)">
-            ← Anterior
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+            Anterior
           </button>
-          <span class="pagination__info">
-            Página {{ page }} de {{ totalPages }}
-          </span>
+          <span class="pagination__info">Página {{ page }} de {{ totalPages }}</span>
           <button class="btn btn--ghost btn--sm" [disabled]="page >= totalPages" (click)="goToPage(page + 1)">
-            Siguiente →
+            Siguiente
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
           </button>
         </div>
       }
