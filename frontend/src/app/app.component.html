@@ -2,8 +2,8 @@
 @if (showGlobalLoader) {
   <div class="loader-overlay">
     <div class="loader-overlay__content">
-      <div class="loader-overlay__logo">
-        <img src="assets/img/Logotipo.png" alt="RestApp" style="height: 48px; object-fit: contain;">
+      <div class="loader-overlay__logo" style="background: transparent;">
+        <img src="/img/Logotipo.png" alt="RestApp" style="height: 48px; object-fit: contain;">
       </div>
       <div class="loader-overlay__bar">
         <div class="loader-overlay__bar-fill"></div>
@@ -16,9 +16,8 @@
   <!-- ═══ SIDEBAR (Ref Ultimate Style) ═══ -->
   @if (auth.isAuthenticated()) {
     <aside class="sidebar">
-      <!-- Circle Logo at Top -->
-      <div class="sidebar__logo">
-        <img src="assets/img/Isotipo.png" alt="Logo" style="width: 24px; height: 24px; object-fit: contain;">
+      <div class="sidebar__logo" style="background: transparent;">
+        <img src="/img/Isotipo.png" alt="Logo" style="width: 36px; height: 36px; object-fit: contain; border-radius: 8px;">
       </div>
 
       <!-- Navigation Icons -->

@@ -18,13 +18,15 @@
   .login-image-card {
     flex: 1;
     border-radius: 24px;
-    /* Changed image to a restaurant interior context */
-    background: url('https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=1934&auto=format&fit=crop') center/cover no-repeat;
+    /* High-quality catering/food logistics image */
+    background: url('https://images.unsplash.com/photo-1555244162-803834f70033?q=80&w=1920&auto=format&fit=crop') center/cover no-repeat;
     position: relative;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: flex-end;
+    align-items: center;
     padding: 32px;
+    padding-bottom: 48px;
     box-shadow: 0 20px 40px rgba(0,0,0,0.15);
 
     &::before {
@@ -32,16 +34,18 @@
       position: absolute;
       inset: 0;
       border-radius: 24px;
-      background: linear-gradient(180deg, rgba(0,0,0,0.1) 0%, transparent 40%, rgba(0,0,0,0.6) 100%);
+      background: linear-gradient(to bottom, rgba(0,0,0,0) 30%, rgba(0,0,0,0.85) 100%);
     }
 
     &__brand {
       position: relative;
       z-index: 1;
       display: flex;
+      flex-direction: column;
       align-items: center;
       gap: 12px;
       color: #ffffff;
+      margin-bottom: 16px;
       
       .brand-text {
         font-size: 1.5rem;
