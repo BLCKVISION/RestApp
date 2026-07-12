@@ -65,25 +65,29 @@ export class AppComponent implements AfterViewInit {
   }
 
   ngAfterViewInit() {
-    // Start loader bar animation globally
-    gsap.to('.loader-overlay__bar-fill', {
-      scaleX: 1,
-      duration: 1.2,
-      ease: 'power2.inOut',
-      delay: 0.2,
-      onComplete: () => {
-        // Slide UP the loader screen
-        gsap.to('.loader-overlay', {
-          yPercent: -100,
-          duration: 0.8,
-          ease: 'power3.inOut',
-          onComplete: () => {
-            this.showGlobalLoader = false;
-            this.cdr.detectChanges();
-          }
-        });
+    // Start logo reveal animation
+    gsap.fromTo('.loader-logo-reveal', 
+      { clipPath: 'polygon(0 0, 0% 0, 0% 100%, 0 100%)', opacity: 0.5 },
+      {
+        clipPath: 'polygon(0 0, 100% 0, 100% 100%, 0 100%)',
+        opacity: 1,
+        duration: 1.5,
+        ease: 'power2.inOut',
+        delay: 0.2,
+        onComplete: () => {
+          // Slide UP the loader screen
+          gsap.to('.loader-overlay', {
+            yPercent: -100,
+            duration: 0.8,
+            ease: 'power3.inOut',
+            onComplete: () => {
+              this.showGlobalLoader = false;
+              this.cdr.detectChanges();
+            }
+          });
+        }
       }
-    });
+    );
   }
 
   navItems = [
