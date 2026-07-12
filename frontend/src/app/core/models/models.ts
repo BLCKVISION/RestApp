@@ -38,6 +38,7 @@ export interface MovimientoComida {
   tipoComidaId: string;
   cantidad: number;
   origen?: string;
+  destino?: string;
   nota?: string;
   registradoPor: string;
   solicitudId?: string;
