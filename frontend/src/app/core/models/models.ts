@@ -54,6 +54,12 @@ export interface Ingrediente {
   updatedAt: string;
 }
 
+export interface ResumenInventarioIngrediente {
+  ingredienteId: string;
+  ingrediente: string;
+  stockActual: number;
+}
+
 export interface RecetaIngrediente {
   ingredienteId: string;
   cantidadPorRacion: number;

@@ -20,6 +20,7 @@ import {
   Rol,
   Usuario,
   PermisoCatalogo,
+  ResumenInventarioIngrediente,
 } from '../models/models';
 import { API_BASE_URL } from '../api.config';
 
@@ -85,6 +86,10 @@ export class ApiService {
 
   getDistribucionPorCentro(): Observable<DistribucionCentro[]> {
     return this.http.get<DistribucionCentro[]>(`${API}/inventario/distribucion`);
+  }
+
+  getResumenInventarioIngredientes(): Observable<ResumenInventarioIngrediente[]> {
+    return this.http.get<ResumenInventarioIngrediente[]>(`${API}/inventario-ingredientes/resumen`);
   }
 
   // ─── Solicitudes ────────────────────────────────────────────────

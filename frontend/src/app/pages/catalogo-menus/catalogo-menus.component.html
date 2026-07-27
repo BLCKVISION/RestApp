@@ -35,6 +35,7 @@
             <tr>
               <th>Nombre</th>
               <th>Unidad</th>
+              <th>Stock</th>
               <th>Activo</th>
               <th></th>
             </tr>
@@ -44,6 +45,7 @@
               <tr>
                 <td class="data-table__strong">{{ ing.nombre }}</td>
                 <td>{{ ing.unidad }}</td>
+                <td>{{ stockDe(ing.id) }} {{ ing.unidad }}</td>
                 <td>
                   <span class="pill" [class.pill--on]="ing.activo" [class.pill--off]="!ing.activo">
                     {{ ing.activo ? 'Sí' : 'No' }}

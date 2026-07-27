@@ -64,6 +64,7 @@ export class CatalogoMenusComponent implements OnInit, AfterViewInit {
   ngOnInit() {
     this.api.getTiposComida().subscribe({ next: data => this.tiposComida = data });
     this.loadAll();
+    this.loadStock();
   }
 
   ngAfterViewInit() {
@@ -86,6 +87,22 @@ export class CatalogoMenusComponent implements OnInit, AfterViewInit {
       next: data => { this.recetas = data; this.loading = false; this.cdr.detectChanges(); },
       error: () => { this.loading = false; }
     });
+  }
+
+  stockPorIngrediente: Record<string, number> = {};
+
+  loadStock() {
+    this.api.getResumenInventarioIngredientes().subscribe({
+      next: data => {
+        this.stockPorIngrediente = {};
+        data.forEach(r => this.stockPorIngrediente[r.ingredienteId] = r.stockActual);
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  stockDe(ingredienteId: string): number {
+    return this.stockPorIngrediente[ingredienteId] ?? 0;
   }
 
   // ─── Helpers ───
