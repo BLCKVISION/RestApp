@@ -1,0 +1,122 @@
+<div class="req-page">
+  <!-- Header -->
+  <div class="req-header">
+    <div>
+      <h1 class="page__title">Requisiciones de Inventario</h1>
+      <p class="page__subtitle">Aprueba o rechaza las solicitudes de inventario generadas automáticamente.</p>
+    </div>
+  </div>
+
+  @if (loading) {
+    <div style="padding: 60px; text-align: center; color: var(--text-muted); display: flex; flex-direction: column; align-items: center; gap: 12px;">
+      <span class="spinner" style="width: 28px; height: 28px; border-width: 3px;"></span>
+      <span style="font-size: 0.88rem;">Cargando requisiciones...</span>
+    </div>
+  } @else {
+    <div class="req-board">
+
+      <!-- Pendientes -->
+      <div class="req-column">
+        <div class="req-column-header">
+          <div class="req-column-title">
+            <span class="status-dot bg-warning"></span>
+            Pendientes
+            <span class="req-count">{{ pendientes.length }}</span>
+          </div>
+        </div>
+        <div class="req-cards">
+          @for (req of pendientes; track req.id) {
+            <div class="req-card">
+              <div class="req-card-top">
+                <span class="req-receta">{{ getRecetaNombre(req.recetaId) }}</span>
+                <span class="req-folio">#{{ folio(req.solicitudId) }}</span>
+              </div>
+
+              <div class="req-items">
+                <div class="req-items__head">
+                  <span>Ingrediente</span>
+                  <span>Req.</span>
+                  <span>Disp.</span>
+                  <span>Falta</span>
+                </div>
+                @for (item of req.items; track item.ingredienteId) {
+                  <div class="req-items__row" [class.req-items__row--falta]="item.cantidadFaltante > 0">
+                    <span class="req-items__name">{{ getIngredienteNombre(item.ingredienteId) }}</span>
+                    <span>{{ item.cantidadRequerida }} {{ getIngredienteUnidad(item.ingredienteId) }}</span>
+                    <span>{{ item.cantidadDisponible }}</span>
+                    <span class="req-items__falta">{{ item.cantidadFaltante }}</span>
+                  </div>
+                }
+              </div>
+
+              <div class="req-card-footer" *appPermiso="'requisiciones.resolver'">
+                <button class="btn-reject"
+                        [disabled]="resolvingId === req.id"
+                        (click)="rechazar(req)">
+                  @if (resolvingId === req.id) { <span class="mini-spinner"></span> }
+                  Rechazar
+                </button>
+                <button class="btn-accept"
+                        [disabled]="resolvingId === req.id"
+                        (click)="aceptar(req)">
+                  @if (resolvingId === req.id) { <span class="mini-spinner"></span> }
+                  Aceptar
+                </button>
+              </div>
+            </div>
+          }
+          @if (pendientes.length === 0) {
+            <div class="req-empty">No hay requisiciones pendientes</div>
+          }
+        </div>
+      </div>
+
+      <!-- Resueltas -->
+      <div class="req-column">
+        <div class="req-column-header">
+          <div class="req-column-title">
+            <span class="status-dot bg-success"></span>
+            Resueltas
+            <span class="req-count">{{ resueltas.length }}</span>
+          </div>
+        </div>
+        <div class="req-cards">
+          @for (req of resueltas; track req.id) {
+            <div class="req-card req-card--resolved">
+              <div class="req-card-top">
+                <span class="req-receta">{{ getRecetaNombre(req.recetaId) }}</span>
+                <span class="req-folio">#{{ folio(req.solicitudId) }}</span>
+              </div>
+
+              <div class="req-resolved-meta">
+                <span class="req-badge"
+                      [class.req-badge--aceptada]="req.estado === 'ACEPTADA'"
+                      [class.req-badge--rechazada]="req.estado === 'RECHAZADA'">
+                  {{ req.estado }}
+                </span>
+                @if (req.resueltoPor) {
+                  <span class="req-resuelto-por">por {{ req.resueltoPor }}</span>
+                }
+              </div>
+
+              <div class="req-items">
+                @for (item of req.items; track item.ingredienteId) {
+                  <div class="req-items__row">
+                    <span class="req-items__name">{{ getIngredienteNombre(item.ingredienteId) }}</span>
+                    <span>{{ item.cantidadRequerida }} {{ getIngredienteUnidad(item.ingredienteId) }}</span>
+                    <span>{{ item.cantidadDisponible }}</span>
+                    <span class="req-items__falta">{{ item.cantidadFaltante }}</span>
+                  </div>
+                }
+              </div>
+            </div>
+          }
+          @if (resueltas.length === 0) {
+            <div class="req-empty">Aún no hay requisiciones resueltas</div>
+          }
+        </div>
+      </div>
+
+    </div>
+  }
+</div>

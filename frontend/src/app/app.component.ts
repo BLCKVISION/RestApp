@@ -90,11 +90,18 @@ export class AppComponent implements AfterViewInit {
     );
   }
 
-  navItems = [
+  navItems: { path: string; label: string; icon: string; permiso?: string }[] = [
     { path: '/dashboard', label: 'Inicio', icon: 'home' },
     { path: '/solicitudes', label: 'Pedidos', icon: 'pedidos' },
+    { path: '/requisiciones', label: 'Requisiciones', icon: 'requisiciones', permiso: 'requisiciones.resolver' },
     { path: '/salida', label: 'Entregas', icon: 'entregas' },
     { path: '/movimientos', label: 'Analítica', icon: 'historial' },
     { path: '/reportes', label: 'Informes', icon: 'reportes' },
+    { path: '/roles', label: 'Roles', icon: 'roles', permiso: 'roles.gestionar' },
+    { path: '/usuarios', label: 'Usuarios', icon: 'usuarios', permiso: 'usuarios.gestionar' },
   ];
+
+  get navItemsVisibles() {
+    return this.navItems.filter(item => !item.permiso || this.auth.hasPermission(item.permiso));
+  }
 }

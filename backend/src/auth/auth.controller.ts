@@ -14,9 +14,9 @@ export class AuthController {
     return this.authService.login(dto);
   }
 
-  /** GET /api/auth/me – Usuario autenticado actual */
+  /** GET /api/auth/me – Usuario autenticado actual (con rol y permisos resueltos) */
   @Get('me')
   me(@Req() req: any) {
-    return req.user;
+    return this.authService.me(req.user.userId);
   }
 }

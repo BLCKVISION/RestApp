@@ -3,6 +3,18 @@ export enum TipoMovimiento {
   SALIDA = 'SALIDA',
 }
 
+export enum NivelMenu {
+  VIP = 'VIP',
+  PREMIUM = 'PREMIUM',
+  PLATINO = 'PLATINO',
+}
+
+export enum EstadoRequisicion {
+  PENDIENTE = 'PENDIENTE',
+  ACEPTADA = 'ACEPTADA',
+  RECHAZADA = 'RECHAZADA',
+}
+
 export enum EstadoSolicitud {
   PENDIENTE = 'PENDIENTE',
   APROBADA = 'APROBADA',
@@ -27,8 +39,57 @@ export interface TipoComida {
   nombre: string;
   descripcion?: string;
   activo: boolean;
+  disponibleEnPortal?: boolean;
   createdAt: string;
   updatedAt: string;
+}
+
+export interface Ingrediente {
+  id: string;
+  nombre: string;
+  unidad: string;
+  descripcion?: string;
+  activo: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface RecetaIngrediente {
+  ingredienteId: string;
+  cantidadPorRacion: number;
+  personalizable?: boolean;
+  alternativas?: string[];
+}
+
+export interface Receta {
+  id: string;
+  nombre: string;
+  tipoComidaId: string;
+  nivel: NivelMenu;
+  ingredientes: RecetaIngrediente[];
+  personalizable: boolean;
+  activo: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface RequisicionItem {
+  ingredienteId: string;
+  cantidadRequerida: number;
+  cantidadDisponible: number;
+  cantidadFaltante: number;
+}
+
+export interface Requisicion {
+  id: string;
+  solicitudId: string;
+  recetaId: string;
+  items: RequisicionItem[];
+  estado: EstadoRequisicion;
+  resueltoPor?: string;
+  notaResolucion?: string;
+  createdAt: string;
+  resueltoAt?: string;
 }
 
 export interface MovimientoComida {
@@ -58,6 +119,10 @@ export interface SolicitudComida {
   observaciones?: string;
   notasInternas?: string;
   ubicacion?: string;
+  nivel?: NivelMenu;
+  recetaId?: string;
+  personalizacion?: { ingredienteOriginalId: string; ingredienteSustitutoId: string }[];
+  requisicionId?: string;
   fechaSolicitada: string;
   createdAt: string;
 }
@@ -110,4 +175,31 @@ export interface DistribucionCentro {
     tipoComida: string;
     cantidad: number;
   }[];
+}
+
+export interface PermisoCatalogo {
+  clave: string;
+  etiqueta: string;
+  modulo: string;
+}
+
+export interface Rol {
+  id: string;
+  nombre: string;
+  descripcion?: string;
+  permisos: string[];
+  esSistema: boolean;
+  activo: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface Usuario {
+  id: string;
+  username: string;
+  nombre: string;
+  rolId: string;
+  activo: boolean;
+  createdAt: string;
+  updatedAt: string;
 }

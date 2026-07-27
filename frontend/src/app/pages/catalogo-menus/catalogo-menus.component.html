@@ -1,0 +1,269 @@
+<div class="page">
+  <div class="page__header">
+    <div>
+      <h1 class="page__title">Catálogo de Menús</h1>
+      <p class="page__subtitle">Administra los ingredientes y las recetas del sistema</p>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="config-tabs">
+    <button class="config-tab" [class.config-tab--active]="activeTab === 'ingredientes'" (click)="activeTab = 'ingredientes'">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+      Ingredientes
+    </button>
+    <button class="config-tab" [class.config-tab--active]="activeTab === 'recetas'" (click)="activeTab = 'recetas'">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M8 13h8"/><path d="M8 17h8"/><path d="M8 9h2"/></svg>
+      Recetas
+    </button>
+  </div>
+
+  <!-- ═══ Tab Ingredientes ═══ -->
+  @if (activeTab === 'ingredientes') {
+    <div class="config-card card">
+      <div class="config-card__head">
+        <h2 class="config-card__title">Ingredientes</h2>
+        <button class="btn btn--action" *appPermiso="'ingredientes.gestionar'" (click)="abrirCrearIngrediente()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Nuevo
+        </button>
+      </div>
+
+      <div class="data-table-wrapper">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Unidad</th>
+              <th>Activo</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (ing of ingredientes; track ing.id) {
+              <tr>
+                <td class="data-table__strong">{{ ing.nombre }}</td>
+                <td>{{ ing.unidad }}</td>
+                <td>
+                  <span class="pill" [class.pill--on]="ing.activo" [class.pill--off]="!ing.activo">
+                    {{ ing.activo ? 'Sí' : 'No' }}
+                  </span>
+                </td>
+                <td class="data-table__actions">
+                  <button class="icon-btn" title="Editar" (click)="abrirEditarIngrediente(ing)">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
+                  </button>
+                </td>
+              </tr>
+            }
+            @if (ingredientes.length === 0) {
+              <tr><td colspan="4" class="data-table__empty">No hay ingredientes registrados</td></tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  }
+
+  <!-- ═══ Tab Recetas ═══ -->
+  @if (activeTab === 'recetas') {
+    <div class="config-card card">
+      <div class="config-card__head">
+        <h2 class="config-card__title">Recetas</h2>
+        <button class="btn btn--action" *appPermiso="'recetas.gestionar'" (click)="abrirCrearReceta()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Nueva
+        </button>
+      </div>
+
+      <div class="data-table-wrapper">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Momento</th>
+              <th>Nivel</th>
+              <th>Ingredientes</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (rec of recetas; track rec.id) {
+              <tr>
+                <td class="data-table__strong">{{ rec.nombre }}</td>
+                <td>{{ getTipoComidaNombre(rec.tipoComidaId) }}</td>
+                <td><span class="pill pill--nivel">{{ rec.nivel }}</span></td>
+                <td>{{ rec.ingredientes.length }}</td>
+                <td class="data-table__actions">
+                  <button class="icon-btn" title="Editar" (click)="abrirEditarReceta(rec)">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
+                  </button>
+                </td>
+              </tr>
+            }
+            @if (recetas.length === 0) {
+              <tr><td colspan="5" class="data-table__empty">No hay recetas registradas</td></tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  }
+</div>
+
+<!-- ═══ Modal Ingrediente ═══ -->
+@if (isIngredienteModalOpen) {
+  <div class="modal-overlay" (click)="cerrarIngredienteModal()">
+    <div class="premium-modal" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <div>
+          <h2 class="modal-title">{{ ingredienteEnEdicion ? 'Editar Ingrediente' : 'Nuevo Ingrediente' }}</h2>
+        </div>
+        <button class="icon-btn close-btn" (click)="cerrarIngredienteModal()">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <div class="form-grid">
+          <div class="form-group form-group--full">
+            <label class="form-label">Nombre *</label>
+            <input type="text" class="form-control" [(ngModel)]="ingredienteForm.nombre" placeholder="Ej: Arroz blanco">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Unidad *</label>
+            <input type="text" class="form-control" [(ngModel)]="ingredienteForm.unidad" placeholder="Ej: kg, g, unidad, litro">
+          </div>
+          <div class="form-group form-group--full">
+            <label class="form-label">Descripción</label>
+            <textarea class="form-control" [(ngModel)]="ingredienteForm.descripcion" rows="2" placeholder="Opcional"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn--outline" (click)="cerrarIngredienteModal()">Cancelar</button>
+        <button class="btn btn--action" [disabled]="savingIngrediente" (click)="guardarIngrediente()">
+          @if (savingIngrediente) { <span class="btn-spinner"></span> Guardando... }
+          @else { Guardar }
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- ═══ Modal Receta ═══ -->
+@if (isRecetaModalOpen) {
+  <div class="modal-overlay" (click)="cerrarRecetaModal()">
+    <div class="premium-modal premium-modal--wide" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <div>
+          <h2 class="modal-title">{{ recetaEnEdicion ? 'Editar Receta' : 'Nueva Receta' }}</h2>
+          <p style="margin: 0; font-size: 0.8rem; color: var(--text-secondary); margin-top: 2px;">Define los ingredientes por ración</p>
+        </div>
+        <button class="icon-btn close-btn" (click)="cerrarRecetaModal()">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">Nombre *</label>
+            <input type="text" class="form-control" [(ngModel)]="recetaForm.nombre" placeholder="Ej: Pollo al horno">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Momento (Tipo de Comida) *</label>
+            <div class="select-wrapper">
+              <select class="form-control" [(ngModel)]="recetaForm.tipoComidaId">
+                <option value="">Seleccionar...</option>
+                @for (tipo of tiposComida; track tipo.id) {
+                  <option [value]="tipo.id">{{ tipo.nombre }}</option>
+                }
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Nivel *</label>
+            <div class="select-wrapper">
+              <select class="form-control" [(ngModel)]="recetaForm.nivel">
+                @for (n of niveles; track n) {
+                  <option [value]="n">{{ n }}</option>
+                }
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Builder de ingredientes -->
+        <div class="lineas-builder">
+          <div class="lineas-builder__head">
+            <h3 class="lineas-builder__title">Ingredientes de la receta</h3>
+            <button class="btn btn--outline btn--sm" (click)="agregarLinea()">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Agregar ingrediente
+            </button>
+          </div>
+
+          @for (linea of recetaLineas; track $index) {
+            <div class="linea">
+              <div class="linea__row">
+                <div class="form-group linea__ingrediente">
+                  <label class="form-label">Ingrediente</label>
+                  <div class="select-wrapper">
+                    <select class="form-control" [(ngModel)]="linea.ingredienteId">
+                      <option value="">Seleccionar...</option>
+                      @for (ing of ingredientes; track ing.id) {
+                        <option [value]="ing.id">{{ ing.nombre }}</option>
+                      }
+                    </select>
+                  </div>
+                </div>
+                <div class="form-group linea__cantidad">
+                  <label class="form-label">Cant. / ración</label>
+                  <input type="number" class="form-control" [(ngModel)]="linea.cantidadPorRacion" min="0" step="0.01" placeholder="0">
+                </div>
+                <div class="form-group linea__personalizable">
+                  <label class="form-label">Personalizable</label>
+                  <label class="checkbox-inline">
+                    <input type="checkbox" [(ngModel)]="linea.personalizable">
+                    <span>Permitir sustituir</span>
+                  </label>
+                </div>
+                <button class="linea__remove" title="Quitar" (click)="quitarLinea($index)">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                </button>
+              </div>
+
+              @if (linea.personalizable) {
+                <div class="linea__alternativas">
+                  <label class="form-label">Alternativas permitidas</label>
+                  <div class="chips">
+                    @for (alt of alternativasDisponibles(linea); track alt.id) {
+                      <button class="chip"
+                              [class.chip--active]="linea.alternativas.includes(alt.id)"
+                              (click)="toggleAlternativa(linea, alt.id)">
+                        {{ alt.nombre }}
+                      </button>
+                    }
+                    @if (alternativasDisponibles(linea).length === 0) {
+                      <span class="chips__empty">Selecciona primero un ingrediente</span>
+                    }
+                  </div>
+                </div>
+              }
+            </div>
+          }
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn--outline" (click)="cerrarRecetaModal()">Cancelar</button>
+        <button class="btn btn--action" [disabled]="savingReceta" (click)="guardarReceta()">
+          @if (savingReceta) { <span class="btn-spinner"></span> Guardando... }
+          @else { Guardar Receta }
+        </button>
+      </div>
+    </div>
+  </div>
+}

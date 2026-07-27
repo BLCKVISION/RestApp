@@ -1,124 +1,6 @@
 <div class="public-wrapper">
   <div class="public-card card">
-    @if (!success && !showSummary) {
-      <div class="public-header">
-        <div class="public-logo">
-          <svg width="40" height="40" viewBox="0 0 24 24" fill="none">
-            <rect width="24" height="24" rx="8" fill="var(--primary)"/>
-            <path d="M7 12l3 3 7-7" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </div>
-        <h1 class="public-title">Registrar Solicitud</h1>
-        <p class="public-subtitle">Formulario de requerimiento para organizaciones</p>
-      </div>
-
-      <div class="form-grid">
-        <div class="form-group form-group--full">
-          <label class="form-label">Organización / Empresa *</label>
-          <input type="text" class="form-control" [(ngModel)]="form.centroId" placeholder="Ej: Comedor de la Paz">
-        </div>
-
-        <div class="form-group form-group--full">
-          <label class="form-label">Ubicación (Destino) *</label>
-          <input type="text" class="form-control" [(ngModel)]="form.ubicacion" placeholder="Ej: Calle Principal, Sector 4">
-        </div>
-
-        <div class="form-group">
-          <label class="form-label">Nombre del Responsable *</label>
-          <input type="text" class="form-control" [(ngModel)]="form.solicitante" placeholder="¿Quién retira?">
-        </div>
-
-        <div class="form-group">
-          <label class="form-label">Tipo de Comida *</label>
-          <div class="select-wrapper">
-            <select class="form-control form-select" [(ngModel)]="form.tipoComidaId">
-              <option value="">Seleccionar menú...</option>
-              @for (tipo of tiposComida; track tipo.id) {
-                <option [value]="tipo.id">{{ tipo.nombre }}</option>
-              }
-            </select>
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label class="form-label">Cantidad (Raciones) *</label>
-          <input type="number" class="form-control" [(ngModel)]="form.cantidad" placeholder="Ej: 150" min="1">
-        </div>
-
-        <div class="form-group">
-          <label class="form-label">Hora de Entrega Requerida</label>
-          <div class="time-input-wrapper">
-            <input type="time" class="form-control time-input" [(ngModel)]="form.horaEntrega">
-          </div>
-        </div>
-
-        <div class="form-group form-group--full">
-          <label class="form-label">Observaciones (Opcional)</label>
-          <textarea class="form-control" [(ngModel)]="form.nota" rows="3" placeholder="Si tienes observaciones de una comida especial, etc..."></textarea>
-        </div>
-      </div>
-
-      <div class="submit-wrapper">
-        <button class="btn btn--primary btn--lg btn-submit" style="background: linear-gradient(135deg, #fb923c, #ea580c); border: none; color: #ffffff; box-shadow: 0 8px 20px -6px rgba(234, 88, 12, 0.5);" [disabled]="!isValid" (click)="verResumen()">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 8px;">
-            <path d="M5 18H3c-.6 0-1-.4-1-1V7c0-.6.4-1 1-1h10c.6 0 1 .4 1 1v11"/>
-            <path d="M14 9h4l4 4v4c0 .6-.4 1-1 1h-2"/>
-            <circle cx="7" cy="18" r="2"/>
-            <circle cx="17" cy="18" r="2"/>
-          </svg>
-          Registrar
-        </button>
-      </div>
-    } @else if (showSummary) {
-      <div class="public-header">
-        <div class="public-logo">
-          <svg width="40" height="40" viewBox="0 0 24 24" fill="none">
-            <rect width="24" height="24" rx="8" fill="var(--primary)"/>
-            <path d="M7 12l3 3 7-7" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </div>
-        <h1 class="public-title">Resumen de la Solicitud</h1>
-        <p class="public-subtitle">Verifica los datos antes de enviar</p>
-      </div>
-
-      <div class="summary-card">
-        <div class="summary-card__item">
-          <span>Organización:</span>
-          <strong>{{ form.centroId || '---' }}</strong>
-        </div>
-        <div class="summary-card__item">
-          <span>Responsable:</span>
-          <strong>{{ form.solicitante || '---' }}</strong>
-        </div>
-        <div class="summary-card__item">
-          <span>Comida:</span>
-          <strong>{{ selectedTipoComidaNombre }}</strong>
-        </div>
-        <div class="summary-card__item">
-          <span>Cantidad:</span>
-          <strong>{{ form.cantidad || 0 }} raciones</strong>
-        </div>
-        <div class="summary-card__item">
-          <span>Ubicación:</span>
-          <strong>{{ form.ubicacion || '---' }}</strong>
-        </div>
-        <div class="summary-card__item">
-          <span>Hora de entrega:</span>
-          <strong>{{ form.horaEntrega || 'A convenir' }}</strong>
-        </div>
-      </div>
-
-      <div class="submit-wrapper summary-actions">
-        <button class="btn btn--outline btn--lg btn--block" (click)="cancelarResumen()">Volver a editar</button>
-        <button class="btn btn--primary btn--lg btn-submit" style="background: linear-gradient(135deg, #fb923c, #ea580c); border: none; color: #ffffff; box-shadow: 0 8px 20px -6px rgba(234, 88, 12, 0.5);" [disabled]="submitting" (click)="confirmarRegistro()">
-          @if (submitting) {
-            <span class="spinner"></span> Procesando...
-          } @else {
-            Continuar
-          }
-        </button>
-      </div>
-    } @else {
+    @if (success) {
       <div class="success-view animate-in">
         <div class="success-icon-wrapper">
           <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2">
@@ -133,6 +15,288 @@
           <button class="btn btn--outline btn--block" routerLink="/solicitudes">Volver</button>
         </div>
       </div>
+    } @else {
+
+      <!-- ═══ Wizard steps ═══ -->
+      @switch (step) {
+
+        <!-- Paso 1: Momento de comida -->
+        @case ('momento') {
+          <div class="public-header">
+            <div class="public-logo">
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none">
+                <rect width="24" height="24" rx="8" fill="var(--primary)"/>
+                <path d="M7 12l3 3 7-7" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <h1 class="public-title">¿Qué momento del día?</h1>
+            <p class="public-subtitle">Selecciona el tipo de comida que necesitas</p>
+          </div>
+
+          <div class="step-options step-options--grid">
+            @for (tipo of tiposComida; track tipo.id) {
+              <button class="choice-card" (click)="elegirMomento(tipo)">
+                <span class="choice-card__icon">
+                  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 2v7c0 1.1.9 2 2 2h1v11h2V11h1c1.1 0 2-.9 2-2V2M8 2v7M20 2v20M20 2c-1.66 0-3 1.34-3 3v6c0 .55.45 1 1 1h2"/>
+                  </svg>
+                </span>
+                <span class="choice-card__title">{{ tipo.nombre }}</span>
+                @if (tipo.descripcion) {
+                  <span class="choice-card__desc">{{ tipo.descripcion }}</span>
+                }
+              </button>
+            }
+            @if (tiposComida.length === 0) {
+              <div class="step-empty">No hay opciones disponibles por ahora.</div>
+            }
+          </div>
+        }
+
+        <!-- Paso 2: Nivel -->
+        @case ('nivel') {
+          <div class="public-header">
+            <div class="public-logo">
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none">
+                <rect width="24" height="24" rx="8" fill="var(--primary)"/>
+                <path d="M7 12l3 3 7-7" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <h1 class="public-title">Elige el nivel</h1>
+            <p class="public-subtitle">{{ selectedTipoComidaNombre }} · Selecciona la categoría del menú</p>
+          </div>
+
+          <div class="step-options step-options--grid">
+            @for (nivel of niveles; track nivel) {
+              <button class="choice-card choice-card--nivel" (click)="elegirNivel(nivel)">
+                <span class="choice-card__icon">
+                  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                  </svg>
+                </span>
+                <span class="choice-card__title">{{ nivel }}</span>
+              </button>
+            }
+          </div>
+
+          <div class="step-nav">
+            <button class="btn btn--outline" (click)="cambiarMomento()">Atrás</button>
+          </div>
+        }
+
+        <!-- Paso 3: Menú (recetas + personalización) -->
+        @case ('menu') {
+          <div class="public-header">
+            <div class="public-logo">
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none">
+                <rect width="24" height="24" rx="8" fill="var(--primary)"/>
+                <path d="M7 12l3 3 7-7" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <h1 class="public-title">Menú disponible</h1>
+            <p class="public-subtitle">{{ selectedTipoComidaNombre }} · Nivel {{ nivelLabel }}</p>
+          </div>
+
+          <div class="step-options">
+            <div class="recetas-list">
+              @for (receta of recetas; track receta.id) {
+                <button class="receta-card"
+                        [class.receta-card--active]="form.recetaId === receta.id"
+                        (click)="elegirReceta(receta)">
+                  <div class="receta-card__main">
+                    <span class="receta-card__title">{{ receta.nombre }}</span>
+                    <span class="receta-card__meta">{{ receta.ingredientes.length }} ingredientes</span>
+                  </div>
+                  @if (receta.personalizable) {
+                    <span class="receta-card__badge">Personalizable</span>
+                  }
+                  @if (form.recetaId === receta.id) {
+                    <span class="receta-card__check">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                    </span>
+                  }
+                </button>
+              }
+              @if (recetas.length === 0) {
+                <div class="step-empty">No hay platos disponibles para este nivel.</div>
+              }
+            </div>
+
+            <!-- Personalización de ingredientes -->
+            @if (recetaSeleccionada && recetaSeleccionada.personalizable && slotsPersonalizables.length > 0) {
+              <div class="personalizacion">
+                <h3 class="personalizacion__title">Personaliza tu plato</h3>
+                <p class="personalizacion__subtitle">Puedes sustituir estos ingredientes por una alternativa.</p>
+                @for (slot of slotsPersonalizables; track slot.ingredienteId) {
+                  <div class="form-group">
+                    <label class="form-label">{{ getIngredienteNombre(slot.ingredienteId) }}</label>
+                    <div class="select-wrapper">
+                      <select class="form-control form-select"
+                              [ngModel]="getSustitutoActual(slot.ingredienteId)"
+                              (ngModelChange)="onSustitutoChange(slot.ingredienteId, $event)">
+                        <option [value]="slot.ingredienteId">{{ getIngredienteNombre(slot.ingredienteId) }} (original)</option>
+                        @for (altId of (slot.alternativas || []); track altId) {
+                          <option [value]="altId">{{ getIngredienteNombre(altId) }}</option>
+                        }
+                      </select>
+                    </div>
+                  </div>
+                }
+              </div>
+            }
+          </div>
+
+          <div class="step-nav">
+            <button class="btn btn--outline" (click)="elegirNivel(form.nivel!)">Atrás</button>
+            <button class="btn btn--action" [disabled]="!form.recetaId" (click)="continuarDesdeMenu()">Continuar</button>
+          </div>
+        }
+
+        <!-- Paso 4: Formulario de datos -->
+        @case ('form') {
+          <div class="public-header">
+            <div class="public-logo">
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none">
+                <rect width="24" height="24" rx="8" fill="var(--primary)"/>
+                <path d="M7 12l3 3 7-7" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <h1 class="public-title">Registrar Solicitud</h1>
+            <p class="public-subtitle">Completa los datos del requerimiento</p>
+          </div>
+
+          <!-- Resumen de lo elegido (no editable) -->
+          <div class="selection-recap">
+            <div class="selection-recap__items">
+              <span class="selection-recap__chip">{{ selectedTipoComidaNombre }}</span>
+              <span class="selection-recap__chip">Nivel {{ nivelLabel }}</span>
+              <span class="selection-recap__chip">{{ selectedRecetaNombre }}</span>
+            </div>
+            <button class="selection-recap__change" (click)="cambiarMomento()">Cambiar</button>
+          </div>
+
+          <div class="form-grid">
+            <div class="form-group form-group--full">
+              <label class="form-label">Organización / Empresa *</label>
+              <input type="text" class="form-control" [(ngModel)]="form.centroId" placeholder="Ej: Comedor de la Paz">
+            </div>
+
+            <div class="form-group form-group--full">
+              <label class="form-label">Ubicación (Destino) *</label>
+              <input type="text" class="form-control" [(ngModel)]="form.ubicacion" placeholder="Ej: Calle Principal, Sector 4">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Nombre del Responsable *</label>
+              <input type="text" class="form-control" [(ngModel)]="form.solicitante" placeholder="¿Quién retira?">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Cantidad (Raciones) *</label>
+              <input type="number" class="form-control" [(ngModel)]="form.cantidad" placeholder="Ej: 150" min="1">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Hora de Entrega Requerida</label>
+              <div class="time-input-wrapper">
+                <input type="time" class="form-control time-input" [(ngModel)]="form.horaEntrega">
+              </div>
+            </div>
+
+            <div class="form-group form-group--full">
+              <label class="form-label">Observaciones (Opcional)</label>
+              <textarea class="form-control" [(ngModel)]="form.nota" rows="3" placeholder="Si tienes observaciones de una comida especial, etc..."></textarea>
+            </div>
+          </div>
+
+          <div class="step-nav">
+            <button class="btn btn--outline" (click)="volverAMenu()">Atrás</button>
+            <button class="btn btn--primary btn--lg btn-submit" style="background: linear-gradient(135deg, #fb923c, #ea580c); border: none; color: #ffffff; box-shadow: 0 8px 20px -6px rgba(234, 88, 12, 0.5);" [disabled]="!isValid" (click)="verResumen()">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 8px;">
+                <path d="M5 18H3c-.6 0-1-.4-1-1V7c0-.6.4-1 1-1h10c.6 0 1 .4 1 1v11"/>
+                <path d="M14 9h4l4 4v4c0 .6-.4 1-1 1h-2"/>
+                <circle cx="7" cy="18" r="2"/>
+                <circle cx="17" cy="18" r="2"/>
+              </svg>
+              Registrar
+            </button>
+          </div>
+        }
+
+        <!-- Paso 5: Resumen -->
+        @case ('resumen') {
+          <div class="public-header">
+            <div class="public-logo">
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none">
+                <rect width="24" height="24" rx="8" fill="var(--primary)"/>
+                <path d="M7 12l3 3 7-7" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <h1 class="public-title">Resumen de la Solicitud</h1>
+            <p class="public-subtitle">Verifica los datos antes de enviar</p>
+          </div>
+
+          <div class="summary-card">
+            <div class="summary-card__item">
+              <span>Momento:</span>
+              <strong>{{ selectedTipoComidaNombre }}</strong>
+            </div>
+            <div class="summary-card__item">
+              <span>Nivel:</span>
+              <strong>{{ nivelLabel }}</strong>
+            </div>
+            <div class="summary-card__item">
+              <span>Menú:</span>
+              <strong>{{ selectedRecetaNombre }}</strong>
+            </div>
+            <div class="summary-card__item">
+              <span>Organización:</span>
+              <strong>{{ form.centroId || '---' }}</strong>
+            </div>
+            <div class="summary-card__item">
+              <span>Responsable:</span>
+              <strong>{{ form.solicitante || '---' }}</strong>
+            </div>
+            <div class="summary-card__item">
+              <span>Cantidad:</span>
+              <strong>{{ form.cantidad || 0 }} raciones</strong>
+            </div>
+            <div class="summary-card__item">
+              <span>Ubicación:</span>
+              <strong>{{ form.ubicacion || '---' }}</strong>
+            </div>
+            <div class="summary-card__item">
+              <span>Hora de entrega:</span>
+              <strong>{{ form.horaEntrega || 'A convenir' }}</strong>
+            </div>
+            @if (form.personalizacion.length > 0) {
+              <div class="summary-card__item summary-card__item--changes">
+                <span>Cambios:</span>
+                <div class="summary-changes">
+                  @for (p of form.personalizacion; track p.ingredienteOriginalId) {
+                    @if (p.ingredienteOriginalId !== p.ingredienteSustitutoId) {
+                      <div class="summary-changes__row">
+                        {{ getIngredienteNombre(p.ingredienteOriginalId) }} <strong>por</strong> {{ getIngredienteNombre(p.ingredienteSustitutoId) }}
+                      </div>
+                    }
+                  }
+                </div>
+              </div>
+            }
+          </div>
+
+          <div class="submit-wrapper summary-actions">
+            <button class="btn btn--outline btn--lg btn--block" (click)="cancelarResumen()">Volver a editar</button>
+            <button class="btn btn--primary btn--lg btn-submit" style="background: linear-gradient(135deg, #fb923c, #ea580c); border: none; color: #ffffff; box-shadow: 0 8px 20px -6px rgba(234, 88, 12, 0.5);" [disabled]="submitting" (click)="confirmarRegistro()">
+              @if (submitting) {
+                <span class="spinner"></span> Procesando...
+              } @else {
+                Continuar
+              }
+            </button>
+          </div>
+        }
+      }
     }
   </div>
 </div>

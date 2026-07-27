@@ -27,6 +27,9 @@ export class SolicitudesService {
       horaEntrega: data.horaEntrega,
       estado: EstadoSolicitud.PENDIENTE,
       ubicacion: data.ubicacion || centro.ubicacion,
+      nivel: data.nivel,
+      recetaId: data.recetaId,
+      personalizacion: data.personalizacion,
       fechaSolicitada: new Date(),
       createdAt: new Date(),
     };
@@ -59,6 +62,10 @@ export class SolicitudesService {
     if (data.notasInternas !== undefined) solicitud.notasInternas = data.notasInternas;
     if (data.prioridad) solicitud.prioridad = data.prioridad;
     if (data.ubicacion !== undefined) solicitud.ubicacion = data.ubicacion;
+    if (data.nivel) solicitud.nivel = data.nivel;
+    if (data.recetaId) solicitud.recetaId = data.recetaId;
+    if (data.personalizacion) solicitud.personalizacion = data.personalizacion;
+    if (data.requisicionId) solicitud.requisicionId = data.requisicionId;
     return solicitud;
   }
 

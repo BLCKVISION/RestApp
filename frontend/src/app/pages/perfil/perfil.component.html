@@ -11,7 +11,7 @@
         <div class="user-avatar">{{ (auth.currentUser()?.nombre || '?').charAt(0).toUpperCase() }}</div>
       </div>
       <h2 class="user-name">{{ auth.currentUser()?.nombre }}</h2>
-      <p class="user-role">{{ auth.currentUser()?.role }}</p>
+      <p class="user-role">{{ auth.currentUser()?.rol?.nombre }}</p>
 
       <div class="user-details">
         <div class="detail-item">

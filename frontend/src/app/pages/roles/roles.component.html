@@ -1,0 +1,138 @@
+<div class="page">
+  <div class="page__header">
+    <div>
+      <h1 class="page__title">Roles y Permisos</h1>
+      <p class="page__subtitle">Administra los roles del sistema y sus permisos asociados</p>
+    </div>
+  </div>
+
+  <div class="config-card card">
+    <div class="config-card__head">
+      <h2 class="config-card__title">Roles</h2>
+      <button class="btn btn--action" (click)="abrirCrearRol()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Nuevo
+      </button>
+    </div>
+
+    <div class="data-table-wrapper">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Descripción</th>
+            <th>Permisos</th>
+            <th>Activo</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (rol of roles; track rol.id) {
+            <tr>
+              <td class="data-table__strong">
+                {{ rol.nombre }}
+                @if (rol.esSistema) {
+                  <span class="pill pill--sistema">Sistema</span>
+                }
+              </td>
+              <td>{{ rol.descripcion || '—' }}</td>
+              <td>
+                @if (esAccesoTotal(rol)) {
+                  <span class="pill pill--total">Todos los permisos</span>
+                } @else {
+                  <span class="pill pill--nivel">{{ cantidadPermisos(rol) }} permisos</span>
+                }
+              </td>
+              <td>
+                <span class="pill" [class.pill--on]="rol.activo" [class.pill--off]="!rol.activo">
+                  {{ rol.activo ? 'Sí' : 'No' }}
+                </span>
+              </td>
+              <td class="data-table__actions">
+                <button class="icon-btn" title="Editar" (click)="abrirEditarRol(rol)">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
+                </button>
+                @if (!rol.esSistema) {
+                  <button class="icon-btn icon-btn--danger" title="Eliminar" (click)="eliminarRol(rol)">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                  </button>
+                }
+              </td>
+            </tr>
+          }
+          @if (roles.length === 0) {
+            <tr><td colspan="5" class="data-table__empty">No hay roles registrados</td></tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ Modal Rol ═══ -->
+@if (isRolModalOpen) {
+  <div class="modal-overlay" (click)="cerrarRolModal()">
+    <div class="premium-modal premium-modal--wide" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <div>
+          <h2 class="modal-title">{{ rolEnEdicion ? 'Editar Rol' : 'Nuevo Rol' }}</h2>
+          @if (rolEnEdicion?.esSistema) {
+            <p style="margin: 0; font-size: 0.8rem; color: var(--text-secondary); margin-top: 2px;">Este es un rol de sistema y no puede modificarse</p>
+          }
+        </div>
+        <button class="icon-btn close-btn" (click)="cerrarRolModal()">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <div class="form-grid">
+          <div class="form-group form-group--full">
+            <label class="form-label">Nombre *</label>
+            <input type="text" class="form-control" [(ngModel)]="rolForm.nombre" [disabled]="rolEnEdicion?.esSistema" placeholder="Ej: Supervisor de inventario">
+          </div>
+          <div class="form-group form-group--full">
+            <label class="form-label">Descripción</label>
+            <textarea class="form-control" [(ngModel)]="rolForm.descripcion" [disabled]="rolEnEdicion?.esSistema" rows="2" placeholder="Opcional"></textarea>
+          </div>
+        </div>
+
+        <div class="permisos-builder">
+          <label class="checkbox-inline permisos-builder__total">
+            <input type="checkbox" [checked]="todoSeleccionado" [disabled]="rolEnEdicion?.esSistema" (change)="toggleTodoSeleccionado()">
+            <span><strong>Seleccionar todos (acceso total)</strong></span>
+          </label>
+
+          @if (!todoSeleccionado) {
+            @for (modulo of modulos; track modulo) {
+              <div class="permisos-modulo">
+                <h4 class="permisos-modulo__title">{{ modulo }}</h4>
+                <div class="permisos-modulo__list">
+                  @for (permiso of permisosPorModulo[modulo]; track permiso.clave) {
+                    <label class="checkbox-inline">
+                      <input type="checkbox"
+                             [checked]="rolForm.permisosSeleccionados.has(permiso.clave)"
+                             [disabled]="rolEnEdicion?.esSistema"
+                             (change)="togglePermiso(permiso.clave)">
+                      <span>{{ permiso.etiqueta }}</span>
+                    </label>
+                  }
+                </div>
+              </div>
+            }
+          }
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn--outline" (click)="cerrarRolModal()">Cancelar</button>
+        @if (!rolEnEdicion?.esSistema) {
+          <button class="btn btn--action" [disabled]="savingRol" (click)="guardarRol()">
+            @if (savingRol) { <span class="btn-spinner"></span> Guardando... }
+            @else { Guardar }
+          </button>
+        }
+      </div>
+    </div>
+  </div>
+}

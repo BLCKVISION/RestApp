@@ -12,6 +12,8 @@ import { META_MENSUAL_INVENTARIO } from '../common/config';
 import { CreateMovimientoDto, FilterMovimientoDto } from './dto/movimientos-comida.dto';
 import { SolicitudesService } from '../solicitudes/solicitudes.service';
 import { CentrosAcopioService } from '../centros-acopio/centros-acopio.service';
+import { RecetasService } from '../recetas/recetas.service';
+import { MovimientosIngredienteService } from '../movimientos-ingrediente/movimientos-ingrediente.service';
 import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
@@ -21,6 +23,8 @@ export class MovimientosComidaService {
   constructor(
     private solicitudesService: SolicitudesService,
     private centrosService: CentrosAcopioService,
+    private recetasService: RecetasService,
+    private movimientosIngredienteService: MovimientosIngredienteService,
   ) {}
 
   /** Registrar un nuevo movimiento (entrada o salida) */
@@ -63,6 +67,33 @@ export class MovimientosComidaService {
 
     if (dto.solicitudId && dto.tipo === TipoMovimiento.SALIDA) {
       this.solicitudesService.updateEstado(dto.solicitudId, EstadoSolicitud.ENTREGADA);
+
+      // Descontar ingredientes según la receta de la solicitud (si la tiene)
+      const solicitud = this.solicitudesService.findOne(dto.solicitudId);
+      if (solicitud.recetaId) {
+        const receta = this.recetasService.findOne(solicitud.recetaId);
+        for (const ri of receta.ingredientes) {
+          // Resolver sustituciones válidas (misma lógica que RequisicionesService.evaluar)
+          let idFinal = ri.ingredienteId;
+          const sustitucion = solicitud.personalizacion?.find(
+            (p) => p.ingredienteOriginalId === ri.ingredienteId,
+          );
+          if (
+            sustitucion &&
+            (ri.alternativas || []).includes(sustitucion.ingredienteSustitutoId)
+          ) {
+            idFinal = sustitucion.ingredienteSustitutoId;
+          }
+
+          this.movimientosIngredienteService.create({
+            tipo: TipoMovimiento.SALIDA,
+            ingredienteId: idFinal,
+            cantidad: ri.cantidadPorRacion * solicitud.cantidadSolicitada,
+            solicitudId: dto.solicitudId,
+            registradoPor: dto.registradoPor,
+          });
+        }
+      }
     }
 
     this.movimientos.push(nuevo);

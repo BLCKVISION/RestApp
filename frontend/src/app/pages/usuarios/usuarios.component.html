@@ -1,0 +1,128 @@
+<div class="page">
+  <div class="page__header">
+    <div>
+      <h1 class="page__title">Usuarios</h1>
+      <p class="page__subtitle">Administra los usuarios del sistema y sus roles asignados</p>
+    </div>
+  </div>
+
+  <div class="config-card card">
+    <div class="config-card__head">
+      <h2 class="config-card__title">Usuarios</h2>
+      <button class="btn btn--action" (click)="abrirCrearUsuario()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Nuevo
+      </button>
+    </div>
+
+    <div class="data-table-wrapper">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Usuario</th>
+            <th>Nombre</th>
+            <th>Rol</th>
+            <th>Activo</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (usuario of usuarios; track usuario.id) {
+            <tr>
+              <td class="data-table__strong">
+                &#64;{{ usuario.username }}
+                @if (esUsuarioActual(usuario)) {
+                  <span class="pill pill--tu">Tú</span>
+                }
+              </td>
+              <td>{{ usuario.nombre }}</td>
+              <td>{{ getRolNombre(usuario.rolId) }}</td>
+              <td>
+                <span class="pill" [class.pill--on]="usuario.activo" [class.pill--off]="!usuario.activo">
+                  {{ usuario.activo ? 'Sí' : 'No' }}
+                </span>
+              </td>
+              <td class="data-table__actions">
+                <button class="icon-btn" title="Editar" (click)="abrirEditarUsuario(usuario)">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
+                </button>
+                @if (!esUsuarioActual(usuario)) {
+                  <button class="icon-btn icon-btn--danger" title="Eliminar" (click)="eliminarUsuario(usuario)">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                  </button>
+                }
+              </td>
+            </tr>
+          }
+          @if (usuarios.length === 0) {
+            <tr><td colspan="5" class="data-table__empty">No hay usuarios registrados</td></tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ Modal Usuario ═══ -->
+@if (isUsuarioModalOpen) {
+  <div class="modal-overlay" (click)="cerrarUsuarioModal()">
+    <div class="premium-modal" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <div>
+          <h2 class="modal-title">{{ usuarioEnEdicion ? 'Editar Usuario' : 'Nuevo Usuario' }}</h2>
+          @if (usuarioEnEdicion && esUsuarioActual(usuarioEnEdicion)) {
+            <p style="margin: 0; font-size: 0.8rem; color: var(--text-secondary); margin-top: 2px;">No puedes cambiar tu propio rol ni tu estado</p>
+          }
+        </div>
+        <button class="icon-btn close-btn" (click)="cerrarUsuarioModal()">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">Usuario *</label>
+            <input type="text" class="form-control" [(ngModel)]="usuarioForm.username" [disabled]="!!usuarioEnEdicion" placeholder="Ej: jperez">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Nombre completo *</label>
+            <input type="text" class="form-control" [(ngModel)]="usuarioForm.nombre" placeholder="Ej: Juan Pérez">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Rol *</label>
+            <div class="select-wrapper">
+              <select class="form-control" [(ngModel)]="usuarioForm.rolId" [disabled]="!!usuarioEnEdicion && esUsuarioActual(usuarioEnEdicion)">
+                <option value="">Seleccionar...</option>
+                @for (rol of roles; track rol.id) {
+                  <option [value]="rol.id">{{ rol.nombre }}</option>
+                }
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">{{ usuarioEnEdicion ? 'Nueva contraseña' : 'Contraseña *' }}</label>
+            <input type="password" class="form-control" [(ngModel)]="usuarioForm.password"
+                   [placeholder]="usuarioEnEdicion ? 'Dejar en blanco para no cambiar' : 'Mínimo 8 caracteres'">
+          </div>
+          @if (usuarioEnEdicion) {
+            <div class="form-group form-group--full">
+              <label class="checkbox-inline">
+                <input type="checkbox" [(ngModel)]="usuarioForm.activo" [disabled]="esUsuarioActual(usuarioEnEdicion)">
+                <span>Usuario activo</span>
+              </label>
+            </div>
+          }
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn--outline" (click)="cerrarUsuarioModal()">Cancelar</button>
+        <button class="btn btn--action" [disabled]="savingUsuario" (click)="guardarUsuario()">
+          @if (savingUsuario) { <span class="btn-spinner"></span> Guardando... }
+          @else { Guardar }
+        </button>
+      </div>
+    </div>
+  </div>
+}

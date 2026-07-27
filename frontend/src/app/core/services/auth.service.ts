@@ -11,7 +11,8 @@ export interface AuthUser {
   id: string;
   username: string;
   nombre: string;
-  role: string;
+  rol: { id: string; nombre: string };
+  permisos: string[];
 }
 
 interface LoginResponse {
@@ -57,5 +58,10 @@ export class AuthService {
 
   getToken(): string | null {
     return localStorage.getItem(TOKEN_KEY);
+  }
+
+  hasPermission(clave: string): boolean {
+    const permisos = this.currentUser()?.permisos ?? [];
+    return permisos.includes('*') || permisos.includes(clave);
   }
 }

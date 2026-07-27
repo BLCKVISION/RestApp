@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
+import { permissionGuard } from './core/guards/permission.guard';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
@@ -50,6 +51,28 @@ export const routes: Routes = [
     path: 'configuracion',
     canActivate: [authGuard],
     loadComponent: () => import('./pages/configuracion/configuracion.component').then((m) => m.ConfiguracionComponent),
+  },
+  {
+    path: 'requisiciones',
+    canActivate: [authGuard],
+    loadComponent: () => import('./pages/requisiciones/requisiciones.component').then((m) => m.RequisicionesComponent),
+  },
+  {
+    path: 'catalogo-menus',
+    canActivate: [authGuard],
+    loadComponent: () => import('./pages/catalogo-menus/catalogo-menus.component').then((m) => m.CatalogoMenusComponent),
+  },
+  {
+    path: 'roles',
+    canActivate: [authGuard, permissionGuard],
+    data: { permiso: 'roles.gestionar' },
+    loadComponent: () => import('./pages/roles/roles.component').then((m) => m.RolesComponent),
+  },
+  {
+    path: 'usuarios',
+    canActivate: [authGuard, permissionGuard],
+    data: { permiso: 'usuarios.gestionar' },
+    loadComponent: () => import('./pages/usuarios/usuarios.component').then((m) => m.UsuariosComponent),
   },
   { path: '**', redirectTo: 'dashboard' },
 ];
