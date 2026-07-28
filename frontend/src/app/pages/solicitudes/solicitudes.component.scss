@@ -1,4 +1,6 @@
 /* ═══ Kanban Page ═══════════════════════════════════════════════════ */
+@use '../../../styles/breakpoints' as bp;
+
 :host { display: block; }
 
 .kanban-page {
@@ -531,5 +533,17 @@ button:disabled {
     color: var(--primary);
     border-color: var(--primary);
   }
+}
+
+/* ═══ Responsive ════════════════════════════════════════════════════ */
+@include bp.tablet {
+  .kanban-board { grid-template-columns: repeat(2, 1fr); }
+}
+
+@include bp.mobile {
+  .kanban-board { grid-template-columns: 1fr; }
+  .kanban-header { flex-direction: column; align-items: flex-start; gap: 12px; }
+  .filter-tabs { width: 100%; overflow-x: auto; }
+  .form-grid, .detail-grid { grid-template-columns: 1fr; }
 }
 

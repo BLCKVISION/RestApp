@@ -1,4 +1,6 @@
 /* ═══ Historial de Movimientos ════════════════════════════════ */
+@use '../../../styles/breakpoints' as bp;
+
 .page {
   width: 100%;
   display: flex;
@@ -256,4 +258,15 @@
     color: var(--text-secondary);
     font-weight: 500;
   }
+}
+
+/* ═══ Responsive ════════════════════════════════════════════════ */
+@include bp.tablet {
+  .mov-kpi-row { grid-template-columns: repeat(2, 1fr); }
+}
+
+@include bp.mobile {
+  .mov-kpi-row { grid-template-columns: 1fr; }
+  .page__header { flex-direction: column; align-items: flex-start; gap: 8px; }
+  .pagination { flex-direction: column; gap: 8px; align-items: flex-start; }
 }

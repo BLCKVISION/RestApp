@@ -168,6 +168,7 @@
 .main-content {
   margin-left: calc(var(--sidebar-width) + 16px);
   flex: 1;
+  min-width: 0; /* allow shrinking below content's min-content (e.g. wide tables) instead of overflowing */
   padding: 16px 24px; /* Reduced to balance with the left gap */
   min-height: 100vh;
   display: flex;
@@ -588,5 +589,26 @@
     &__search {
       width: 100%;
     }
+  }
+}
+
+@media (max-width: 480px) {
+  .sidebar {
+    width: 52px;
+    left: 8px;
+    top: 8px;
+    bottom: 8px;
+    padding: 16px 0;
+  }
+
+  .main-content {
+    margin-left: 52px;
+    padding: 16px 10px;
+  }
+
+  .sidebar__logo,
+  .sidebar__item {
+    width: 36px;
+    height: 36px;
   }
 }

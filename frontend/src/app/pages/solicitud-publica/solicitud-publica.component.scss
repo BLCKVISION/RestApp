@@ -1,3 +1,5 @@
+@use '../../../styles/breakpoints' as bp;
+
 .public-wrapper {
   min-height: 100vh;
   display: flex;
@@ -487,6 +489,12 @@
   }
 }
 
+@include bp.tablet {
+  .public-card {
+    padding: 32px;
+  }
+}
+
 @media (max-width: 640px) {
   .form-grid {
     grid-template-columns: 1fr;
@@ -501,5 +509,13 @@
   }
   .step-options--grid {
     grid-template-columns: 1fr;
+  }
+  .step-nav {
+    flex-direction: column;
+
+    .btn {
+      width: 100%;
+      min-width: 0;
+    }
   }
 }

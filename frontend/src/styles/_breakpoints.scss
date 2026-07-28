@@ -1,0 +1,18 @@
+// Breakpoints compartidos — usar estos valores en código nuevo.
+// No se migran breakpoints existentes que ya funcionan (768px en app.component,
+// 720px en requisiciones, 1200px en dashboard) salvo que se toque ese bloque.
+$bp-mobile: 640px;
+$bp-tablet: 900px;
+$bp-desktop: 1200px;
+
+@mixin mobile {
+  @media (max-width: $bp-mobile) { @content; }
+}
+
+@mixin tablet {
+  @media (max-width: $bp-tablet) { @content; }
+}
+
+@mixin desktop {
+  @media (max-width: $bp-desktop) { @content; }
+}

@@ -1,4 +1,5 @@
 /* ═══ Configuración Page ════════════════════════════════════════════ */
+@use '../../../styles/breakpoints' as bp;
 .page {
   width: 100%;
   display: flex;
@@ -186,4 +187,17 @@
 button:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+@include bp.mobile {
+  .config-tabs {
+    width: 100%;
+    overflow-x: auto;
+  }
+
+  .page__header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
 }

@@ -63,7 +63,7 @@
 /* ─── Top KPI Cards ─── */
 .kpi-row {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 16px;
 }
 
@@ -148,8 +148,10 @@
 
   &__header {
     display: flex;
+    flex-wrap: wrap;
     justify-content: space-between;
     align-items: flex-start;
+    gap: 16px;
     margin-bottom: 24px;
   }
 
@@ -243,6 +245,7 @@
 
   &__bars {
     flex: 1;
+    min-width: 0;
     display: flex;
     align-items: stretch;
     justify-content: center;
@@ -250,6 +253,7 @@
     padding-bottom: 24px;
     border-bottom: 1.5px solid rgba(0, 0, 0, 0.04);
     position: relative;
+    overflow-x: auto;
   }
 
   &__group {
@@ -346,8 +350,10 @@
 .today-booking {
   &__header {
     display: flex;
+    flex-wrap: wrap;
     justify-content: space-between;
     align-items: center;
+    gap: 12px;
     margin-bottom: 16px;
   }
 
@@ -705,12 +711,12 @@
 /* ─── Responsive Styles ─── */
 @media (max-width: 1200px) {
   .dash__grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .dash__right {
     display: grid;
-    grid-template-columns: 1.2fr 1fr;
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
     gap: 16px;
   }
 
@@ -721,15 +727,15 @@
 
 @media (max-width: 768px) {
   .kpi-row {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   }
 
   .today-booking__grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .dash__right {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .forecast-card {
@@ -746,10 +752,25 @@
     }
   }
 
+  .today-booking__search {
+    flex: 1;
+    min-width: 0;
+
+    input {
+      width: 100%;
+    }
+  }
+
   .dash__greeting {
     flex-direction: column;
     align-items: flex-start;
     gap: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .kpi-row {
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 

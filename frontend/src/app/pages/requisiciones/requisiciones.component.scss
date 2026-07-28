@@ -1,3 +1,5 @@
+@use '../../../styles/breakpoints' as bp;
+
 :host { display: block; }
 
 .req-page {
@@ -261,4 +263,14 @@
 
 @media (max-width: 720px) {
   .req-board { grid-template-columns: 1fr; }
+}
+
+@include bp.mobile {
+  .req-items {
+    overflow-x: auto;
+
+    &__head, &__row {
+      min-width: 420px;
+    }
+  }
 }
